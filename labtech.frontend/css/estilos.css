@@ -8,3 +8,15 @@
     --marca: #902b32;
     --texto: #21140E;
 }
+
+nav{
+    background-color: var(--paneles);
+}
+
+nav a{
+    color: var(--titulos);
+}
+
+nav a:hover{
+    color: var(--marca);
+}
