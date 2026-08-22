@@ -9,27 +9,42 @@
     --texto: #21140E;
 }
 
-body{
-    background-color: var(--fondos-principales);
+header {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--paneles);
+    display: block;
 }
 
-nav{
-    background-color: var(--referencias);
-    padding: 0;
+.panelSuperior{
+    display: flex;
+    background-color:var(--paneles);
+    padding: 5%;
     margin: 0;
+    width: 100%;
+}
+
+nav {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    
+    background-color: var(--titulos);
+    display: block;
 }
 
 nav ul{
     display: flex;
     list-style: none;
-    padding: 0.2%;
-    margin: 1%;
+    padding: 0;
+    margin: 1;
     width: 100%;
     justify-content: space-evenly;
 }
 
 nav a{
-    color: var(--texto);
+    color: var(--fondos-principales);
     text-decoration: none;
     font-weight: bold;
     font-size: 30px;
@@ -40,6 +55,13 @@ nav a:hover{
     text-decoration: var(--detalles);
 }
 
+body{
+    background-color: var(--fondos-principales);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
 footer{
     background-color: var(--paneles);
     padding: 3px;
@@ -48,9 +70,48 @@ footer{
 
 .footer-contenedor{
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: flex-start;
-    padding: 1%;
     margin: 0 auto;
     max-width: 1200px;
+}
+
+.footer-seccion{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5;
+}
+
+.footer-seccion h3{
+    display: flex;
+    font-size: 25px;
+    color: var(--fondos-principales);
+}
+
+.footer-seccion a:hover{
+    display: flex;
+    font-size: 15px;
+    color:var(--detalles);
+    text-decoration:underline;
+    font-weight: bold;
+}
+
+.footer-seccion p, a{
+    display: flex;
+    font-size: 15px;
+    color:var(--fondos-principales);
+    text-decoration: none;
+    margin: 0;
+    line-height: 150%;
+}
+
+.footer-copy{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--fondos-principales);
+    width: 100%;
+    max-width: 1200px;
+    margin:0 auto;
+    padding: 1rem;
 }
