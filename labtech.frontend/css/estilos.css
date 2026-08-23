@@ -1,3 +1,4 @@
+/*--------------------------------VARIABLES DE COLORES-----------------------*/
 :root{
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -8,7 +9,7 @@
     --marca: #902b32;
     --texto: #21140E;
 }
-
+/*--------------------------------HEADER----------------------------------*/
 header {
     width: 100%;
     margin: 0;
@@ -16,7 +17,7 @@ header {
     background-color: var(--paneles);
     display: block;
 }
-
+/*--------------------------------PANEL SUPERIOR-----------------------*/
 .panelSuperior{
    width: 90%;
     max-width: 1400px;
@@ -27,7 +28,6 @@ header {
     justify-content: space-between;
     gap: 40px;
 }
-
 .logo {
     display: flex;
     align-items: center;
@@ -139,78 +139,23 @@ nav ul{
     width: 100%;
     justify-content: space-evenly;
 }
-
+/*-----------------------------------NAV--------------------------------------*/
 nav a{
     color: var(--fondos-principales);
     text-decoration: none;
     font-weight: bold;
     font-size: 30px;
 }
-
 nav a:hover{
     color: var(--marca);
     text-decoration: var(--detalles);
 }
-
+/*-----------------------------------body--------------------------------------*/
 body{
     background-color: var(--fondos-principales);
     margin: 0;
     padding: 0;
     width: 100%;
-}
-
-footer{
-    background-color: var(--paneles);
-    padding: 3px;
-    margin: 0;
-}
-
-.footer-contenedor{
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin: 0 auto;
-    max-width: 1200px;
-}
-
-.footer-seccion{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5;
-}
-
-.footer-seccion h3{
-    display: flex;
-    font-size: 25px;
-    color: var(--fondos-principales);
-}
-
-.footer-seccion a:hover{
-    display: flex;
-    font-size: 15px;
-    color:var(--detalles);
-    text-decoration:underline;
-    font-weight: bold;
-}
-
-.footer-seccion p, a{
-    display: flex;
-    font-size: 15px;
-    color:var(--fondos-principales);
-    text-decoration: none;
-    margin: 0;
-    line-height: 150%;
-}
-
-.footer-copy{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--fondos-principales);
-    width: 100%;
-    max-width: 1200px;
-    margin:0 auto;
-    padding: 1rem;
 }
 
 /*----------------------------------CARRUSEL----------------------------------*/
@@ -315,7 +260,6 @@ footer{
 }
 
 /* TITULO */
-
 .info-titulo {
     max-width: 700px;
     margin: 0 auto 50px;
@@ -333,6 +277,7 @@ footer{
     font-size: 30px;
     font-weight: 500;
     letter-spacing: 1.5px;
+    color: var(--detalles);
 }
 
 .info-titulo p {
@@ -499,4 +444,58 @@ footer{
 .plan.destacado {
     transform: scale(1.05);
     border: 2px solid #c9a227;
+}
+
+footer{
+    background-color: var(--paneles);
+    padding: 3px;
+    margin: 0;
+}
+
+.footer-contenedor{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0 auto;
+    max-width: 1200px;
+}
+
+.footer-seccion{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5;
+}
+
+.footer-seccion h3{
+    display: flex;
+    font-size: 25px;
+    color: var(--fondos-principales);
+}
+
+.footer-seccion a:hover{
+    display: flex;
+    font-size: 15px;
+    color:var(--detalles);
+    text-decoration:underline;
+    font-weight: bold;
+}
+
+.footer-seccion p, a{
+    display: flex;
+    font-size: 15px;
+    color:var(--fondos-principales);
+    text-decoration: none;
+    margin: 0;
+    line-height: 150%;
+}
+
+.footer-copy{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--fondos-principales);
+    width: 100%;
+    max-width: 1200px;
+    margin:0 auto;
+    padding: 1rem;
 }
