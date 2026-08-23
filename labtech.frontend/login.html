@@ -6,15 +6,16 @@
     <title>Iniciar Sesión</title>
 </head>
 <body>
-    <article>
-        <h1>Bienvenido de nuevo</h1>
-        <form action = "loginContraseña.html" method="post">
-            <label for="email">Correo Electronico</label>
-            <input type="email" id="email" name="email" required>
+    <article class="login">
+        <h1 class="login-titulo">Bienvenido de nuevo</h1>
+        <form class="login-formulario" action = "loginContraseña.html" method="post">
+            <div class="login-campo">
+                <label for="email">Correo Electronico</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit" class="login-boton">Siguiente</button>
 
-            <button type="submit">Siguiente</button>
-
-            <label>¿No tenés una cuenta? <a href="signup.html">Registrate</a></label>
+            <label class="enlace">¿No tenés una cuenta? <a href="signup.html">Registrate</a></label>
         </form>
     </article>
 </body>
