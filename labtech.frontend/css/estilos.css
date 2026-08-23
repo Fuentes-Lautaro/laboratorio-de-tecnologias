@@ -115,3 +115,98 @@ footer{
     margin:0 auto;
     padding: 1rem;
 }
+
+/*CARRUSEL*/
+.carrusel {
+    position: relative;
+    width: 100%;
+    height: 410px;
+    overflow: hidden;
+    background-color: var(--paneles);
+}
+
+.slides {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+.slide.activo {
+    opacity: 1; /**/
+}
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+/* Botones de navegación carrusel */
+.carrusel button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 45px;
+    height: 65px;
+
+    border: none;
+    background-color:var(--titulos);
+
+    color: white;
+    font-size: 30px;
+
+    cursor: pointer;
+
+    transition: background-color 0.3s ease;
+}
+
+.carrusel button:hover {
+    background-color: var(--texto);
+}
+
+.anterior {
+    left: 0;
+}
+
+.siguiente {
+    right: 0;
+}
+
+/* Indicadores carrusel */
+.indicadores {
+    position: absolute;
+
+    bottom: 12px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 8px;
+}
+
+.indicador {
+    width: 9px;
+    height: 9px;
+
+    background-color: var(--texto);
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.indicador.activo {
+    width: 30px;
+    border-radius: 10px;
+
+    background-color: var(--titulos);
+}
