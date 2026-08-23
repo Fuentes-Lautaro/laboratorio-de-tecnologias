@@ -1,0 +1,14 @@
+* {
+    box-sizing: border-box;
+}
+/*--------------------------------VARIABLES DE COLORES-----------------------*/
+:root{
+    --fondos-principales: #F9EBE0;
+    --titulos: #64141B;
+    --paneles: #3E100F;
+    --detalles: #B5865A;
+    --referencias: #513B2A;
+    --bordes: #987C65;
+    --marca: #902b32;
+    --texto: #21140E;
+}

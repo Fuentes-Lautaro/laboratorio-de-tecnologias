@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 /*--------------------------------VARIABLES DE COLORES-----------------------*/
 :root{
     --fondos-principales: #F9EBE0;
@@ -19,7 +22,7 @@ header {
 }
 /*--------------------------------PANEL SUPERIOR-----------------------*/
 .panelSuperior{
-   width: 90%;
+   width: 100%;
     max-width: 1400px;
     height: 150px;
     margin: 0 auto;
@@ -121,12 +124,11 @@ header {
     background-color: var(--detalles);
     color: var(--titulos);
 }
-
-nav {
+/*-----------------------------------NAV--------------------------------------*/
+.nav {
     display: flex;
     width: 100%;
     margin: 0;
-    
     background-color: var(--titulos);
     display: block;
 }
@@ -135,11 +137,11 @@ nav ul{
     display: flex;
     list-style: none;
     padding: 0;
-    margin: 1;
+    margin: 0;
     width: 100%;
     justify-content: space-evenly;
 }
-/*-----------------------------------NAV--------------------------------------*/
+
 nav a{
     color: var(--fondos-principales);
     text-decoration: none;
@@ -413,6 +415,7 @@ body{
     border-radius: 15px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
     text-align: center;
+    
 }
 
 .plan h3 {
@@ -499,3 +502,330 @@ footer{
     margin:0 auto;
     padding: 1rem;
 }
+
+/*----------------------------------responsive----------------------------------*/
+/*----------------header movil------*/
+
+.btn-menu {
+    display: none;
+}
+.btn-cerrar-menu {
+    display: none;
+}
+
+.menu-lateral {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+   /* ----------------------------------panel superior----------------------------------*/
+  
+    .panelSuperior {
+        width: 90%;
+        height: auto;
+        min-height: 120px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "logo menu"
+            "buscador buscador";
+
+        gap: 15px;
+
+        padding: 20px 0;
+    }
+    .header-acciones {
+        display: none;
+    }
+
+    nav {
+        display: none;
+    }
+
+    /*---------------- LOGO ----------------*/
+
+    .logo {
+        grid-area: logo;
+        display: flex;
+        align-items: center;
+    }
+
+    .logo img {
+        width: 220px;
+        height: auto;
+    }
+    /*---------------- BUSCADOR ----------------*/
+
+    .buscador {
+        grid-area: buscador;
+
+        width: 100%;
+        max-width: none;
+        height: 42px;
+    }
+    /*---------------- BOTÓN HAMBURGUESA ----------------*/
+
+    .btn-menu {
+        grid-area: menu;
+        display: block;
+
+        width: 45px;
+        height: 45px;
+
+        border: none;
+        border-radius: 8px;
+
+        background-color: var(--titulos);
+        color: var(--fondos-principales);
+
+        font-size: 25px;
+
+        cursor: pointer;
+    }
+
+    .btn-menu:hover {
+        background-color: var(--detalles);
+        color: var(--titulos);
+    }
+    /*------------------SECCION PLANES----------------*/
+    .planes-contenedor {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    gap: 25px;
+    }
+
+    .plan {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .plan.destacado {
+        transform: none;
+    }
+/*----------------------------------- MENÚ LATERAL --------------------------------*/
+
+.menu-lateral {
+    display: flex;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 80%;
+    max-width: 350px;
+    height: 100vh;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background-color: var(--paneles);
+
+    z-index: 1000;
+
+    flex-direction: column;
+
+    /* Oculto inicialmente */
+   transform: translateX(-100%);
+   transition: transform 0.35s ease;
+    
+}
+    
+
+    
+/* MENÚ ABIERTO */
+
+.menu-lateral.abierto {
+    transform: translateX(0);
+}
+
+
+/*---------------- LOGO ----------------*/
+
+.menu-logo {
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 35px;
+}
+
+.menu-logo img {
+    width: 200px;
+    height: auto;
+}
+
+
+/*---------------- NAVEGACIÓN ----------------*/
+
+.menu-lateral nav {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+}
+
+.menu-lateral nav ul {
+    display: flex;
+
+    flex-direction: column;
+
+    list-style: none;
+
+    width: 100%;
+
+    padding: 0;
+    margin: 0;
+}
+
+.menu-lateral nav li {
+    width: 100%;
+}
+
+.menu-lateral nav a {
+    display: block;
+
+    width: 100%;
+
+    padding: 15px 10px;
+
+    box-sizing: border-box;
+
+    color: var(--fondos-principales);
+
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    border-bottom: 1px solid var(--bordes);
+
+    transition: all 0.3s ease;
+}
+
+.menu-lateral nav a:hover {
+    color: var(--detalles);
+    background-color: var(--titulos);
+}
+
+
+/*---------------- BOTONES ----------------*/
+
+.menu-acciones {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-top: auto;
+}
+
+.menu-acciones a {
+    display: block;
+
+    width: 100%;
+
+    padding: 12px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    border-radius: 5px;
+
+    background-color: var(--titulos);
+
+    color: var(--fondos-principales);
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    transition: all 0.3s ease;
+}
+
+.menu-acciones a:hover {
+    background-color: var(--detalles);
+    color: var(--titulos);
+}
+.btn-cerrar-menu {
+    align-self: flex-end;
+
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    background: transparent;
+
+    color: var(--fondos-principales);
+
+    font-size: 25px;
+
+    cursor: pointer;
+
+    margin-bottom: 10px;
+}
+
+.btn-cerrar-menu:hover {
+    color: var(--detalles);
+}
+
+/*-------------------------------- FOOTER RESPONSIVE --------------------------------*/
+
+footer {
+    padding: 30px 20px;
+}
+
+.footer-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+
+    gap: 30px;
+
+    text-align: center;
+}
+
+.footer-seccion {
+    width: 100%;
+    align-items: center;
+}
+
+.footer-seccion h3 {
+    font-size: 22px;
+    margin: 0 0 10px;
+}
+
+.footer-seccion p,
+.footer-seccion a {
+    font-size: 15px;
+    justify-content: center;
+}
+
+.footer-copy {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    max-width: 100%;
+
+    padding: 20px 0 0;
+
+    gap: 10px;
+
+    text-align: center;
+}
+
+.footer-copy p {
+    margin: 0;
+}
+}
+
+
+
