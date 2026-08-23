@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta</title>
+</head>
+<body>
+    <article>
+        <h1>Crear Cuenta</h1>
+        <form action="mailto:">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" required>
+
+            <label for="fechaNacimiento">Fecha de nacimiento</label>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+
+            <label for="direccion">Dirección <span>(opcional)</span></label>
+            <input type="text" id="direccion" name="direccion">
+
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="confirmPassword">Confirmar contraseña</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <label for="comoNosConocio">¿Cómo conociste nuestra página?</label>
+            <select id="comoNosConocio" name="comoNosConocio">
+                <option value="redes">Redes sociales</option>
+                <option value="amigos">Recomendación de un amigo</option>
+                <option value="buscador">Buscador de internet</option>
+                <option value="otro">Otro</option>
+            </select>
+
+            <label for="comentarios">Comentarios adicionales</label>
+            <textarea id="comentarios" name="comentarios" rows="5" placeholder="Escribí algún comentario si querés..."></textarea>
+
+            <button type="submit">Registrarse</button>
+        </form>
+    </article>
+</body>
+</html>
