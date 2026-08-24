@@ -385,7 +385,7 @@ footer {
     gap: 0.5rem;
 }
 
-.footer-seccion h3 {
+.footer-seccion h2 {
     font-size: 18px;
     color: var(--detalles);
     margin-bottom: 0.5rem;
