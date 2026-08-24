@@ -47,7 +47,7 @@ footer{
     font-weight: bold;
 }
 
-.footer-seccion p, a{
+.footer-seccion p, .footer-seccion a{
     display: flex;
     font-size: 15px;
     color:var(--fondos-principales);

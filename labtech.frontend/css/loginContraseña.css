@@ -1,0 +1,124 @@
+* {
+    box-sizing: border-box;
+}
+/*--------------------------------VARIABLES DE COLORES-----------------------*/
+:root{
+    --fondos-principales: #F9EBE0;
+    --titulos: #64141B;
+    --paneles: #3E100F;
+    --detalles: #B5865A;
+    --referencias: #513B2A;
+    --bordes: #987C65;
+    --marca: #902b32;
+    --texto: #21140E;
+}
+header{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--paneles);
+    display: block;
+}
+body{
+    background-color: var(--fondos-principales);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/*---------------------------------FORMULARIO-----------------------------*/
+.login {
+    width: 90%;
+    max-width: 420px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.login h1 {
+    text-align: center;
+    color: var(--detalles);
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login form label {
+    color: var(--titulos);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.login form input {
+    width: 100%;
+    padding: 13px 15px;
+    margin-top: 8px;
+
+    border: 1px solid #ccc;
+    border-radius: 8px;
+
+    font-size: 16px;
+    outline: none;
+
+    transition: 0.3s;
+}
+
+.login form input:focus {
+    border-color: var(--titulos);
+    box-shadow: 0 0 0 3px rgba(100, 20, 27, 0.12);
+}
+
+.login form button {
+    width: 100%;
+    padding: 13px;
+
+    border: none;
+    border-radius: 8px;
+
+    background-color: var(--detalles);
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login form button:hover {
+    background-color: #4d0f15;
+    transform: translateY(-2px);
+}
+
+.login form a {
+    color: var(--detalles);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login form a:hover {
+    text-decoration: underline;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 480px) {
+
+    .login {
+        width: 92%;
+        margin: 40px auto;
+        padding: 30px 20px;
+    }
+
+    .login h1 {
+        font-size: 24px;
+    }
+}
