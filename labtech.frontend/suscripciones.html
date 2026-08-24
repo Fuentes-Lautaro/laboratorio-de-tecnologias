@@ -10,29 +10,80 @@
 <body>
   <header>
 
-    <div class="panelSuperior">
+        <div class="panelSuperior">
 
-      <div class="logo">
-        <a href="index.html"><img src="./imagenes/logo-Maria-Balbina-Lateral.png" alt="Logo María Balbina"></a>  
-      </div>
+            <div class="logo">
+              <a href="index.html"><img src="imagenes/logo-Maria-Balbina-Lateral.png" alt="Logo María Balbina"></a>  
+            </div>
 
-      <div class="header-acciones">
-        <a href="./login.html" class="btn-login">Iniciar sesión</a>
-        <a href="./signup.html" class="btn-registro">Registrarse</a>
-      </div>
+            <div class="buscador">
+                <input 
+                    type="text" 
+                    placeholder="Buscar vinos"
+                >
+                <button type="button" class="btn-buscar">
+                🔍
+                </button>
+            
+                
 
-    </div>
+            </div>
 
-    <nav>
-      <ul>
-        <li> <a href="">Nosotros</a></li>
-        <li> <a href="./suscripciones.html">Suscripciones</a></li>
-        <li> <a href="">Catalogo</a></li>
-        <li><a href="">Eventos Proximos</a></li>
-      </ul>
-    </nav>
+            <button class="btn-menu" type="button">
+                ☰
+            </button>
+            
 
-  </header>
+                <div class="header-acciones">
+
+                    <a href="login.html" class="btn-login">
+                        Iniciar sesión
+                    </a>
+
+                    <a href="signup.html" class="btn-registro">
+                        Registrarse
+                    </a>
+            
+                </div>
+
+        </div>
+
+        <aside class="menu-lateral">
+
+            <div class="menu-logo">
+                <a href="index.html"><img src="imagenes/logo-Maria-Balbina-centrado.png" alt="Logo María Balbina"></a>
+            </div>
+            <button class="btn-cerrar-menu" type="button">
+                ✕
+            </button>
+            <nav >
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="./nosotros.html">Nosotros</a></li>
+                    <li><a href="./suscripciones.html">Suscripciones</a></li>
+                    <li><a href="#">Catalogo</a></li>
+                    <li><a href="#">Eventos Próximos</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="menu-acciones">
+                <a href="#">Iniciar sesión</a>
+                <a href="#">Registrarse</a>
+            </div>
+
+        </aside>
+
+        <nav class="nav-desktop">
+            <ul>
+                <li> <a href="./nosotros.html">Nosotros</a></li>
+                <li> <a href="./suscripciones.html">Suscripciones</a></li>
+                <li> <a href="">Catalogo</a></li>
+                <li><a href="">Eventos Proximos</a></li>
+            </ul>
+        </nav>
+
+    </header>
 
     <main> 
 
@@ -45,10 +96,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>1 vino mensual</td></tr>
-            <tr><td>✔️ 5% de descuento en compras en el local</td></tr>
-            <tr><td>✔️ Acceso a preventas exclusivas</td></tr>
-            <tr><td>✔️ Elección de tipo</td></tr>
+            <tr><td class="cantidad">1 vino mensual</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> 5% de descuento en compras en el local</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Acceso a preventas exclusivas</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Elección de tipo</td></tr>
             <tr><td>❌ Entrega a domicilio</td></tr>
             <tr class="precio"><td>$$$ / mes</td></tr>
             <tr class="fila-botones">
@@ -64,11 +115,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>3 vinos mensuales</td></tr>
-            <tr><td>✔️ 10% de descuento en compras en el local</td></tr>
-            <tr><td>✔️ Acceso a preventas exclusivas</td></tr>
-            <tr><td>✔️ Elección de tipo</td></tr>
-            <tr><td>✔️ Entrega a domicilio</td></tr>
+            <tr><td class="cantidad">3 vinos mensuales</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> 10% de descuento en compras en el local</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Acceso a preventas exclusivas</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Elección de tipo</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Entrega a domicilio</td></tr>
             <tr class="precio"><td>$$$ / mes</td></tr>
             <tr class="fila-botones">
               <td><button class="btn-tabla">Suscribirme</button></td>
@@ -83,11 +134,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>5 vinos mensuales</td></tr>
-            <tr><td>✔️ 15% de descuento en compras en el local</td></tr>
-            <tr><td>✔️ Acceso a preventas exclusivas</td></tr>
-            <tr><td>✔️ Elección de tipo</td></tr>
-            <tr><td>✔️ Entrega a domicilio</td></tr>
+            <tr><td class="cantidad">5 vinos mensuales</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> 15% de descuento en compras en el local</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Acceso a preventas exclusivas</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Elección de tipo</td></tr>
+            <tr><td><span style="color: #28a745; font-weight: bold; font-size: 1.1em;">✓</span> Entrega a domicilio</td></tr>
             <tr class="precio"><td>$$$ / mes</td></tr>
             <tr class="fila-botones">
               <td><button class="btn-tabla">Suscribirme</button></td>

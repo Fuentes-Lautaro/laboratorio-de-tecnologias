@@ -1,8 +1,9 @@
 * {
     box-sizing: border-box;
 }
+
 /*--------------------------------VARIABLES DE COLORES-----------------------*/
-:root{
+:root {
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
     --paneles: #3E100F;
@@ -12,6 +13,7 @@
     --marca: #902b32;
     --texto: #21140E;
 }
+
 /*--------------------------------HEADER----------------------------------*/
 header {
     width: 100%;
@@ -20,14 +22,16 @@ header {
     background-color: var(--paneles);
     display: block;
 }
-/*-----------------------------------body--------------------------------------*/
-body{
+
+/*-----------------------------------BODY--------------------------------------*/
+body {
     background-color: var(--fondos-principales);
     margin: 0;
     padding: 0;
     width: 100%;
 }
 
+/*--------------------------------TABLAS DE PLANES--------------------------------*/
 .tablas-planes-contenedor {
     display: flex;
     justify-content: center;
@@ -69,6 +73,10 @@ body{
     border-bottom: 1px solid var(--bordes);
 }
 
+.tabla-plan .cantidad {
+    font-weight: bold;
+}
+
 .tabla-plan .precio td {
     font-weight: bold;
     font-size: 1.2rem;
@@ -106,4 +114,27 @@ body{
 
 .plan-destacado:hover {
     transform: scale(1.08);
+}
+
+/*--------------------------------RESPONSIVE PLANES--------------------------------*/
+@media (max-width: 768px) {
+    .tablas-planes-contenedor {
+        flex-direction: column;
+        padding: 30px 15px;
+        gap: 25px;
+    }
+
+    .tabla-plan {
+        width: 100%;
+        max-width: 380px; /* Ancho cómodo para pantallas móviles */
+    }
+
+    /* En móvil se anula el scale() para evitar desbordes laterales */
+    .plan-destacado {
+        transform: none;
+    }
+
+    .plan-destacado:hover {
+        transform: translateY(-4px);
+    }
 }
