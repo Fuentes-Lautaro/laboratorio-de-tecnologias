@@ -139,6 +139,18 @@ body {
     line-height: 1.7;
 }
 
+.info-link{
+    margin: 0;
+    color: var(--marca);
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.info-link:hover{
+    text-decoration:underline;
+}
+
 .info-grid {
     max-width: 700px;
     margin: auto;
@@ -185,7 +197,7 @@ body {
 .info-card li {
     margin-bottom: 9px;
     font-size: 14px;
-    color: var(--detalles);
+    color: var(--texto);
 }
 
 .info-card li::before {
