@@ -400,6 +400,39 @@ body{
 }
 
 /*----------------------------------seccion de planes----------------------------------*/
+/*---------------- PRESENTACIÓN DE PLANES ----------------*/
+
+.Presentacion-planes {
+    text-align: center;
+    padding: 70px 20px 35px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* TÍTULO */
+
+.Presentacion-planes h2 {
+    margin: 0 0 15px;
+
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    color: var(--titulos);
+}
+
+/* TEXTO */
+
+.Presentacion-planes p {
+    margin: 0 auto;
+
+    max-width: 650px;
+
+    font-size: 18px;
+    line-height: 1.7;
+
+    color: var(--referencias);
+}
 .planes-contenedor {
     display: flex;
     justify-content: center;

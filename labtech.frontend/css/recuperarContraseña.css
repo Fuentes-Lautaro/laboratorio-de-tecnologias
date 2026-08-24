@@ -66,6 +66,18 @@ footer {
     line-height: 1.6;
 }
 
+.login-volver{
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+
+    color: var(--paneles);
+    font-size: 14px;
+    text-decoration: none;
+
+    border: 3px solid var(--titulos);
+    border-radius: 5px;
+}
 .footer-contenedor {
     margin-top: auto;
 }
