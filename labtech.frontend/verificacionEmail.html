@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta</title>
-    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/estilos.css">
     <link rel="stylesheet" href="./css/login.css">
-    <link rel="stylesheet" href="./css/footer.css">
 </head>
 <body>
     <header>
@@ -22,16 +21,15 @@
     <main>
     <article class="login">
         <h1 class="login-titulo">Verificación de Identidad</h1>
-
-        <form class="login-formulario" action="signupDatos.html" method="post">
+        <form class="login-formulario" action="signupDatos.html">
             <div class="login-campo">
                 <label for="codigo">Ingresa el código que te enviamos a tu correo.</label>
                 <input type="text" id="codigo" name="codigo" required>
             </div>
 
-            <button type="submit" class="login-boton">Verificar</button>
-            <a href="signup.html" class="login-volver">← Volver</a>
-            
+            <a href="signupDatos.html">
+                <button type="submit" class="login-boton">Verificar</button>
+            </a>
         </form>
     </article>
     </main>
