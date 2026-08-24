@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-/*--------------------------------VARIABLES DE COLORES-----------------------*/
+/*--------------------------------VARIABLES-----------------------*/
 :root {
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -49,7 +49,7 @@ body {
     background-color: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
-    overflow: hidden; /* Mantiene las esquinas redondeadas */
+    overflow: hidden;
     border: 1px solid var(--bordes);
     transition: transform 0.3s ease;
 }
@@ -108,7 +108,7 @@ body {
 }
 
 .plan-destacado {
-    outline: 3px solid #c9a227; /* Borde fino exacto */
+    outline: 3px solid #c9a227;
     transform: scale(1.05);
 }
 
@@ -116,7 +116,7 @@ body {
     transform: scale(1.08);
 }
 
-/*--------------------------------RESPONSIVE PLANES--------------------------------*/
+/*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
     .tablas-planes-contenedor {
         flex-direction: column;
@@ -126,10 +126,9 @@ body {
 
     .tabla-plan {
         width: 100%;
-        max-width: 380px; /* Ancho cómodo para pantallas móviles */
+        max-width: 380px;
     }
 
-    /* En móvil se anula el scale() para evitar desbordes laterales */
     .plan-destacado {
         transform: none;
     }

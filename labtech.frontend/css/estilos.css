@@ -1,10 +1,10 @@
-/*--------------------------------RESET & VARIABLES-----------------------*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/*--------------------------------VARIABLES-----------------------*/
 :root {
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -33,12 +33,11 @@ main {
     flex: 1;
 }
 
-/* Checkbox oculto para el menú móvil */
 .input-check-menu {
     display: none;
 }
 
-/*--------------------------------HEADER (DESKTOP)-----------------------*/
+/*--------------------------------HEADER (PC)-----------------------*/
 header {
     width: 100%;
     background-color: var(--paneles);
@@ -140,7 +139,6 @@ header {
     color: var(--fondos-principales);
 }
 
-/* Ocultos en desktop */
 .btn-menu,
 .menu-lateral,
 .menu-overlay,
@@ -148,7 +146,7 @@ header {
     display: none;
 }
 
-/*--------------------------------NAV DESKTOP-----------------------*/
+/*--------------------------------NAV PC-----------------------*/
 .nav-desktop {
     width: 100%;
     background-color: var(--titulos);
@@ -427,7 +425,6 @@ footer {
 
 /*--------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
-    /* Header */
     .panelSuperior {
         padding: 16px 20px;
         height: auto;

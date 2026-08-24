@@ -2,7 +2,7 @@
 * {
     box-sizing: border-box;
 }
-/*--------------------------------VARIABLES DE COLORES-----------------------*/
+/*--------------------------------VARIABLES-----------------------*/
 :root{
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -126,10 +126,8 @@ body{
     font-size: 18px;
     color: var(--titulos);
 }
-/* =========================
-   RESPONSIVE
-========================= */
 
+/*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 480px) {
 
     .login {

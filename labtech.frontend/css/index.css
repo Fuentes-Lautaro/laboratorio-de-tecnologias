@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-/*--------------------------------VARIABLES DE COLORES-----------------------*/
+/*--------------------------------VARIABLES-----------------------*/
 :root {
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -106,13 +106,12 @@ body {
     background-color: var(--titulos);
 }
 
-/*----------------------------------SECCION DE BIENVENIDA----------------------------------*/
+/*----------------------------------BIENVENIDA----------------------------------*/
 .informacion-bienvenida {
     padding: 90px 30px;
     background: var(--paneles);
 }
 
-/* TITULO */
 .info-titulo {
     max-width: 700px;
     margin: 0 auto 50px;
@@ -140,7 +139,6 @@ body {
     line-height: 1.7;
 }
 
-/* GRID */
 .info-grid {
     max-width: 700px;
     margin: auto;
@@ -149,7 +147,6 @@ body {
     gap: 15px;
 }
 
-/* TARJETAS */
 .info-card {
     padding: 25px;
     background: var(--fondos-principales);
@@ -160,21 +157,18 @@ body {
     transform: translateY(-4px);
 }
 
-/* ICONOS */
 .info-icono {
     font-size: 25px;
     margin-bottom: 18px;
     color: var(--titulos);
 }
 
-/* TITULOS */
 .info-card h3 {
     margin: 0 0 12px;
     font-size: 20px;
     font-weight: 500;
 }
 
-/* TEXTO */
 .info-card p {
     margin: 0 0 20px;
     color: var(--referencias);
@@ -182,7 +176,6 @@ body {
     line-height: 1.7;
 }
 
-/* LISTA */
 .info-card ul {
     padding: 0;
     margin: 0;
@@ -201,7 +194,6 @@ body {
     color: var(--titulos);
 }
 
-/* TARJETA EXTRA */
 .info-extra {
     background: var(--fondos-principales);
     color: var(--titulos);
@@ -224,8 +216,6 @@ body {
     margin: 0 auto;
 }
 
-/* TÍTULO */
-
 .Presentacion-planes h2 {
     margin: 0 0 15px;
 
@@ -235,8 +225,6 @@ body {
 
     color: var(--titulos);
 }
-
-/* TEXTO */
 
 .Presentacion-planes p {
     margin: 0 auto;
@@ -297,10 +285,9 @@ body {
     border: 2px solid #c9a227;
 }
 
-/*----------------------------------RESPONSIVE MAIN / CONTENIDO----------------------------------*/
+/*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
 
-    /*---------------- CARRUSEL RESPONSIVE ----------------*/
     .carrusel {
         height: 260px;
     }
@@ -311,7 +298,6 @@ body {
         font-size: 18px;
     }
 
-    /*---------------- BIENVENIDA RESPONSIVE ----------------*/
     .informacion-bienvenida {
         padding: 50px 20px;
     }
@@ -324,7 +310,6 @@ body {
         grid-template-columns: 1fr;
     }
 
-    /*---------------- PLANES RESPONSIVE ----------------*/
     .planes-contenedor {
         flex-direction: column;
         align-items: center;

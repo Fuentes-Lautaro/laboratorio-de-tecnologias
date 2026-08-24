@@ -1,7 +1,7 @@
 * {
     box-sizing: border-box;
 }
-/*--------------------------------VARIABLES DE COLORES-----------------------*/
+/*--------------------------------VARIABLES-----------------------*/
 :root{
     --fondos-principales: #F9EBE0;
     --titulos: #64141B;
@@ -33,9 +33,6 @@ body {
 footer {
     margin-top: 70px;
 }
-/* =========================
-   RECUPERAR CONTRASEÑA
-========================= */
 
 .recuperacion {
     width: 90%;
@@ -54,14 +51,14 @@ footer {
 .recuperacion h1 {
     margin-bottom: 25px;
 
-    color: #64141B;
+    color: var(--paneles);
     font-size: 28px;
 }
 
 .recuperacion p {
     margin-bottom: 15px;
 
-    color: #555;
+    color: var(--referencias);
     font-size: 16px;
     line-height: 1.6;
 }
@@ -81,6 +78,7 @@ footer {
 .footer-contenedor {
     margin-top: auto;
 }
+
 .ayuda {
     width: 100%;
     max-width: 700px;
@@ -98,19 +96,18 @@ footer {
     margin: 0 0 15px;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #64141B;
+    color: var(--titulos);
 }
 
 .ayuda p:last-child {
     margin: 0;
     font-size: 1rem;
-    color: #333;
+    color: var(--referencias);
     line-height: 1.6;
 }
 
 
-/* RESPONSIVE */
-
+/*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 480px) {
 
     .recuperacion {
