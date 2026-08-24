@@ -125,7 +125,7 @@ header {
     color: var(--titulos);
 }
 /*-----------------------------------NAV--------------------------------------*/
-.nav {
+nav {
     display: flex;
     width: 100%;
     margin: 0;
@@ -149,8 +149,8 @@ nav a{
     font-size: 30px;
 }
 nav a:hover{
-    color: var(--marca);
-    text-decoration: var(--detalles);
+    color: var(--detalles);
+    text-decoration: underline;
 }
 /*-----------------------------------body--------------------------------------*/
 body{
