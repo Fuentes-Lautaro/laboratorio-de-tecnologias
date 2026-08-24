@@ -499,7 +499,7 @@ footer{
     color: var(--fondos-principales);
     width: 100%;
     max-width: 1200px;
-    margin:0 auto;
+    margin: 2rem auto 0 auto;
     padding: 1rem;
 }
 
