@@ -38,7 +38,6 @@ body {
     padding-bottom: 80px;
 }
 
-/* Hero / Cabecera */
 .nosotros-hero {
     background-color: var(--paneles);
     padding: 75px 20px 65px;
@@ -72,7 +71,6 @@ body {
     line-height: 1.6;
 }
 
-/* Contenedor de Bloques */
 .nosotros-contenedor {
     max-width: 1200px;
     margin: 0 auto;
@@ -82,7 +80,6 @@ body {
     gap: 75px;
 }
 
-/* Cada Bloque (Imagen + Texto) */
 .nosotros-bloque {
     display: flex;
     align-items: center;
@@ -90,7 +87,6 @@ body {
     gap: 55px;
 }
 
-/* Inversión en escritorio para diseño zig-zag */
 .nosotros-bloque.bloque-invertido {
     flex-direction: row-reverse;
 }
@@ -111,7 +107,6 @@ body {
     display: block;
 }
 
-/* Contenedor de Texto */
 .nosotros-texto {
     flex: 1;
     max-width: 540px;
@@ -144,7 +139,6 @@ body {
     color: var(--titulos);
 }
 
-/* Botón de llamada a la acción */
 .btn-nosotros {
     display: inline-block;
     margin-top: 10px;
