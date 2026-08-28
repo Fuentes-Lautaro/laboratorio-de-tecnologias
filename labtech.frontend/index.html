@@ -12,7 +12,6 @@
     <header>
 
         <div class="panelSuperior" id="panelSuperior">
-
             <div class="logo">
               <a href="index.html"><img src="imagenes/logo-Maria-Balbina-Lateral.png" alt="Logo María Balbina"></a>  
             </div>
@@ -25,12 +24,11 @@
                 <button type="button" class="btn-buscar">
                 🔍
                 </button>
-            
-                
 
             </div>
 
-            <button class="btn-menu" type="button">
+
+            <button id="btn-abrir-menu" class="btn-menu"  type="button">
                 ☰
             </button>
             
@@ -46,20 +44,20 @@
                     </a>
             
                 </div>
-
         </div>
+        <div id="menu-overlay" class="menu-overlay"></div>
 
-        <aside class="menu-lateral">
+        <aside class="menu-lateral" id="menu-lateral">
 
             <div class="menu-logo">
                 <a href="index.html"><img src="imagenes/logo-Maria-Balbina-centrado.png" alt="Logo María Balbina"></a>
             </div>
-            <button class="btn-cerrar-menu" type="button">
+            <button class="btn-cerrar-menu" id="btn-cerrar-menu" type="button">
                 ✕
             </button>
             <nav >
                 <ul>
-                    <li><a href="#">Inicio</a></li>
+                    <li><a href="index.html">Inicio</a></li>
                     <li><a href="./nosotros.html">Nosotros</a></li>
                     <li><a href="./suscripciones.html">Suscripciones</a></li>
                     <li><a href="#">Catalogo</a></li>
@@ -69,8 +67,8 @@
             </nav>
 
             <div class="menu-acciones">
-                <a href="#">Iniciar sesión</a>
-                <a href="#">Registrarse</a>
+                <a href="login.html" class="btn-login" id="btn-login-menu">Iniciar sesión</a>
+                <a href="signup.html"  class="btn-registro" id="btn-registro-menu">Registrarse</a>
             </div>
 
         </aside>
@@ -86,31 +84,28 @@
 
     </header>
 
-    <section class="carrusel">
+   <section class="carrusel">
+  <div class="slides">
+    <div class="slide activo">
+      <img src="imagenes/carruselProvisional.jpg" alt="Promoción María Balbina">
+    </div>
+    <div class="slide">
+      <img src="imagenes/carruselProvisionalVinos.jpg" alt="Vinos seleccionados">
+    </div>
+    <div class="slide">
+      <img src="imagenes/carruselProvisionalSuscripciones.jpg" alt="Suscripciones María Balbina">
+    </div>
+  </div>
 
-        <div class="slide activo">
-            <img src="imagenes/carruselProvisional.jpg" alt="Promoción María Balbina">
-        </div>
+  <button class="anterior" id="btn-prev">&#10094;</button>
+  <button class="siguiente" id="btn-next">&#10095;</button>
 
-        <div class="slide">
-            <img src="imagenes/carruselProvisional.jpg" alt="Vinos seleccionados">
-        </div>
-
-        <div class="slide">
-            <img src="imagenes/carruselProvisional.jpg" alt="Suscripciones María Balbina">
-        </div>
-
-        <button class="anterior">&#10094;</button>
-        <button class="siguiente">&#10095;</button>
-
-     
-        <div class="indicadores">
-            <span class="indicador activo"></span>
-            <span class="indicador"></span>
-            <span class="indicador"></span>
-        </div>
-
-    </section>
+  <div class="indicadores">
+    <span class="indicador activo"></span>
+    <span class="indicador"></span>
+    <span class="indicador"></span>
+  </div>
+</section>
 
 
     <main>
@@ -301,5 +296,7 @@
     </div>
 
 </footer>
+<script src="./javaScript/menu.js"></script>
+<script src="./javaScript/carrusel.js"></script>
 </body>
 </html>
