@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*--------------------------------VARIABLES-----------------------*/
+:root {
+    --fondos-principales: #F9EBE0;
+    --titulos: #64141B;
+    --paneles: #3E100F;
+    --detalles: #B5865A;
+    --referencias: #513B2A;
+    --bordes: #987C65;
+    --marca: #902b32;
+    --texto: #21140E;
+}
+
+html {
+    height: 100%;
+}
+
+/*-----------------------------------BODY--------------------------------------*/
+body {
+    background-color: var(--fondos-principales);
+    color: var(--texto);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/*-----------------------------------SECCION EVENTOS--------------------------------------*/
+.eventos-contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 25px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.evento-bloque {
+    display: flex;
+    align-items: flex-start;
+    gap: 3%;
+    border: 1px solid var(--bordes);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 5%;
+    background-color:var(--fondos-principales);
+}
+
+.evento-imagen img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 0.5px solid var(--bordes);
+}
+
+
+.evento-texto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.evento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 2px;
+}
+
+.bloque-fecha {
+  margin: 0;
+  font-weight: 500;
+  color: var(--titulos);
+}
+
+.bloque-titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--detalles);
+}
+
+.bloque-ubicacion {
+  font-size: 0.9rem;
+  color: var(--referencias); 
+  margin-top: -2px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.bloque-descripcion {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #4a4a4a;
+  margin: 0;
+  font-style: italic;
+}
+
+.evento-bloque:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
