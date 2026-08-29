@@ -235,14 +235,14 @@ footer {
 /*--------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
     .panelSuperior {
-        padding: 16px 20px;
+        padding: 10px 16px;
         height: auto;
         display: grid;
         grid-template-columns: 1fr auto;
         grid-template-areas:
             "logo menu"
             "buscador buscador";
-        gap: 12px;
+        gap: 8px;
     }
 
     .logo {
@@ -250,7 +250,7 @@ footer {
     }
 
     .logo img {
-        width: 180px;
+        width: 140px;
     }
 
     .btn-menu {
@@ -271,7 +271,11 @@ footer {
     .buscador {
         grid-area: buscador;
         max-width: 100%;
-        height: 38px;
+        height: 34px;
+    }
+
+    .buscador:empty {
+        display: none;
     }
 
     .header-acciones,

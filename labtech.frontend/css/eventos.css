@@ -106,3 +106,51 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+/*--------------------------------RESPONSIVE----------------------------------*/
+@media (max-width: 768px) {
+    .eventos-contenedor {
+        padding: 30px 15px 0;
+    }
+
+    .evento-bloque {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+
+    .evento-imagen img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .evento-texto {
+        width: 100%;
+    }
+
+    .evento-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 8px;
+    }
+
+    .bloque-titulo {
+        font-size: 1.4rem;
+    }
+
+    .bloque-fecha {
+        font-size: 0.9rem;
+    }
+
+    .bloque-ubicacion {
+        margin-top: 2px;
+        margin-bottom: 10px;
+    }
+
+    .bloque-descripcion {
+        font-size: 0.9rem;
+    }
+}
