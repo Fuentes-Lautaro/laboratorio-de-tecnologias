@@ -299,6 +299,89 @@ body {
     border: 2px solid #c9a227;
 }
 
+
+--------------------------------------------------boton flotante de whatsapp----------------------------------
+a.whatsapp-flotante,
+a.whatsapp-flotante * {
+  box-sizing: border-box !important;
+}
+
+/* Burbuja circular flotante */
+a.whatsapp-flotante {
+  position: fixed !important;
+  bottom: 25px !important;
+  right: 25px !important;
+  width: 60px !important;
+  height: 60px !important;
+  background-color: #25d366 !important; /* Verde oficial WhatsApp */
+  border-radius: 50% !important; /* Obliga la forma redonda */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+  z-index: 999999 !important; /* Capa extrema por encima del footer */
+  text-decoration: none !important;
+  transition: transform 0.25s ease, background-color 0.25s ease !important;
+  opacity: 0.85 !important;
+}
+
+/* Ícono SVG en el centro de la esfera */
+a.whatsapp-flotante svg {
+  width: 32px !important;
+  height: 32px !important;
+  fill: #ffffff !important;
+  stroke: none !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Cartel emergente (Tooltip) */
+.globo-whatsapp {
+  position: absolute;
+  right: 72px;
+  background-color: #111111;
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+  /* Estado oculto */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+}
+
+/* Flecha del cartel */
+.globo-whatsapp::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent #111111;
+}
+
+/* Efectos Hover */
+a.whatsapp-flotante:hover {
+  transform: scale(1.1) !important;
+  border: 2px solid var(--marca) !important;
+}
+
+a.whatsapp-flotante:hover .globo-whatsapp {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
 /*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
 
@@ -342,4 +425,24 @@ body {
         transform: none;
     }
 
+    .whatsapp-flotante {
+    bottom: 20px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+  }
+  
+  .whatsapp-flotante svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* En móviles se oculta el tooltip ya que no hay hover con mouse */
+  .globo-whatsapp {
+    display: none;
+  }
+  a.whatsapp-flotante:hover {
+  transform: scale(0.8) !important;
+  border: none !important; 
+}
 }
