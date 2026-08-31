@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta</title>
+    <link rel="icon" type="image/png" href="../imagenesLogos/logo-redondo.jpeg">
+    <link rel="stylesheet" href="../css/estilos.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+    <header>
+        <div class="panelSuperior">
+
+            <div class="logo">
+              <a href="../index.html"><img src="../imagenesLogos/logo-Maria-Balbina-Lateral.png" alt="Logo María Balbina"></a>  
+            </div>
+            
+        </div>
+
+    </header>
+    
+    <main>
+        <article class="login">
+            <h1 class="login-titulo">Crear Cuenta</h1>
+            <form class="login-formulario" action="mailto:">
+                <div class="login-campo">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+
+                <div class="login-campo">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido" required>
+                </div>
+
+                <div class="login-campo">
+                    <label for="fechaNacimiento">Fecha de nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                </div>
+
+                <div class="login-campo">
+                    <label for="direccion">Dirección <span>(opcional)</span></label>
+                    <input type="text" id="direccion" name="direccion">
+                </div>
+
+                <div class="login-campo">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <div class="login-campo">
+                    <label for="confirmPassword">Confirmar contraseña</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="login-campo">
+                    <label for="comoNosConocio">¿Cómo conociste nuestra página?</label>
+                    <select id="comoNosConocio" name="comoNosConocio">
+                        <option value="redes">Redes sociales</option>
+                        <option value="amigos">Recomendación de un amigo</option>
+                        <option value="buscador">Buscador de internet</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="login-campo">
+                    <label for="comentarios">Comentarios adicionales</label>
+                    <textarea id="comentarios" name="comentarios" rows="5" placeholder="Escribí algún comentario si querés..."></textarea>
+                </div>
+
+                <button type="submit" class="login-boton">Registrarse</button>
+            </form>
+        </article>
+    </main>
+    
+    <footer>
+
+        <div class="footer-contenedor">
+
+            <div class="footer-seccion marca-info">
+                <h2>MARIA BALBINA</h2>
+                <p>Mas que un vino, una experiencia.</p>
+                <div class="mapa-contenedor">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3334.468205728863!2d-66.3379!3d-33.3021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95d43981dbfa3237%3A0xa6bf8525b6c7b944!2sMaip%C3%BA%20650%2C%20San%20Luis!5e0!3m2!1ses!2sar!4v1711200000000!5m2!1es!2sar" 
+                        width="100%" 
+                        height="250" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Enlaces</h2>
+                <a href="../index.html">Inicio</a>
+                <a href="./nosotros.html">Nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Contacto</h2>
+                <p>📍 San Luis, Argentina</p>
+                <p>📧 contacto@mariab.com</p>
+                <p>📱 +54 9 266 4 1234 56</p>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Seguinos</h2>
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">TikTok</a>
+            </div>
+
+        </div>
+
+        <div class="footer-copy">
+            <p>© 2026 Mi Empresa. Todos los derechos reservados.</p>
+            <a href="#">Política de privacidad</a>
+        </div>
+ 
+    </footer>
+</body>
+</html>
