@@ -9,11 +9,10 @@ function Footer({ marca }) {
         <div class="footer-contenedor">
 
             <ul className="footer-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Pricing</a></li>
-                <li><a href="#">FAQs</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Catalogo</a></li>
+                <li><a href="#">Nosotros</a></li>
+                <li><a href="#">Contactanos</a></li>
             </ul>
 
             <hr className="linea-divisoria"></hr>
