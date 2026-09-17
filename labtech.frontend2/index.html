@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Balbina</title>
+    <link rel="icon" type="image/png" href="./imagenes/imagenesLogos/logo-redondo.jpeg">
+    <link rel="stylesheet" href="./css/estilos.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+    <header>
+
+        <div class="panelSuperior" id="panelSuperior">
+
+            <div class="logo">
+                <a href="index.html"><img src="./imagenes/imagenesLogos/logo-Maria-Balbina-Lateral.png" alt="Logo María Balbina"></a>  
+            </div>
+
+            <div class="buscador">
+                <input 
+                    type="text" 
+                    placeholder="Buscar vinos"
+                >
+                <button type="button" class="btn-buscar">
+                🔍
+                </button>
+
+            </div>
+
+            <button id="btn-abrir-menu" class="btn-menu"  type="button">
+                ☰
+            </button>
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            <div class="header-acciones">
+
+                <a href="./imagenes/vistas/login.html" class="btn-login">Iniciar sesión</a>
+
+                <a href="./imagenes/vistas/signup.html" class="btn-registro">Registrarse</a>
+            
+            </div>
+
+        </div>
+
+        <div id="menu-overlay" class="menu-overlay"></div>
+
+        <aside class="menu-lateral" id="menu-lateral">
+
+            <div class="menu-logo">
+                <a href="index.html"><img src="./imagenes/imagenesLogos/logo-Maria-Balbina-centrado.png" alt="Logo María Balbina"></a>
+            </div>
+
+            <button class="btn-cerrar-menu" id="btn-cerrar-menu" type="button">
+                ✕
+            </button>
+
+            <nav >
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="./vistas/nosotros.html">Nosotros</a></li>
+                    <li><a href="./vistas/suscripciones.html">Suscripciones</a></li>
+                    <li><a href="./vistas/catalogo.html">Catalogo</a></li>
+                    <li><a href="./vistas/eventos.html">Eventos Próximos</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </nav>
+
+            <div class="menu-acciones">
+                <a href="./vistas/login.html" class="btn-login" id="btn-login-menu">Iniciar sesión</a>
+                <a href="./vistas/signup.html"  class="btn-registro" id="btn-registro-menu">Registrarse</a>
+            </div>
+
+        </aside>
+
+        <nav class="nav-desktop">
+            <ul>
+                <li> <a href="./vistas/nosotros.html">Nosotros</a></li>
+                <li> <a href="./vistas/suscripciones.html">Suscripciones</a></li>
+                <li> <a href="./vistas/catalogo.html">Catalogo</a></li>
+                <li> <a href="./vistas/eventos.html">Eventos Proximos</a></li>
+            </ul>
+            
+        </nav>
+
+    </header>
+
+   <section class="carrusel">
+  <div class="slides">
+    <div class="slide activo">
+      <img src="./imagenes/imagenesCarrusel/carruselProvisional.jpg" alt="Promoción María Balbina">
+    </div>
+    <div class="slide">
+      <img src="./imagenes/imagenesCarrusel/carruselProvisionalSuscripciones.jpg" alt="Suscripciones María Balbina">
+    </div>
+    <div class="slide">
+      <img src="./imagenes/imagenesCarrusel/carruselProvisionalVinos.jpg" alt="Vinos seleccionados">
+    </div>
+  </div>
+
+  <button class="anterior" id="btn-prev">&#10094;</button>
+  <button class="siguiente" id="btn-next">&#10095;</button>
+
+  <div class="indicadores">
+    <span class="indicador activo"></span>
+    <span class="indicador"></span>
+    <span class="indicador"></span>
+  </div>
+</section>
+
+
+    <main>
+        
+        <section class="informacion-bienvenida ">
+            <div class="info-titulo">
+                <span>MARÍA BALBINA</span>
+                <h2>MUCHO MÁS QUE UNA VINERIA</h2>
+                <p>
+                    Ser parte de María Balbina es disfrutar del vino,
+                    descubrir nuevos sabores y vivir experiencias únicas.
+                </p>
+            </div>
+
+
+            <div class="info-grid">
+
+                <article class="info-card">
+                    <div class="info-icono">✦</div>
+
+                    <h3>Beneficios exclusivos</h3>
+
+                    <p>
+                    Como cliente disfrutás de beneficios pensados
+                    especialmente para vos.
+                    </p>
+
+                    <ul>
+                        <li>Recibi vinos mensualmente</li>
+                        <li>Acceso a preventas</li>
+                        <li>Descuentos en proximas compras</li>
+                    </ul>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icono">❖</div>
+
+                    <h3>Eventos presenciales</h3>
+
+                    <p>
+                        Compartí nuestra pasión por el vino en encuentros
+                        pensados para disfrutar, aprender y descubrir.
+                    </p>
+
+                    <ul>
+                        <li>Catas para descubrir</li>
+                        <li>Cenas para recordar</li>
+                        <li>Viajes para nunca olvidar</li>
+                    </ul>
+                </article>
+
+                <article class="info-card">
+                    <div class="info-icono">♡</div>
+
+                    <h3>Sobre nosotros</h3>
+
+                    <p>
+                        como empezo todo...
+                    </p>
+
+                    <a href="./vistas/nosotros.html" class="info-link">
+                        CONOCÉ NUESTRA HISTORIA →
+                    </a>
+                </article>
+
+
+                <article class="info-card">
+
+                    <div class="info-icono">+</div>
+
+                    <h3>Podes visitarnos en nuestro local!</h3>
+
+                    <p>
+                        Estamos en maipu 650 de:
+                    </p>
+                    <ul>
+                        <li>9:00hs a 14:00hs</li>
+                        <li>17:30hs a 23:00hs</li>
+                    </ul>
+
+                </article>
+
+            </div>
+        </section>
+
+
+
+        <section class="planes">
+            <div class="Presentacion-planes">
+                 <h2>Elegí tu suscripción</h2>
+                 <p>Recibí vinos seleccionados cada mes y disfrutá de beneficios exclusivos.</p>
+            </div>
+           
+
+            <div class="planes-contenedor">
+
+                <article class="plan">
+                    <h3>Plan Esencial</h3>
+                    <p>Breve descripción del plan esencial.</p>
+                    <h4>$$$ / mes</h4>
+
+                    <ul>
+                        <li>......</li>
+                        <li>......</li>
+                        <li>......</li>
+                    </ul>
+                    <button>Suscribirme</button>
+                </article>
+
+
+                <article class="plan destacado">
+
+                    <span>⭐ MÁS ELEGIDO</span>
+                    <h3>Plan Selección</h3>
+                    <p>breve descripción del plan de selección.</p>
+                    <h4>$$$ / mes</h4>
+
+                    <ul>
+                        <li>......</li>
+                        <li>......</li>
+                        <li>......</li>
+                        <li>......</li>
+                    </ul>
+
+                    <button>Suscribirme</button>
+
+                </article>
+
+
+                <article class="plan">
+                    <h3>Plan Premium</h3>
+                    <p>Breve descripción del plan premium.</p>
+                    <h4>$$$$ / mes</h4>
+
+                    <ul>
+                        <li>......</li>
+                        <li>......</li>
+                        <li>......</li>
+                        <li>......</li>
+                    </ul>
+
+                    <button>Suscribirme</button>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+    
+    <footer>
+
+        <div class="footer-contenedor">
+
+            <div class="footer-seccion marca-info">
+                <h2>MARIA BALBINA</h2>
+                <p>Mas que un vino, una experiencia.</p>
+                <div class="mapa-contenedor">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3334.468205728863!2d-66.3379!3d-33.3021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95d43981dbfa3237%3A0xa6bf8525b6c7b944!2sMaip%C3%BA%20650%2C%20San%20Luis!5e0!3m2!1ses!2sar!4v1711200000000!5m2!1es!2sar" 
+                        width="100%" 
+                        height="250" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Enlaces</h2>
+                <a href="#panelSuperior">Inicio</a>
+                <a href="./vistas/nosotros.html">Nosotros</a>
+                <a href="#">Contacto</a>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Contacto</h2>
+                <p>📍 San Luis, Argentina</p>
+                <p>📧 contacto@mariab.com</p>
+                <p>📱 +54 9 266 4 1234 56</p>
+            </div>
+
+            <div class="footer-seccion">
+                <h2>Seguinos</h2>
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">TikTok</a>
+            </div>
+
+        </div>
+
+        <div class="footer-copy">
+            <p>© 2026 Mi Empresa. Todos los derechos reservados.</p>
+            <a href="#">Política de privacidad</a>
+        </div>
+ 
+    </footer>
+
+
+<script src="./javaScript/menu.js"></script>
+<script src="./javaScript/carrusel.js"></script>
+
+<a href="#ACA VA EL LINK DE WHATSAPP"
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="whatsapp-flotante" 
+       aria-label="Contactar por WhatsApp">
+      
+      <span class="globo-whatsapp">¡Hacé tu pedido!</span>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+      </svg>
+    </a>
+
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+
+* {
+    box-sizing: border-box;
+}
+/*--------------------------------VARIABLES-----------------------*/
+:root{
+    --fondos-principales: #F9EBE0;
+    --titulos: #64141B;
+    --paneles: #3E100F;
+    --detalles: #B5865A;
+    --referencias: #513B2A;
+    --bordes: #987C65;
+    --marca: #902b32;
+    --texto: #21140E;
+}
+
+header{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--paneles);
+    display: block;
+}
+body{
+    background-color: var(--fondos-principales);
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+/*---------------------------------FORMULARIO-----------------------------*/
+
+.login {
+    width: 90%;
+    max-width: 420px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.login-titulo {
+    text-align: center;
+    color: var(--titulos);
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+.login-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-parrafo {
+    text-align: center;
+    color: var(--texto);
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.login-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-campo label {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--titulos);
+}
+
+.login-campo input {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+.login-campo input:focus {
+    border-color: var(--titulos);
+    box-shadow: 0 0 0 3px rgba(100, 20, 27, 0.12);
+}
+
+.login-boton {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--titulos);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-boton:hover {
+    background-color: var(--detalles);
+    transform: translateY(-2px);
+}
+
+.enlace {
+    text-align: center;
+    font-size: 14px;
+    color: var(--detalles)
+}
+
+.enlace a {
+    color: var(--paneles);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.enlace a:hover {
+    text-decoration: underline;
+}
+
+.login-volver {
+    text-align: left;
+    font-size: 18px;
+    color: var(--titulos);
+}
+
+/*----------------------------------RESPONSIVE----------------------------------*/
+@media (max-width: 480px) {
+
+    .login {
+        width: 92%;
+        margin: 40px auto;
+        padding: 30px 20px;
+    }
+
+    .login-titulo {
+        font-size: 24px;
+    }
+
+    
+}
