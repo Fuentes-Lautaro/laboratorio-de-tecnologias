@@ -4,6 +4,47 @@
     min-height: 100vh;
 }
 
+/* FONDO DEL NAVBAR */
+.nav-personalizado {
+    background-color: var(--paneles) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* MARCA / LOGO */
+.nav-marca {
+    color: var(--detalles) !important;
+    font-size: 1.25rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* ENLACES DE NAVEGACIÓN (Normales, Hover y Activos) */
+.nav-link-custom {
+    color: var(--fondos-principales) !important;
+    font-size: 15px;
+    transition: color 0.2s ease;
+}
+
+.nav-link-custom:hover, 
+.nav-link-custom.active {
+    color: var(--detalles) !important;
+}
+
+/* BOTÓN INGRESAR */
+.btn-ingresar {
+    color: var(--fondos-principales);
+    border: 1px solid var(--fondos-principales);
+    background-color: transparent;
+    padding: 6px 16px;
+    transition: all 0.2s ease;
+}
+
+.btn-ingresar:hover {
+    color: var(--detalles);
+    border-color: var(--detalles);
+    background-color: transparent;
+}
+
 footer {
     background-color: var(--paneles);
     padding: 1.5rem 0;
