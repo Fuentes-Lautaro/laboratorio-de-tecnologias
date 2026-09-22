@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar'
 import Footer from './Footer'
 
@@ -13,6 +14,10 @@ function LayoutPublico(){
     return(
         <div className="d-flex flex-column min-vh-100">
             <Navbar marca={MARCA} enlaces={ENLACES} />
+
+            <main className="container-fluid px-3 px-lg-5 py-4 flex-grow-1">
+                <Outlet context />
+            </main>
 
             <Footer marca={MARCA} />
         </div>
