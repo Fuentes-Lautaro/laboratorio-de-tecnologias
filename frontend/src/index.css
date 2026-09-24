@@ -4,13 +4,11 @@
     min-height: 100vh;
 }
 
-/* FONDO DEL NAVBAR */
 .nav-personalizado {
     background-color: var(--paneles) !important;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* MARCA / LOGO */
 .nav-marca {
     color: var(--detalles) !important;
     font-size: 1.25rem;
@@ -18,7 +16,6 @@
     letter-spacing: 1px;
 }
 
-/* ENLACES DE NAVEGACIÓN (Normales, Hover y Activos) */
 .nav-link-custom {
     color: var(--fondos-principales) !important;
     font-size: 15px;
@@ -30,7 +27,6 @@
     color: var(--detalles) !important;
 }
 
-/* BOTÓN INGRESAR */
 .btn-ingresar {
     color: var(--fondos-principales);
     border: 1px solid var(--fondos-principales);

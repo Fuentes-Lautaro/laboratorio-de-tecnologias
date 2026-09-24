@@ -1,0 +1,98 @@
+[
+    {
+        "Codigo": "VIN-001",
+        "Marca": "Trapiche",
+        "Tipo": "Tinto",
+        "Precio": 6500.00,
+        "Costo": 3800.00,
+        "Anio": 2021,
+        "Medida": "750ml",
+        "Bodega": "Trapiche",
+        "Varietal": "Malbec",
+        "Stock": 45
+    },
+    {   
+        "Codigo": "VIN-002",
+        "Marca": "Rutini",
+        "Tipo": "Tinto",
+        "Precio": 18500.00,
+        "Costo": 11000.00,
+        "Anio": 2020,
+        "Medida": "750ml",
+        "Bodega": "Rutini Wines",
+        "Varietal": "Cabernet Sauvignon",
+        "Stock": 20
+    },
+    {
+        "Codigo": "VIN-003",
+        "Marca": "Luigi Bosca",
+        "Tipo": "Tinto",
+        "Precio": 14200.00,
+        "Costo": 8500.00,
+        "Anio": 2022,
+        "Medida": "750ml",
+        "Bodega": "Luigi Bosca",
+        "Varietal": "Pinot Noir",
+        "Stock": 15
+    },
+    {   
+        "Codigo": "VIN-004",
+        "Marca": "Norton",
+        "Tipo": "Blanco",
+        "Precio": 4800.00,
+        "Costo": 2700.00,
+        "Anio": 2023,
+        "Medida": "750ml",
+        "Bodega": "Bodega Norton",
+        "Varietal": "Sauvignon Blanc",
+        "Stock": 30
+    },
+    {
+        "Codigo": "VIN-005",
+        "Marca": "Catena Zapata",
+        "Tipo": "Tinto",
+        "Precio": 22000.00,
+        "Costo": 13500.00,
+        "Anio": 2019,
+        "Medida": "750ml",
+        "Bodega": "Catena Zapata",
+        "Varietal": "Malbec",
+        "Stock": 12
+    },
+    {
+        "Codigo": "VIN-006",
+        "Marca": "Alamos",
+        "Tipo": "Blanco",
+        "Precio": 5200.00,
+        "Costo": 3100.00,
+        "Anio": 2023,
+        "Medida": "750ml",
+        "Bodega": "Alamos",
+        "Varietal": "Torrontés",
+        "Stock": 25
+    },
+    {
+        "Codigo": "VIN-007",
+        "Marca": "Salentein",
+        "Tipo": "Rosado",
+        "Precio": 7800.00,
+        "Costo": 4500.00,
+        "Anio": 2022,
+        "Medida": "750ml",
+        "Bodega": "Bodegas Salentein",
+        "Varietal": "Malbec Rosé",
+        "Stock": 18
+    },
+    {
+        "Codigo": "VIN-008",
+        "Marca": "Finca La Linda",
+        "Tipo": "Tinto",
+        "Precio": 8900.00,
+        "Costo": 5200.00,
+        "Anio": 2021,
+        "Medida": "750ml",
+        "Bodega": "Luigi Bosca",
+        "Varietal": "Syrah",
+        "Stock": 28
+    }
+]
