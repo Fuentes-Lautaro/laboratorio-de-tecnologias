@@ -5,8 +5,6 @@ export async function obtenerProductos() {
   if (!respuesta.ok) {
     throw new Error('No se pudieron obtener los productos')
   }
-  console.log(respuesta.json())
-  console.log(respuesta.ok)
   return respuesta.json()
 }
 

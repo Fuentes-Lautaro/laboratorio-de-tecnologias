@@ -1,7 +1,5 @@
 import { useState } from 'react'
 
-const ORDEN_TALLES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-
 // CLASE 3 · Reutilizar lógica con hooks personalizados
 export function useFiltros(productos) {
   const [categoria, setCategoria] = useState('todas')
