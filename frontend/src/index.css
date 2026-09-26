@@ -41,6 +41,80 @@
     background-color: transparent;
 }
 
+.imagen-detalle {
+  max-width: 100%;
+  height: auto;
+  max-height: 450px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.titulo-catalogo{
+    color: var(--paneles);
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+}
+
+.input-busqueda{
+    border: 1px solid var(--bordes);
+}
+
+.boton-filtro{
+    border: 1px solid var(--bordes);
+    color: var(--texto);
+    background-color: var(--fondos-principales);
+}
+
+.boton-filtro:hover{
+    border: 2px solid var(--bordes);
+    background-color: var(--fondos-principales);
+}
+
+.menu-desplegable{
+    color: var(--texto);
+    border: 1px solid var(--detalles);
+}
+
+.producto-card{
+    box-shadow: 0 4px 12px var(--bordes);
+}
+
+.producto-card:hover{
+    transform: scale(1.02);
+}
+
+.imagen-card img{
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+.titulo-card{
+    color: var(--paneles);
+    font-family: 'Cinzel', serif;
+}
+
+.sinStock-mensaje{
+    color: gray;
+    justify-content: end;
+}
+
+.titulo-card:hover{
+    color: var(--detalles);
+}
+
+.boton-error{
+    background-color: var(--paneles);
+    color: var(--bordes)
+}
+
+.boton-error:hover{
+    background-color: var(--detalles);
+    color: var(--paneles);
+}
+
 footer {
     background-color: var(--paneles);
     padding: 1.5rem 0;
