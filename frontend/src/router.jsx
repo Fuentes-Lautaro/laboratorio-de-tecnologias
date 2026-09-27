@@ -4,6 +4,10 @@ import Spinner from './shared/components/Spinner'
 import { HomePage } from './features/home'
 import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
+import { SuscripcionesPage } from './features/suscripciones'
+import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
+
+
 
 export const router = createBrowserRouter([
   // ---------- Vista pública: Navbar + <Outlet /> + Footer ----------
@@ -15,6 +19,8 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> }, // "/" exacto
       { path: 'catalogo', element: <CatalogoPage /> }, // "/catalogo"
       { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
+      { path: 'suscripciones', element: <SuscripcionesPage /> }, // "/suscripciones"
+      { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
     ],
   },
 

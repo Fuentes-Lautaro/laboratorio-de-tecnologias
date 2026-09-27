@@ -8,6 +8,7 @@ const ENLACES = [
   { id: 1, texto: 'Inicio', destino: '/' },
   { id: 2, texto: 'Catálogo', destino: '/catalogo' },
   { id: 3, texto: 'Contacto', destino: '/contacto' },
+{ id: 4, texto: 'Suscripciones', destino: '/suscripciones' },
 ]
 
 function LayoutPublico(){

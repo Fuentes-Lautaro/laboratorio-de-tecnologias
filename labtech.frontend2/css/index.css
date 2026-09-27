@@ -384,65 +384,26 @@ a.whatsapp-flotante:hover .globo-whatsapp {
 
 /*----------------------------------RESPONSIVE----------------------------------*/
 @media (max-width: 768px) {
-
-    .carrusel {
-        height: 260px;
-    }
-    .carrusel button {
-    width: 25px;
-    height: 40px;
-    border: none;
-    font-size: 15px;
-    opacity: 0.5; 
-    transition: opacity 0.3s ease, background-color 0.3s ease;
-    }
-
-    .informacion-bienvenida {
-        padding: 50px 20px;
-    }
-
-    .info-titulo h2 {
-        font-size: 24px;
-    }
-
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .planes-contenedor {
+.encabezado-suscripciones {
+        /* Fuerza a que el contenedor ocupe el 100% de la altura visible del celular */
+        min-height: 100dvh; 
+        
+        /* Centrado perfecto en vertical y horizontal */
+        display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
-        padding: 30px 20px;
-        gap: 25px;
+        
+        padding: 20px 15px;
+        margin-bottom: 0;
     }
 
-    .plan {
-        width: 100%;
-        max-width: 350px;
+    .titulo-principal {
+        font-size: 2.1rem; /* Tamaño proporcional para pantallas pequeñas */
     }
 
-    .plan.destacado {
-        transform: none;
+    .descripcion-encabezado {
+        font-size: 1rem;
+        max-width: 90%; /* Evita que las líneas toquen los bordes */
     }
-
-    .whatsapp-flotante {
-    bottom: 20px;
-    right: 20px;
-    width: 54px;
-    height: 54px;
-  }
-  
-  .whatsapp-flotante svg {
-    width: 30px;
-    height: 30px;
-  }
-
-  /* En móviles se oculta el tooltip ya que no hay hover con mouse */
-  .globo-whatsapp {
-    display: none;
-  }
-  a.whatsapp-flotante:hover {
-  transform: scale(0.8) !important;
-  border: none !important; 
-}
 }

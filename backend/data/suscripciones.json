@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1001,
+    "clienteDni": "12345678",
+    "planId": "Esencial",
+    "fechaPago": "2026-09-27",
+    "metodoPago": "Mercado Pago",
+    "monto": 15000,
+    "estado": "Activa"
+  }
+]

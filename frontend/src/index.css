@@ -86,3 +86,200 @@ footer {
     color: var(--detalles);
     text-decoration: underline;
 }
+
+/*--------------------------------SUSCRIPCION PAGE------------------------------------------------------------------*/
+/* --- CONTENEDOR DEL ENCABEZADO --- */
+.encabezado-suscripciones {
+    max-width: 750px;
+    margin: 0 auto 3rem auto;
+    text-align: center;
+    padding: 0 15px;
+}
+
+/* Subtítulo / Tagline superior */
+.subtitulo-tag {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--detalles); /* #B5865A */
+    margin-bottom: 0.5rem;
+}
+
+/* Título principal */
+.titulo-principal {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--titulos); /* #64141B */
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+/* Línea decorativa dorada/bronce */
+.linea-decorativa {
+    width: 60px;
+    height: 3px;
+    background-color: var(--detalles); /* #B5865A */
+    margin: 0 auto 1.2rem auto;
+    border-radius: 2px;
+}
+
+/* Descripción del club */
+.descripcion-encabezado {
+    font-size: 1.1rem;
+    color: var(--referencias); /* #513B2A */
+    line-height: 1.6;
+    margin: 0;
+}
+/* --- ENCABEZADO DE LA TARJETA (Nombre del Plan) --- */
+.tabla-plan th {
+    background-color: var(--paneles);
+    color: var(--detalles); 
+    padding: 1.3rem 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--detalles);
+}
+.tablas-planes-contenedor {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;    
+    gap: 45px;             
+    padding: 20px 10px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tabla-plan {
+    width: 100%;
+    max-width: 360px; 
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--bordes);
+    transition: transform 0.3s ease;
+}
+
+.tabla-plan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.tabla-plan td {
+    padding: 0.85rem 1rem;
+    text-align: center;
+    color: var(--texto);
+    border-bottom: 1px solid var(--bordes);
+}
+
+.tabla-plan .cantidad {
+    font-weight: bold;
+}
+
+.tabla-plan .precio td {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--detalles);
+    padding-top: 1.2rem;
+}
+
+.tabla-plan .fila-botones td {
+    border-bottom: none;
+    padding: 1.2rem;
+}
+
+.btn-tabla {
+    width: 100%;
+    background-color: var(--titulos);
+    color: var(--fondos-principales);
+    border: none;
+    border-radius: 6px;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-tabla:hover {
+    background-color: var(--marca);
+    color: var(--detalles);
+}
+
+
+/*----------------------------------RESPONSIVE----------------------------------*/
+@media (max-width: 768px) {
+
+
+    .titulo-principal {
+        font-size: 2.1rem; /* Tamaño proporcional para pantallas pequeñas */
+    }
+
+    .descripcion-encabezado {
+        font-size: 1rem;
+        max-width: 90%; /* Evita que las líneas toquen los bordes */
+    }
+    .tablas-planes-contenedor {
+        flex-direction: column;
+        padding: 30px 15px;
+        gap: 60px;
+    }
+
+    .tabla-plan {
+        width: 100%;
+        max-width: 380px;
+    }
+
+}
+
+/*------------------------------------------------------------------------------------------------------*/
+/* Tarjeta unificada para el flujo de autenticación/registro */
+.card-auth-flujo {
+  background-color: var(--paneles, #ffffff);
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.75rem;
+  color: #ffffff;
+}
+
+/* Fuerza color claro para el subtítulo, las etiquetas de input y textos secundarios */
+.card-auth-flujo .text-muted,
+.card-auth-flujo .text-secondary,
+.card-auth-flujo .form-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Título de la tarjeta */
+.card-auth-flujo .titulo-auth {
+  color: var(--detalles);
+  font-weight: 700;
+}
+
+.btn-auth-submit {
+  background-color: var(--detalles);
+  border-color: #000;
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-auth-submit:hover,
+.btn-auth-submit:focus {
+  background-color: #360e1a;
+  border-color: #360e1a;
+  color: #ffffff;
+}
+
+.btn-auth-submit:disabled {
+  background-color: var(--titulos);
+  border-color: var(--titulos);
+  opacity: 0.7;
+}

@@ -1,0 +1,23 @@
+[
+    {
+        "Nombre": "Esencial",
+        "Descripcion": "Ideal para quienes desean iniciarse en el mundo del vino y descubrir nuevas etiquetas cada mes.",
+        "CantidadVinos": 1,
+        "tipos": ["Tinto", "Blanco"],
+        "valor": 15000
+    },
+    {
+        "Nombre": "Seleccion",
+        "Descripcion": "La opción perfecta para paladares curiosos que buscan dar un salto de calidad y disfrutar de mayor variedad.",
+        "CantidadVinos": 3,
+        "tipos": ["Tinto", "Blanco", "Rosado"],
+        "valor": 50000
+    },
+    {
+        "Nombre": "Premiun",
+        "Descripcion": "La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.",
+        "CantidadVinos": 5,
+        "tipos": ["Tinto", "Blanco", "Rosado", "Espumante"],
+        "valor": 100000
+    }
+]
