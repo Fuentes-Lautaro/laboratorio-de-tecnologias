@@ -1,44 +1,73 @@
 import { useState } from 'react'
 
-// CLASE 3 · Reutilizar lógica con hooks personalizados
 export function useFiltros(productos) {
-  const [categoria, setCategoria] = useState('todas')
-  const [talle, setTalle] = useState('todos')
+  const [marcasSeleccionadas, setMarcas] = useState([])
+  const [tiposSeleccionados, setTipos] = useState([])
+  const [varietalesSeleccionados, setVarietales] = useState([])
+  const [medidasSeleccionadas, setMedidas] = useState([])
+  const [bodegasSeleccionadas, setBodegas] = useState([])
   const [busqueda, setBusqueda] = useState('')
 
-  // CLASE 3 · Elegir la estructura del estado: evitar estado redundante
-  // Solo se guardan las ELECCIONES del usuario. Las categorías disponibles,
-  // los talles y la lista filtrada se CALCULAN en cada render a partir de ellas.
-  // Si los guardáramos en otro useState habría que mantenerlos sincronizados a mano.
   const lista = productos ?? []
-  const categorias = [...new Set(lista.map((p) => p.categoria))]
-  const talles = ORDEN_TALLES.filter((t) => lista.some((p) => p.talles.includes(t)))
-  const textoBuscado = busqueda.trim().toLowerCase()
+
+  const marcas = [...new Set(lista.map((p) => p.marca))]            //filtro las marcas que hay al menos 1 en stock
+  const tipos = [...new Set(lista.map((p) => p.tipo))]              //filtro los tipos que hay al menos 1 en stock
+  const medidas = [...new Set(lista.map((p) => p.medida))]          //filtro las medidas que hay al menos 1 en stock
+  const bodegas = [...new Set(lista.map((p) => p.bodega))]          //filtro las bodegas que hay al menos 1 en stock
+  const varietales = [...new Set(lista.map((p) => p.varietal))]     //filtro los varietales que hay al menos 1 en stock
+
+  const textoBuscado = busqueda.trim().toLowerCase()                //convierte a minuscula todo lo que el usuario escriba en el buscador
 
   const productosFiltrados = lista.filter(
     (p) =>
-      (categoria === 'todas' || p.categoria === categoria) &&
-      (talle === 'todos' || p.talles.includes(talle)) &&
-      p.nombre.toLowerCase().includes(textoBuscado),
+      (marcasSeleccionadas.length === 0 || marcasSeleccionadas.includes(p.marca)) &&
+      (tiposSeleccionados.length === 0 || tiposSeleccionados.includes(p.tipo)) &&
+      (varietalesSeleccionados.length === 0 || varietalesSeleccionados.includes(p.varietal)) &&
+      (medidasSeleccionadas.length === 0 || medidasSeleccionadas.includes(p.medida)) &&
+      (bodegasSeleccionadas.length === 0 || bodegasSeleccionadas.includes(p.bodega)) &&
+      p.marca.toLowerCase().includes(textoBuscado),
   )
 
-  const hayFiltrosActivos = categoria !== 'todas' || talle !== 'todos' || textoBuscado !== ''
+  const hayFiltrosActivos = 
+    marcasSeleccionadas.length > 0 || 
+    tiposSeleccionados.length > 0 ||
+    varietalesSeleccionados.length > 0 || 
+    medidasSeleccionadas.length > 0 || 
+    bodegasSeleccionadas.length > 0 ||
+    textoBuscado !== ''
 
   function limpiarFiltros() {
-    setCategoria('todas')
-    setTalle('todos')
+    setMarcas([])
+    setTipos([])
+    setVarietales([])
+    setMedidas([])
+    setBodegas([])
     setBusqueda('')
   }
 
   return {
-    categoria,
-    setCategoria,
-    talle,
-    setTalle,
+    marcasSeleccionadas,
+    setMarcas,
+    marcas,
+    tiposSeleccionados,
+    setTipos,
+    tipos,
+    varietalesSeleccionados,
+    setVarietales,
+    varietales,
+    medidasSeleccionadas,
+    setMedidas,
+    medidas,
+    bodegasSeleccionadas,
+    setBodegas,
+    bodegas,
     busqueda,
     setBusqueda,
-    categorias,
-    talles,
+    marcasSeleccionadas,
+    tiposSeleccionados,
+    varietalesSeleccionados,
+    medidasSeleccionadas,
+    bodegasSeleccionadas,
     productosFiltrados,
     hayFiltrosActivos,
     limpiarFiltros,
