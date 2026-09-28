@@ -6,7 +6,7 @@ const ANIO_ACTUAL = new Date().getFullYear()
 function Footer({ marca }) {
   return (
     <footer>
-        <div class="footer-contenedor">
+        <div className="footer-contenedor">
 
             <ul className="footer-links">
                 <li><a href="#">Inicio</a></li>
