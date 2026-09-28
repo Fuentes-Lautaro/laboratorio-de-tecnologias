@@ -6,6 +6,7 @@ const ENLACES = [
   { id: 1, texto: 'Inicio', destino: '/' },
   { id: 2, texto: 'Catálogo', destino: '/catalogo' },
   { id: 3, texto: 'Contacto', destino: '/contacto' },
+    { id: 4, texto: 'Nosotros', destino: '/nosotros' },
 ]
 
 function LayoutPublico(){

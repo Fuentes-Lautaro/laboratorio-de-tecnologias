@@ -1,0 +1,1 @@
+export {default as NosotrosPages} from './pages/NosotrosPages';

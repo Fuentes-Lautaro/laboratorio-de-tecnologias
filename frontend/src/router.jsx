@@ -5,6 +5,7 @@ import { HomePage } from './features/home'
 import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
 import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
+import { NosotrosPages } from './features/nosotros'
 
 export const router = createBrowserRouter([
   // ---------- Vista pública: Navbar + <Outlet /> + Footer ----------
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> }, // "/" exacto
       { path: 'catalogo', element: <CatalogoPage /> }, // "/catalogo"
       { path: 'catalogo/:id', element: <DetalleProductoPage /> }, // "/catalogo"
+      { path: '/nosotros', element: <NosotrosPages /> },
       { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
     ],
   },
