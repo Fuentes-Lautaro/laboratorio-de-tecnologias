@@ -6,11 +6,8 @@ const ENLACES = [
   { id: 1, texto: 'Inicio', destino: '/' },
   { id: 2, texto: 'Catálogo', destino: '/catalogo' },
   { id: 3, texto: 'Contacto', destino: '/contacto' },
-<<<<<<< HEAD
-{ id: 4, texto: 'Suscripciones', destino: '/suscripciones' },
-=======
     { id: 4, texto: 'Nosotros', destino: '/nosotros' },
->>>>>>> 9186bb26110b40bf33a3acf7b855205038579b8d
+{ id: 4, texto: 'Suscripciones', destino: '/suscripciones' },
 ]
 
 function LayoutPublico(){

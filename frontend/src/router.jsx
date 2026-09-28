@@ -4,15 +4,12 @@ import Spinner from './shared/components/Spinner'
 import { HomePage } from './features/home'
 import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
-<<<<<<< HEAD
+import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
+import { NosotrosPages } from './features/nosotros'
 import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
 
 
-=======
-import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
-import { NosotrosPages } from './features/nosotros'
->>>>>>> 9186bb26110b40bf33a3acf7b855205038579b8d
 
 export const router = createBrowserRouter([
   // ---------- Vista pública: Navbar + <Outlet /> + Footer ----------
