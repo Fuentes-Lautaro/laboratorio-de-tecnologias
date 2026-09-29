@@ -1,10 +1,12 @@
 import { createBrowserRouter } from 'react-router'
 import LayoutPublico from './shared/layout/LayoutPublico'
+import LayoutPrivado from './shared/layout/LayoutPrivado'
 import Spinner from './shared/components/Spinner'
 import { HomePage } from './features/home'
 import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
 import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
+import AdminInicioPage from './features/adminPanel/pages/AdminInicioPage'
 import { NosotrosPages } from './features/nosotros'
 import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
@@ -29,4 +31,11 @@ export const router = createBrowserRouter([
   },
 
   // ---------- Vista privada: NavbarGestor + sidebar + <Outlet /> ----------
+  {
+    path: '/admin',
+    element: <LayoutPrivado />,
+    hydrateFallbackElement: <Spinner />,
+    errorElement: <NoEncontradaPage />,
+    children: [{index: true, element: <AdminInicioPage />}]
+  },
 ])

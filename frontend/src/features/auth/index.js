@@ -3,5 +3,6 @@ export { CardIngresoPassword } from './componentes/CardIngresoPassword';
 export { CardRegistro } from './componentes/CardRegistro';
 export {
   verificarEmailExistente,
-  iniciarSesion
-} from './services/authService';
+  iniciarSesion,
+  cerrarSesion
+} from './services/authService.js';
