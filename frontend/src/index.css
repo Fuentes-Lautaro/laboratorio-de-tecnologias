@@ -82,6 +82,14 @@
     }
 }
 
+.titulo-noEncontrada{
+    color: var(--paneles);
+}
+
+.texto-noEncontrada{
+    color: var(--texto);
+}
+
 .imagen-detalle {
   max-width: 100%;
   height: auto;
