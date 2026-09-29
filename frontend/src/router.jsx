@@ -8,6 +8,9 @@ import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
 import { NosotrosPages } from './features/nosotros'
 import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
+import LayoutAdministrador from './shared/layout/LayoutAdministrador';
+import LayoutCM from './shared/layout/LayoutCM';
+import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
 
 
 
@@ -27,6 +30,34 @@ export const router = createBrowserRouter([
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
     ],
   },
+  {
+        path: 'login-gestion',
+        element: <LoginGestionPage />,
+        loader: redirigirSiHaySesion, // Si ya hay sesión iniciada, evita volver a mostrar el formulario[cite: 4]
+      },
 
-  // ---------- Vista privada: NavbarGestor + sidebar + <Outlet /> ----------
-])
+  // Panel Interno de Administración (Vendedor / Gerente)
+  {
+    path: '/gestion',
+    element: <LayoutAdministrador />,
+    loader: protegerRuta,
+    children: [
+      { path: 'ventas', element: <h2>Sección Ventas</h2> },
+      { path: 'clientes', element: <h2>Sección Clientes</h2> },
+      { path: 'productos', element: <h2>Sección Productos</h2> },
+      { path: 'compras', element: <h2>Sección Compras</h2> },
+      { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
+      { path: 'planes', element: <h2>Sección Planes (Solo Gerente)</h2> },
+    ],
+  },
+
+  // Panel Community Manager
+  {
+    path: '/cm',
+    element: <LayoutCM />,
+    loader: protegerRuta,
+    children: [
+      { path: 'eventos', element: <h2>Gestión de Eventos</h2> },
+    ],
+  },
+]);

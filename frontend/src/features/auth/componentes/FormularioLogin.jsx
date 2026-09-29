@@ -1,0 +1,206 @@
+import { useRef, useState } from 'react'
+import { esEmailValido, esRequerido } from '../../../shared/utils/validaciones'
+
+function validar(valores) {
+  const errores = {}
+  if (!esRequerido(valores.email)) errores.email = 'Ingresá tu email.'
+  else if (!esEmailValido(valores.email)) errores.email = 'El formato del email no es válido.'
+  if (!esRequerido(valores.password)) errores.password = 'Ingresá tu contraseña.'
+  return errores
+}
+
+export function FormularioLogin({ onIngresar }) {
+  const [valores, setValores] = useState({ email: '', password: '' })
+  const [errores, setErrores] = useState({})
+  const [errorServidor, setErrorServidor] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [mostrarPassword, setMostrarPassword] = useState(false)
+  const formularioRef = useRef(null)
+
+  function handleChange(e) {
+    const { name, value } = e.target
+    setValores({ ...valores, [name]: value })
+    if (errores[name]) setErrores({ ...errores, [name]: undefined })
+    setErrorServidor('')
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+
+    const nuevosErrores = validar(valores)
+    setErrores(nuevosErrores)
+
+    const primerCampoConError = Object.keys(nuevosErrores)[0]
+    if (primerCampoConError) {
+      formularioRef.current.elements[primerCampoConError].focus()
+      return
+    }
+
+    setEnviando(true)
+    try {
+      await onIngresar(valores)
+    } catch (error) {
+      setErrorServidor(error.message)
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <form ref={formularioRef} onSubmit={handleSubmit} noValidate className="p-1">
+      
+      {/* Cabecera visual del formulario */}
+      <div className="text-center mb-4">
+        <span 
+          className="text-uppercase small fw-semibold tracking-wide d-block mb-1"
+          style={{ color: 'var(--detalles, #B5865A)', letterSpacing: '2px', fontSize: '0.75rem' }}
+        >
+          ✦ MARÍA BALBINA ✦
+        </span>
+        <h4 className="fw-bold m-0" style={{ color: 'var(--titulos, #64141B)' }}>
+          Ingreso al Sistema
+        </h4>
+        <div 
+          className="mx-auto mt-2" 
+          style={{ width: '45px', height: '2px', backgroundColor: 'var(--detalles, #B5865A)', borderRadius: '2px' }}
+        />
+      </div>
+
+      {/* Alerta de Error de Servidor */}
+      {errorServidor && (
+        <div 
+          className="alert py-2 px-3 small rounded-3 mb-4 d-flex align-items-center gap-2"
+          role="alert"
+          style={{ 
+            backgroundColor: 'rgba(100, 20, 27, 0.08)', 
+            border: '1px solid var(--titulos, #64141B)',
+            color: 'var(--titulos, #64141B)'
+          }}
+        >
+          <span>⚠️</span>
+          <div>{errorServidor}</div>
+        </div>
+      )}
+
+      {/* Campo Email */}
+      <div className="mb-3">
+        <label 
+          htmlFor="email" 
+          className="form-label fw-bold small text-uppercase mb-1" 
+          style={{ color: 'var(--texto, #21140E)', letterSpacing: '0.5px', fontSize: '0.75rem' }}
+        >
+          Email
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="username"
+          className={`form-control ${errores.email ? 'is-invalid' : ''}`}
+          value={valores.email}
+          onChange={handleChange}
+          disabled={enviando}
+          placeholder="ejemplo@mariabalbina.com"
+          style={{
+            borderColor: errores.email ? '#dc3545' : 'var(--bordes, #987C65)',
+            backgroundColor: '#ffffff',
+            padding: '0.65rem 0.9rem'
+          }}
+        />
+        {errores.email && (
+          <div className="invalid-feedback small fw-semibold mt-1">
+            {errores.email}
+          </div>
+        )}
+      </div>
+
+      {/* Campo Contraseña */}
+      <div className="mb-4">
+        <label 
+          htmlFor="password" 
+          className="form-label fw-bold small text-uppercase mb-1" 
+          style={{ color: 'var(--texto, #21140E)', letterSpacing: '0.5px', fontSize: '0.75rem' }}
+        >
+          Contraseña
+        </label>
+        <div className="input-group has-validation">
+          <input
+            id="password"
+            name="password"
+            type={mostrarPassword ? 'text' : 'password'}
+            autoComplete="current-password"
+            className={`form-control ${errores.password ? 'is-invalid' : ''}`}
+            value={valores.password}
+            onChange={handleChange}
+            disabled={enviando}
+            placeholder="••••••••"
+            style={{
+              borderColor: errores.password ? '#dc3545' : 'var(--bordes, #987C65)',
+              backgroundColor: '#ffffff',
+              padding: '0.65rem 0.9rem'
+            }}
+          />
+          <button
+            type="button"
+            className="btn btn-outline-secondary px-3"
+            onClick={() => setMostrarPassword(!mostrarPassword)}
+            aria-pressed={mostrarPassword}
+            disabled={enviando}
+            style={{
+              borderColor: 'var(--bordes, #987C65)',
+              color: 'var(--paneles, #3E100F)',
+              backgroundColor: 'rgba(181, 134, 90, 0.08)',
+              fontWeight: '500',
+              fontSize: '0.85rem'
+            }}
+          >
+            {mostrarPassword ? 'Ocultar' : 'Mostrar'}
+          </button>
+          {errores.password && (
+            <div className="invalid-feedback small fw-semibold mt-1">
+              {errores.password}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Botón Principal corporativo */}
+      <button 
+        type="submit" 
+        className="btn w-100 py-2.5 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2 shadow-sm" 
+        disabled={enviando}
+        style={{
+          backgroundColor: 'var(--paneles, #3E100F)',
+          color: 'var(--fondos-principales, #F9EBE0)',
+          border: '1px solid var(--titulos, #64141B)',
+          letterSpacing: '1px',
+          fontSize: '0.9rem',
+          transition: 'all 0.2s ease-in-out'
+        }}
+        onMouseEnter={(e) => {
+          if (!enviando) {
+            e.currentTarget.style.backgroundColor = 'var(--titulos, #64141B)'
+            e.currentTarget.style.borderColor = 'var(--detalles, #B5865A)'
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!enviando) {
+            e.currentTarget.style.backgroundColor = 'var(--paneles, #3E100F)'
+            e.currentTarget.style.borderColor = 'var(--titulos, #64141B)'
+          }
+        }}
+      >
+        {enviando ? (
+          <>
+            <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" />
+            <span>Verificando...</span>
+          </>
+        ) : (
+          <span>Ingresar</span>
+        )}
+      </button>
+
+    </form>
+  )
+}
+
+export default FormularioLogin

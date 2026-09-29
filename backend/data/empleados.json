@@ -1,0 +1,57 @@
+[
+  {
+    "dni": "28123456",
+    "nombre": "Roberto Fernández",
+    "fechaNac": "1982-04-12",
+    "telefono": "2664112233",
+    "mail": "admin@mariabalbina.com",
+    "direccion": "Av. Illia 450, San Luis",
+    "rol": "vendedor",
+    "clave": "ventas123",
+    "activo": true
+  },
+  {
+    "dni": "31987654",
+    "nombre": "Sofia Martínez",
+    "fechaNac": "1988-09-25",
+    "telefono": "2664998877",
+    "mail": "gestor@mariabalbina.com",
+    "direccion": "Pedernera 1230, San Luis",
+    "rol": "gerente",
+    "clave": "gestor123",
+    "activo": true
+  },
+  {
+    "dni": "35456789",
+    "nombre": "Camila Torres",
+    "fechaNac": "1994-01-18",
+    "telefono": "2664556677",
+    "mail": "cm@mariabalbina.com",
+    "direccion": "Junín 850, San Luis",
+    "rol": "CM",
+    "clave": "cm123",
+    "activo": true
+  },
+  {
+    "dni": "33234567",
+    "nombre": "Gonzalo Morales",
+    "fechaNac": "1991-07-03",
+    "telefono": "2664334455",
+    "mail": "gonzalo.sommelier@mariabalbina.com",
+    "direccion": "San Martín 620, San Luis",
+    "rol": "vendedor",
+    "clave": "vino123",
+    "activo": true
+  },
+  {
+    "dni": "37890123",
+    "nombre": "Lucía Pereyra",
+    "fechaNac": "1996-11-30",
+    "telefono": "2664223344",
+    "mail": "lucia.ventas@mariabalbina.com",
+    "direccion": "Ruta 146 Km 8, San Luis",
+    "rol": "Vendedor",
+    "clave": "ventas123",
+    "activo": true
+  }
+]
