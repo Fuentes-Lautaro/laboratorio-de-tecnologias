@@ -1,236 +1,269 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import EventoCard from '../componentes/EventoCard';
-import { getEventos } from '../services/eventoService';
+import { 
+  getEventos, 
+} from '../services/eventoService';
+
+const FORM_INICIAL = {
+  nombre: '',
+  fecha: '',
+  descripcion: '',
+  cantAsistentes: 10,
+  imagenUrl: '/img/imagenesEventos/eventos.png'
+};
 
 export function EventosPagePrivada() {
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Formulario con el campo imagenUrl
-  const [formData, setFormData] = useState({
-    id: null,
-    nombre: '',
-    fecha: '',
-    descripcion: '',
-    cantAsistentes: '',
-    imagenUrl: ''
-  });
-  const [editando, setEditando] = useState(false);
+  // Estados para Modales
+  const [mostrarModalForm, setMostrarModalForm] = useState(false);
+  const [eventoEditando, setEventoEditando] = useState(null); // null = Crear, objeto = Editar
+  const [eventoAEliminar, setEventoAEliminar] = useState(null);
+
+  // Estado del Formulario
+  const [formData, setFormData] = useState(FORM_INICIAL);
 
   useEffect(() => {
-    cargarEventos();
+    cargarLista();
   }, []);
 
-  const cargarEventos = async () => {
+  const cargarLista = async () => {
     try {
-      setCargando(true);
       const data = await getEventos();
-      setEventos(data);
+      setEventos(data || []);
     } catch (err) {
-      setError(err.message || 'Error al conectar con el servidor');
+      console.error('Error al cargar eventos:', err);
     } finally {
       setCargando(false);
     }
   };
 
-  const handleChange = (e) => {
+  // --- MANEJO DE CREAR Y EDITAR ---
+  const handleAbrirCrear = () => {
+    setEventoEditando(null);
+    setFormData(FORM_INICIAL);
+    setMostrarModalForm(true);
+  };
+
+  const handleAbrirEditar = (evento) => {
+    setEventoEditando(evento);
+    setFormData({
+      nombre: evento.nombre || '',
+      fecha: evento.fecha || '',
+      descripcion: evento.descripcion || '',
+      cantAsistentes: evento.cantAsistentes || 10,
+      imagenUrl: evento.imagenUrl || '/img/imagenesEventos/eventos.png'
+    });
+    setMostrarModalForm(true);
+  };
+
+  const handleChangeForm = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
-    if (!formData.nombre || !formData.fecha) return;
-
-    const payload = {
-      ...formData,
-      cantAsistentes: Number(formData.cantAsistentes) || 0
-    };
-
     try {
-      if (editando) {
-        const actualizado = await eventoService.actualizarEvento(formData.id, payload);
-        setEventos(eventos.map((evt) => (evt.id === formData.id ? actualizado : evt)));
+      if (eventoEditando) {
+        // EDICIÓN
+        const guardado = await actualizarEvento(eventoEditando.id, formData);
+        setEventos(eventos.map((ev) => (ev.id === eventoEditando.id ? { ...ev, ...guardado } : ev)));
       } else {
-        const nuevo = await eventoService.crearEvento(payload);
+        // CREACIÓN
+        const nuevo = await crearEvento(formData);
         setEventos([...eventos, nuevo]);
       }
-      resetFormulario();
-    } catch (err) {
-      alert(err.message);
+      setMostrarModalForm(false);
+    } catch (error) {
+      console.error('Error al guardar el evento:', error);
     }
   };
 
-  const handleEditar = (evento) => {
-    setFormData({
-      id: evento.id,
-      nombre: evento.nombre || '',
-      fecha: evento.fecha || '',
-      descripcion: evento.descripcion || '',
-      cantAsistentes: evento.cantAsistentes || '',
-      imagenUrl: evento.imagenUrl || ''
-    });
-    setEditando(true);
+  // --- MANEJO DE ELIMINAR ---
+  const handleSolicitarEliminar = (id) => {
+    const encontrado = eventos.find((ev) => ev.id === id);
+    if (encontrado) setEventoAEliminar(encontrado);
   };
 
-  const handleEliminar = async (id) => {
-    if (!window.confirm('¿Deseas eliminar este evento?')) return;
+  const handleConfirmarEliminar = async () => {
+    if (!eventoAEliminar) return;
     try {
-      await eventoService.eliminarEvento(id);
-      setEventos(eventos.filter((evt) => evt.id !== id));
-      if (formData.id === id) resetFormulario();
-    } catch (err) {
-      alert(err.message);
+      await eliminarEvento(eventoAEliminar.id);
+      setEventos(eventos.filter((ev) => ev.id !== eventoAEliminar.id));
+      setEventoAEliminar(null);
+    } catch (error) {
+      console.error('Error al eliminar evento:', error);
     }
-  };
-
-  const resetFormulario = () => {
-    setFormData({ id: null, nombre: '', fecha: '', descripcion: '', cantAsistentes: '', imagenUrl: '' });
-    setEditando(false);
   };
 
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom" style={{ borderColor: '#E5E0DC' }}>
+    <div className="container-fluid py-3">
+      {/* Encabezado con Botón Crear */}
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-3 border-bottom">
         <div>
-          <h3 className="fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)' }}>Gestión de Eventos</h3>
-          <p className="text-muted small mb-0">Publicá la cartelera de eventos con fotos y descripción.</p>
+          <h2 className="fw-bold mb-1" style={{ color: '#3E100F' }}>Gestión de Eventos</h2>
+          <p className="text-muted small mb-0">Administrá la cartelera de eventos, cupos e imágenes.</p>
         </div>
-        <button onClick={cargarEventos} className="btn btn-sm btn-outline-secondary">
-          🔄 Actualizar
+        <button 
+          onClick={handleAbrirCrear}
+          className="btn text-white fw-semibold px-3 py-2 d-flex align-items-center justify-content-center gap-2 rounded-2"
+          style={{ backgroundColor: 'var(--detalles, #B5865A)' }}
+        >
+          <span>➕</span> Nuevo Evento
         </button>
       </div>
 
-      {error && <div className="alert alert-danger py-2">{error}</div>}
-
-      <div className="row g-4">
-        {/* LADO IZQUIERDO: Cards de Eventos */}
-        <div className="col-lg-7 col-xl-8">
-          {cargando ? (
-            <div className="text-center py-5 text-muted">Cargando eventos...</div>
-          ) : eventos.length === 0 ? (
-            <div className="p-5 text-center bg-white rounded-3 border text-muted">
-              No hay eventos cargados. Agregá uno usando el formulario.
+      {/* Grilla de Eventos */}
+      {cargando ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-warning" role="status"></div>
+          <p className="text-muted small mt-2">Cargando gestión...</p>
+        </div>
+      ) : (
+        <div className="row g-4">
+          {eventos.map((evento) => (
+            <div key={evento.id} className="col-12 col-md-6 col-lg-4">
+              <EventoCard
+                evento={evento}
+                esGestion={true}
+                onEditar={handleAbrirEditar}
+                onEliminar={handleSolicitarEliminar}
+              />
             </div>
-          ) : (
-            <div className="row row-cols-1 row-cols-md-2 g-3">
-              {eventos.map((evt) => (
-                <div key={evt.id} className="col">
-                  <EventoCard
-                    evento={evt}
-                    esGestion={true}
-                    onEditar={handleEditar}
-                    onEliminar={handleEliminar}
-                  />
-                </div>
-              ))}
+          ))}
+          {eventos.length === 0 && (
+            <div className="col-12 text-center py-5 text-muted">
+              No hay eventos registrados. Hacé clic en "Nuevo Evento" para agregar uno.
             </div>
           )}
         </div>
+      )}
 
-        {/* LADO DERECHO: Formulario de Alta / Modificación */}
-        <div className="col-lg-5 col-xl-4">
-          <div className="bg-white rounded-3 p-4 shadow-sm border sticky-top" style={{ top: '90px', borderColor: 'rgba(0,0,0,0.06)' }}>
-            <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-              <h5 className="fw-bold mb-0" style={{ fontSize: '1.05rem', color: '#3E100F' }}>
-                {editando ? 'Modificar Evento' : 'Crear Nuevo Evento'}
-              </h5>
-              {editando && <span className="badge bg-warning text-dark" style={{ fontSize: '0.7rem' }}>Edición</span>}
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label small fw-semibold text-secondary">Nombre del Evento</label>
-                <input
-                  type="text"
-                  className="form-control form-control-sm"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  placeholder="Ej: Cata Guiada Reserva"
-                  required
-                />
+      {/* CREACIÓN / EDICIÓN */}
+      {mostrarModalForm && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#1C1614' }}>
+                <h5 className="modal-title fw-bold fs-6">
+                  {eventoEditando ? '✏️ Editar Evento' : '✨ Crear Nuevo Evento'}
+                </h5>
+                <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalForm(false)}></button>
               </div>
 
-              <div className="row g-2 mb-3">
-                <div className="col-6">
-                  <label className="form-label small fw-semibold text-secondary">Fecha</label>
-                  <input
-                    type="date"
-                    className="form-control form-control-sm"
-                    name="fecha"
-                    value={formData.fecha}
-                    onChange={handleChange}
-                    required
-                  />
+              <form onSubmit={handleSubmitForm}>
+                <div className="modal-body p-4">
+                  <div className="row g-3">
+                    <div className="col-12 col-md-8">
+                      <label className="form-label small fw-bold">Nombre del Evento</label>
+                      <input
+                        type="text"
+                        name="nombre"
+                        required
+                        className="form-control"
+                        value={formData.nombre}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: Cata Guiada Reserva & Quesos"
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Fecha</label>
+                      <input
+                        type="date"
+                        name="fecha"
+                        required
+                        className="form-control"
+                        value={formData.fecha}
+                        onChange={handleChangeForm}
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Cupos / Asistentes</label>
+                      <input
+                        type="number"
+                        name="cantAsistentes"
+                        min="1"
+                        required
+                        className="form-control"
+                        value={formData.cantAsistentes}
+                        onChange={handleChangeForm}
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-8">
+                      <label className="form-label small fw-bold">Ruta de Imagen (`/public`)</label>
+                      <input
+                        type="text"
+                        name="imagenUrl"
+                        className="form-control"
+                        value={formData.imagenUrl}
+                        onChange={handleChangeForm}
+                        placeholder="/img/imagenesEventos/eventos.png"
+                      />
+                    </div>
+
+                    <div className="col-12">
+                      <label className="form-label small fw-bold">Descripción</label>
+                      <textarea
+                        name="descripcion"
+                        rows="3"
+                        className="form-control"
+                        value={formData.descripcion}
+                        onChange={handleChangeForm}
+                        placeholder="Detalles sobre el menú, maridaje o la experiencia..."
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
-                <div className="col-6">
-                  <label className="form-label small fw-semibold text-secondary">Capacidad</label>
-                  <input
-                    type="number"
-                    min="1"
-                    className="form-control form-control-sm"
-                    name="cantAsistentes"
-                    value={formData.cantAsistentes}
-                    onChange={handleChange}
-                    placeholder="Ej: 25"
-                  />
-                </div>
-              </div>
 
-              <div className="mb-3">
-                <label className="form-label small fw-semibold text-secondary">URL de la Imagen / Foto</label>
-                <input
-                  type="url"
-                  className="form-control form-control-sm"
-                  name="imagenUrl"
-                  value={formData.imagenUrl}
-                  onChange={handleChange}
-                  placeholder="https://ejemplo.com/foto.jpg"
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label small fw-semibold text-secondary">Descripción</label>
-                <textarea
-                  className="form-control form-control-sm"
-                  rows="3"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleChange}
-                  placeholder="Detalles del evento..."
-                ></textarea>
-              </div>
-
-              <div className="d-flex gap-2 pt-2">
-                <button
-                  type="submit"
-                  className="btn w-100 py-2 fw-semibold"
-                  style={{
-                    backgroundColor: editando ? '#B5865A' : '#3E100F',
-                    color: '#FFF',
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  {editando ? 'Guardar Cambios' : 'Publicar Evento'}
-                </button>
-
-                {editando && (
-                  <button
-                    type="button"
-                    onClick={resetFormulario}
-                    className="btn btn-outline-secondary py-2"
-                    style={{ fontSize: '0.875rem' }}
-                  >
+                <div className="modal-footer border-0 bg-light justify-content-end gap-2">
+                  <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setMostrarModalForm(false)}>
                     Cancelar
                   </button>
-                )}
-              </div>
-            </form>
+                  <button type="submit" className="btn btn-sm text-white px-4 fw-semibold" style={{ backgroundColor: '#B5865A' }}>
+                    {eventoEditando ? 'Guardar Cambios' : 'Crear Evento'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+     
+      {eventoAEliminar && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#1C1614' }}>
+                <h5 className="modal-title fw-bold fs-6">🗑️ Confirmar Eliminación</h5>
+                <button type="button" className="btn-close btn-close-white" onClick={() => setEventoAEliminar(null)}></button>
+              </div>
+
+              <div className="modal-body p-4 text-center">
+                <p className="mb-2 fs-6">¿Estás seguro de que deseas eliminar el evento?</p>
+                <div className="p-3 rounded-2 fw-bold text-start mb-3" style={{ backgroundColor: '#F8F9FA', color: '#3E100F', borderLeft: '4px solid #B5865A' }}>
+                  {eventoAEliminar.nombre}
+                </div>
+                <small className="text-muted">Esta acción no se puede deshacer.</small>
+              </div>
+
+              <div className="modal-footer border-0 bg-light justify-content-end gap-2">
+                <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setEventoAEliminar(null)}>
+                  Cancelar
+                </button>
+                <button type="button" className="btn btn-sm btn-danger px-3 fw-semibold" style={{ backgroundColor: '#A93226', borderColor: '#A93226' }} onClick={handleConfirmarEliminar}>
+                  Sí, Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
