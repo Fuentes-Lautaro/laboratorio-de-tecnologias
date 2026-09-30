@@ -1,36 +1,33 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom';
 import { cerrarSesion } from '../../features/auth/services/authService';
 
 export function NavGestor({ sesion }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleCerrarSesion = () => {
-    cerrarSesion()
-    navigate('/login-gestion', { replace: true })
-  }
-
+    cerrarSesion();
+    navigate('/login-gestion', { replace: true });
+  };
 
   const getNavLinkStyle = ({ isActive }) => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
     color: isActive ? 'var(--detalles)' : 'rgba(255, 255, 255, 0.65)',
     borderLeft: isActive ? '3px solid var(--detalles, #B5865A)' : '3px solid transparent',
-    fontSize: '0.95rem', // Tamaño de letra aumentado
+    fontSize: '0.95rem',
     fontWeight: isActive ? '600' : '400',
     transition: 'all 0.15s ease'
-  })
+  });
 
   return (
     <aside 
-      className="d-flex flex-column p-4 min-vh-100"
+      className="d-flex flex-column p-3 p-md-4 sidebar-gestor"
       style={{ 
-        width: '260px', 
-        backgroundColor: '#1C1614', // Fondo neutro sobrio
-        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-       
+        backgroundColor: '#1C1614',
+        borderRight: '1px solid rgba(255, 255, 255, 0.08)'
       }}
     >
       {/* Encabezado: Panel + Usuario */}
-      <div className="pb-3 mb-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+      <div className="pb-3 mb-3 mb-md-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <h5 className="fw-bold text-white mb-1" style={{ fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           Panel Gestión
         </h5>
@@ -40,7 +37,7 @@ export function NavGestor({ sesion }) {
       </div>
 
       {/* Navegación Principal */}
-      <nav className="nav nav-pills flex-column gap-1 mb-auto">
+      <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
         <NavLink to="/gestion/ventas" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
           <span style={{ fontSize: '1.1rem' }}>🛒</span>
           <span>Ventas</span>
@@ -63,7 +60,7 @@ export function NavGestor({ sesion }) {
 
         {/* Separador de Sección */}
         <div 
-          className="mt-4 mb-2 px-3 fw-semibold text-uppercase" 
+          className="mt-3 mt-md-4 mb-2 px-3 fw-semibold text-uppercase" 
           style={{ 
             color: 'rgba(255, 255, 255, 0.4)', 
             fontSize: '0.78rem', 
@@ -98,12 +95,12 @@ export function NavGestor({ sesion }) {
             transition: 'all 0.2s ease'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
-            e.currentTarget.style.color = '#FFFFFF'
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.color = '#FFFFFF';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent'
-            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)'
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
           }}
         >
           <span>🚪</span>
@@ -111,8 +108,21 @@ export function NavGestor({ sesion }) {
         </button>
       </div>
 
+      {/* Media query para responsive en mobile y escritorio */}
+      <style>{`
+        .sidebar-gestor {
+          width: 100%;
+        }
+        @media (min-width: 768px) {
+          .sidebar-gestor {
+            width: 260px !important;
+            min-width: 260px;
+            min-height: 100vh;
+          }
+        }
+      `}</style>
     </aside>
-  )
+  );
 }
 
-export default NavGestor
+export default NavGestor;

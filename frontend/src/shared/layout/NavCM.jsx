@@ -12,7 +12,7 @@ export function NavCM({ sesion }) {
   // Estilo minimalista neutro (sin fondos pesados)
   const getNavLinkStyle = ({ isActive }) => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-    color: isActive ? 'var(--detalles)': 'rgba(255, 255, 255, 0.65)',
+    color: isActive ? 'var(--detalles)' : 'rgba(255, 255, 255, 0.65)',
     borderLeft: isActive ? '3px solid var(--detalles, #B5865A)' : '3px solid transparent',
     fontSize: '0.95rem',
     fontWeight: isActive ? '600' : '400',
@@ -21,15 +21,14 @@ export function NavCM({ sesion }) {
 
   return (
     <aside 
-      className="d-flex flex-column p-4 min-vh-100"
+      className="d-flex flex-column p-3 p-md-4 sidebar-cm"
       style={{ 
-        width: '260px', 
         backgroundColor: '#1C1614', 
         borderRight: '1px solid rgba(255, 255, 255, 0.08)' 
       }}
     >
       {/* Encabezado: Panel + Usuario */}
-      <div className="pb-3 mb-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+      <div className="pb-3 mb-3 mb-md-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <h5 className="fw-bold text-white mb-1" style={{ fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           Panel CM
         </h5>
@@ -39,7 +38,7 @@ export function NavCM({ sesion }) {
       </div>
 
       {/* Navegación Principal */}
-      <nav className="nav nav-pills flex-column gap-1 mb-auto">
+      <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
         <NavLink 
           to="/cm/eventos" 
           style={getNavLinkStyle} 
@@ -77,6 +76,19 @@ export function NavCM({ sesion }) {
         </button>
       </div>
 
+      {/* Media query para adaptar ancho según el dispositivo */}
+      <style>{`
+        .sidebar-cm {
+          width: 100%;
+        }
+        @media (min-width: 768px) {
+          .sidebar-cm {
+            width: 260px !important;
+            min-width: 260px;
+            min-height: 100vh;
+          }
+        }
+      `}</style>
     </aside>
   );
 }

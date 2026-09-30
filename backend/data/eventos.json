@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Cata Guiada Reserva & Quesos",
+    "fecha": "2026-10-15",
+    "descripcion": "Degustación exclusiva de nuestra selección de etiquetas Reserva maridada con quesos artesanales de la región.",
+    "cantAsistentes": 25,
+    "imagenUrl": "/img/imagenesEventos/eventos.png"
+  },
+  {
+    "id": 2,
+    "nombre": "Noche de Maridaje y Jazz",
+    "fecha": "2026-10-22",
+    "descripcion": "Música en vivo en la terraza con copa de bienvenida y menú degustación de cuatro pasos.",
+    "cantAsistentes": 40,
+    "imagenUrl": "/img/imagenesEventos/eventos.png"
+  },
+  {
+    "id": 3,
+    "nombre": "Taller Introducción al Sommelier",
+    "fecha": "2026-11-05",
+    "descripcion": "Aprende los fundamentos de la cata profesional, maridaje básico y conservación del vino en cava.",
+    "cantAsistentes": 15,
+    "imagenUrl": "/img/imagenesEventos/eventos.png"
+  }
+]

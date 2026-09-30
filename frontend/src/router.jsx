@@ -11,6 +11,8 @@ import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscri
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
 import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
+import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
+import { EventosPage } from './features/eventos/pages/EventosPage';
 
 
 
@@ -28,6 +30,7 @@ export const router = createBrowserRouter([
       { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
       { path: 'suscripciones', element: <SuscripcionesPage /> }, // "/suscripciones"
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
+      { path: 'eventos', element: <EventosPage /> }, // "/eventos"
     ],
   },
   {
@@ -57,7 +60,7 @@ export const router = createBrowserRouter([
     element: <LayoutCM />,
     loader: protegerRuta,
     children: [
-      { path: 'eventos', element: <h2>Gestión de Eventos</h2> },
+      { path: 'eventos', element: <EventosPagePrivada /> },
     ],
   },
 ]);
