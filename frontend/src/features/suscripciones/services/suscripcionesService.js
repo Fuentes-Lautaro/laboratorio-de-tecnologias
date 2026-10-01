@@ -1,6 +1,6 @@
 const URL_BASE = '/backend/data'
 
-export async function obtenerPlanesSuscripciones() {
+export async function getPlanes() {
   const respuesta = await fetch(`${URL_BASE}/planesSuscripciones.json`);
   if (!respuesta.ok) {
     throw new Error('No se pudieron obtener los planes de suscripción');
@@ -11,11 +11,11 @@ export async function obtenerPlanesSuscripciones() {
 /**
  * Busca y devuelve un plan específico según su nombre desde la URL leyendo del JSON real.
  */
-export const obtenerPlanesSuscripcionPorNombre = async (nombre) => {
+export const getPlanesPorNombre = async (nombre) => {
   if (!nombre) return null;
 
   // 1. Obtenemos la lista de planes directamente desde el JSON
-  const planes = await obtenerPlanesSuscripciones();
+  const planes = await getPlanes();
 
   // 2. Limpiamos y normalizamos el nombre de la URL
   const nombreLimpio = decodeURIComponent(nombre).trim().toLowerCase();
@@ -37,7 +37,7 @@ export const obtenerPlanesSuscripcionPorNombre = async (nombre) => {
  * @param {string} clienteDni - El DNI del cliente autenticado.
  * @returns {Promise<Object|null>} Devuelve la suscripción activa o null si no tiene.
  */
-export async function obtenerSuscripcionActivaPorDni(clienteDni) {
+export async function getSuscripcionActivaPorDni(clienteDni) {
   try {
     const respuesta = await fetch(`${URL_BASE}/suscripciones.json`);
     

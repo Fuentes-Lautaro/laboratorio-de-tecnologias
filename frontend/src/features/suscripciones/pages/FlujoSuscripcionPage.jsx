@@ -12,10 +12,7 @@ import {
 
 // Importaciones de Suscripciones (Rutas corregidas con ../)
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
-import { 
-  obtenerSuscripcionActivaPorDni, 
-  obtenerPlanesSuscripcionPorNombre 
-} from '../services/suscripcionesService';
+import { getSuscripcionActivaPorDni, getPlanesPorNombre } from '../services/suscripcionesService';
 
 export function FlujoSuscripcionPage() {
   const { nombre } = useParams();
@@ -39,7 +36,7 @@ export function FlujoSuscripcionPage() {
     async function cargarPlan() {
       if (!nombre) return;
       try {
-        const plan = await obtenerPlanesSuscripcionPorNombre(nombre);
+        const plan = await getPlanesPorNombre(nombre);
         setPlanSeleccionado(plan);
       } catch (err) {
         console.error('Error al cargar datos del plan:', err);
@@ -79,7 +76,7 @@ export function FlujoSuscripcionPage() {
       setClienteLogueado(sesion);
 
       // Verificar en suscripciones.json si ya tiene suscripción activa
-      const subActiva = await obtenerSuscripcionActivaPorDni(sesion.dni);
+      const subActiva = await getSuscripcionActivaPorDni(sesion.dni);
 
       if (subActiva) {
         setSuscripcionExistente(subActiva);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { obtenerPlanesSuscripciones } from '../services/suscripcionesService';
+import { getPlanes } from '../services/suscripcionesService';
 import { TarjetaPlan } from '../components/TarjetaPlan';
 
 export function SuscripcionesPage() {
@@ -12,7 +12,7 @@ export function SuscripcionesPage() {
 
   useEffect(() => {
     // Pedimos los planes de suscripción
-    obtenerPlanesSuscripciones()
+    getPlanes()
       .then((datos) => {
         setPlanes(datos);
         setCargando(false);
