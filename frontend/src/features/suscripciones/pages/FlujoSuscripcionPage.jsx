@@ -11,7 +11,7 @@ import {
 } from '../../auth';
 
 // Importaciones de Suscripciones (Rutas corregidas con ../)
-import { CardPagarSuscripcion } from '../componentes/CardPagarSuscripcion';
+import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
 import { 
   obtenerSuscripcionActivaPorDni, 
   obtenerPlanesSuscripcionPorNombre 

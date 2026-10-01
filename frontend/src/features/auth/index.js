@@ -1,8 +1,8 @@
 // Exportación de tarjetas y componentes visuales
-export { CardIngresoEmail } from './componentes/CardIngresoEmail';
-export { CardIngresoPassword } from './componentes/CardIngresoPassword';
-export { CardRegistro } from './componentes/CardRegistro';
-export { default as FormularioLogin } from './componentes/FormularioLogin';
+export { CardIngresoEmail } from './components/CardIngresoEmail';
+export { CardIngresoPassword } from './components/CardIngresoPassword';
+export { CardRegistro } from './components/CardRegistro';
+export { default as FormularioLogin } from './components/FormularioLogin';
 export { default as LoginGestionPage } from './pages/LoginGestionPage';
 
 // Exportación de servicios y utilidades de autenticación

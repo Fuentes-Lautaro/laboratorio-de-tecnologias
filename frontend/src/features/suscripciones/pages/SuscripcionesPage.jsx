@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { obtenerPlanesSuscripciones } from '../services/suscripcionesService';
-import { TarjetaPlan } from '../componentes/TarjetaPlan';
+import { TarjetaPlan } from '../components/TarjetaPlan';
 
 export function SuscripcionesPage() {
   const [planes, setPlanes] = useState([]);
