@@ -13,7 +13,8 @@ import LayoutCM from './shared/layout/LayoutCM';
 import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
 import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
 import { EventosPage } from './features/eventos/pages/EventosPage';
-import { ClientesPagePrivada } from './features/Clientes/pages/ClientesPagePrivada';
+import { ContactoPage } from './features/contacto/pages/ContactoPage'
+import { ClientesPagePrivada } from './features/clientes/pages/ClientesPagePrivada';
 import ProductosPagePrivada from './features/productos'
 
 
@@ -28,11 +29,12 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> }, // "/" exacto
       { path: 'catalogo', element: <CatalogoPage /> }, // "/catalogo"
       { path: 'catalogo/:id', element: <DetalleProductoPage /> }, // "/catalogo"
-      { path: '/nosotros', element: <NosotrosPages /> },
-      { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
+      { path: 'nosotros', element: <NosotrosPages /> },
+      { path: 'contacto', element: <ContactoPage /> },
       { path: 'suscripciones', element: <SuscripcionesPage /> }, // "/suscripciones"
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
       { path: 'eventos', element: <EventosPage /> }, // "/eventos"
+      { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
     ],
   },
   {
@@ -49,7 +51,6 @@ export const router = createBrowserRouter([
     children: [
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
-      { path: 'clientes', element: <h2>Sección Clientes</h2> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
       { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
