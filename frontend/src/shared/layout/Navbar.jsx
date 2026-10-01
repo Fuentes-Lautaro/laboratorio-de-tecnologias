@@ -7,7 +7,7 @@ function Navbar({ enlaces, logoSrc, logoAlt = "Logo" }) {
                 
                 <div className="w-100 d-flex justify-content-between align-items-center py-1 border-bottom-brand">
                     <Link className="navbar-brand d-flex align-items-center m-0 logo-container" to="/">
-                        <img src="/img/logos/logo-Maria-Balbina-Lateral.png" className="logo-img" />
+                        <img src="/img/logos/logo-Maria-Balbina-Lateral-recortado.png" className="logo-img" />
                     </Link>
 
                     <div className="d-flex align-items-center gap-2">
