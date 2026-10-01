@@ -24,7 +24,7 @@ function LayoutPublico(){
         <div className="d-flex flex-column min-vh-100">
             <Navbar enlaces={ENLACES} />
 
-            <main className="container-fluid px-3 px-lg-5 flex-grow-1">
+            <main className="container-fluid bg-light px-3 px-lg-5 flex-grow-1">
                 <Outlet context />
             </main>
 

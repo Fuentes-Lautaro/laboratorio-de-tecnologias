@@ -18,7 +18,6 @@ const ASUNTOS = [
 
 const MAXIMO_MENSAJE = 500
 
-// Función pura, fuera del componente: recibe los valores y devuelve los errores.
 function validar(valores) {
   const errores = {}
   if (!esRequerido(valores.nombre)) errores.nombre = 'Ingresá tu nombre.'
@@ -28,41 +27,30 @@ function validar(valores) {
   return errores
 }
 
-// Simula el envío al servidor (todavía no existe): tarda 1,5 segundos.
 function enviarMensaje(valores) {
   return new Promise((resolve) => setTimeout(() => resolve(valores), 1500))
 }
 
 function FormularioContacto() {
-  // CLASE 3 · Formularios controlados: un objeto con todos los campos.
   const [valores, setValores] = useState(VALORES_INICIALES)
   const [errores, setErrores] = useState({})
-
-  // CLASE 3 · Reaccionar a la entrada con el estado
-  // En vez de varios booleanos (estaEnviando, fueEnviado...) que pueden
-  // contradecirse, UN estado con los valores posibles: 'escribiendo' | 'enviando' | 'enviado'
   const [estado, setEstado] = useState('escribiendo')
-
-  // CLASE 3 · Manipular el DOM con refs
   const formularioRef = useRef(null)
 
-  // Un solo manejador para todos los campos: usa el atributo "name" del input.
   function handleChange(e) {
     const { name, value, type, checked } = e.target
-    // Se crea un objeto NUEVO copiando el anterior (nunca valores[name] = value).
     setValores({ ...valores, [name]: type === 'checkbox' ? checked : value })
     if (errores[name]) setErrores({ ...errores, [name]: undefined })
   }
 
   async function handleSubmit(e) {
-    e.preventDefault() // evita que el navegador recargue la página
+    e.preventDefault()
 
     const nuevosErrores = validar(valores)
     setErrores(nuevosErrores)
 
     const primerCampoConError = Object.keys(nuevosErrores)[0]
     if (primerCampoConError) {
-      // El ref da acceso al <form> real del DOM para llevar el foco al campo con error.
       formularioRef.current.elements[primerCampoConError].focus()
       return
     }
@@ -79,12 +67,18 @@ function FormularioContacto() {
 
   if (estado === 'enviado') {
     return (
-      <div className="alert alert-success mb-0" role="status">
-        <h2 className="h5">¡Gracias, {valores.nombre}!</h2>
-        <p>Recibimos tu mensaje y te vamos a responder a {valores.email}.</p>
-        <Boton variante="success" onClick={handleNuevoMensaje}>
+      <div className="alert border-0 shadow-sm p-4 text-center mb-0" style={{ backgroundColor: 'rgba(181, 134, 90, 0.1)' }} role="status">
+        <span style={{ fontSize: '2.5rem' }}>✨</span>
+        <h2 className="h5 fw-bold mt-2" style={{ color: '#3E100F' }}>¡Gracias, {valores.nombre}!</h2>
+        <p className="text-secondary small mb-3">Recibimos tu mensaje y te vamos a responder a la brevedad a <strong>{valores.email}</strong>.</p>
+        <button 
+          type="button" 
+          className="btn px-4 py-2 text-white fw-semibold rounded-pill shadow-sm"
+          style={{ backgroundColor: '#3E100F', border: 'none' }}
+          onClick={handleNuevoMensaje}
+        >
           Enviar otro mensaje
-        </Boton>
+        </button>
       </div>
     )
   }
@@ -93,43 +87,57 @@ function FormularioContacto() {
 
   return (
     <form ref={formularioRef} onSubmit={handleSubmit} noValidate>
+      
+      {/* Campo Nombre */}
       <div className="mb-3">
-        <label htmlFor="nombre" className="form-label">
+        <label htmlFor="nombre" className="form-label fw-semibold small" style={{ color: '#3E100F' }}>
           Nombre
         </label>
         <input
           id="nombre"
           name="nombre"
           type="text"
-          className={`form-control ${errores.nombre ? 'is-invalid' : ''}`}
+          className={`form-control shadow-none ${errores.nombre ? 'is-invalid' : ''}`}
+          style={{ borderColor: errores.nombre ? undefined : '#dee2e6' }}
           value={valores.nombre}
           onChange={handleChange}
           disabled={enviando}
+          placeholder="Tu nombre completo"
         />
         {errores.nombre && <div className="invalid-feedback">{errores.nombre}</div>}
       </div>
 
+      {/* Campo Email */}
       <div className="mb-3">
-        <label htmlFor="email" className="form-label">
+        <label htmlFor="email" className="form-label fw-semibold small" style={{ color: '#3E100F' }}>
           Email
         </label>
         <input
           id="email"
           name="email"
           type="email"
-          className={`form-control ${errores.email ? 'is-invalid' : ''}`}
+          className={`form-control shadow-none ${errores.email ? 'is-invalid' : ''}`}
           value={valores.email}
           onChange={handleChange}
           disabled={enviando}
+          placeholder="tu@email.com"
         />
         {errores.email && <div className="invalid-feedback">{errores.email}</div>}
       </div>
 
+      {/* Campo Asunto */}
       <div className="mb-3">
-        <label htmlFor="asunto" className="form-label">
+        <label htmlFor="asunto" className="form-label fw-semibold small" style={{ color: '#3E100F' }}>
           Asunto
         </label>
-        <select id="asunto" name="asunto" className="form-select" value={valores.asunto} onChange={handleChange} disabled={enviando}>
+        <select 
+          id="asunto" 
+          name="asunto" 
+          className="form-select shadow-none" 
+          value={valores.asunto} 
+          onChange={handleChange} 
+          disabled={enviando}
+        >
           {ASUNTOS.map((asunto) => (
             <option key={asunto.valor} value={asunto.valor}>
               {asunto.texto}
@@ -138,8 +146,9 @@ function FormularioContacto() {
         </select>
       </div>
 
+      {/* Campo Mensaje */}
       <div className="mb-3">
-        <label htmlFor="mensaje" className="form-label">
+        <label htmlFor="mensaje" className="form-label fw-semibold small" style={{ color: '#3E100F' }}>
           Mensaje
         </label>
         <textarea
@@ -147,43 +156,52 @@ function FormularioContacto() {
           name="mensaje"
           rows="4"
           maxLength={MAXIMO_MENSAJE}
-          className={`form-control ${errores.mensaje ? 'is-invalid' : ''}`}
+          className={`form-control shadow-none ${errores.mensaje ? 'is-invalid' : ''}`}
           value={valores.mensaje}
           onChange={handleChange}
           disabled={enviando}
+          placeholder="Escribinos tu consulta..."
         ></textarea>
         {errores.mensaje && <div className="invalid-feedback">{errores.mensaje}</div>}
-        {/* Dato derivado: el contador se calcula, no se guarda */}
-        <div className="form-text text-end">
+        <div className="form-text text-end text-muted small">
           {valores.mensaje.length}/{MAXIMO_MENSAJE}
         </div>
       </div>
 
+      {/* Checkbox Novedades */}
       <div className="form-check mb-4">
         <input
           id="aceptaNovedades"
           name="aceptaNovedades"
           type="checkbox"
-          className="form-check-input"
+          className="form-check-input shadow-none"
           checked={valores.aceptaNovedades}
           onChange={handleChange}
           disabled={enviando}
+          style={{ cursor: 'pointer' }}
         />
-        <label htmlFor="aceptaNovedades" className="form-check-label">
-          Quiero recibir novedades y promociones
+        <label htmlFor="aceptaNovedades" className="form-check-label text-secondary small" style={{ cursor: 'pointer' }}>
+          Quiero recibir novedades y promociones exclusivas
         </label>
       </div>
 
-      <Boton type="submit" variante="dark" className="w-100" disabled={enviando}>
+      {/* Botón de Enviar personalizado con el color borravino */}
+      <button
+        type="submit"
+        className="btn w-100 py-2 text-white fw-semibold shadow-sm rounded-2 transition-all"
+        style={{ backgroundColor: '#3E100F', border: 'none' }}
+        disabled={enviando}
+      >
         {enviando ? (
           <>
             <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-            Enviando...
+            Enviando consulta...
           </>
         ) : (
           'Enviar mensaje'
         )}
-      </Boton>
+      </button>
+
     </form>
   )
 }

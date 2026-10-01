@@ -56,7 +56,6 @@ function Hero() {
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
         marginRight: 'calc(-50vw + 50%)',
-        marginTop: '-1.5rem' // Cancela el espacio blanco superior del main
       }}
     >
       <div 

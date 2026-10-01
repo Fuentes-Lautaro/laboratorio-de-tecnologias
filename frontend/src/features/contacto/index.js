@@ -1,1 +1,1 @@
-export { default as ContactoPage } from './pages/ContactoPage'
+export { default as ContactoPage} from './pages/ContactoPage'

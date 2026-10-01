@@ -1,21 +1,21 @@
 import { createBrowserRouter } from 'react-router'
-import LayoutPublico from './shared/layout/LayoutPublico'
 import Spinner from './shared/components/Spinner'
-import { HomePage } from './features/home'
-import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
-import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
-import { NosotrosPage } from './features/nosotros'
-import { SuscripcionesPage } from './features/suscripciones'
-import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
+import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
+import LayoutPublico from './shared/layout/LayoutPublico'
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
-import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
-import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
-import { EventosPage } from './features/eventos/pages/EventosPage';
-import { ContactoPage } from './features/contacto/pages/ContactoPage'
-import { ClientesPagePrivada } from './features/clientes/pages/ClientesPagePrivada';
-import ProductosPagePrivada from './features/productos'
+import { HomePage } from './features/home'
+import { CatalogoPage } from './features/catalogo'
+import { DetalleProductoPage } from './features/catalogo'
+import { NosotrosPage } from './features/nosotros'
+import { SuscripcionesPage } from './features/suscripciones'
+import { FlujoSuscripcionPage } from './features/suscripciones'
+import { ContactoPage } from './features/contacto';
+import { EventosPage } from './features/eventos';
+import { ClientesPagePrivada } from './features/clientes';
+import { ProductosPagePrivada } from './features/productos'
+import { EventosPagePrivada } from './features/eventos';
 
 
 
