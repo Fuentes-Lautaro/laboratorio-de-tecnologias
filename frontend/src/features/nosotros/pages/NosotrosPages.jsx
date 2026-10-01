@@ -4,11 +4,20 @@ function NostrosPages() {
     return (
         <div className="nosotros-main">
 
-                <section className="nosotros-hero">
-                    <span className="subtitulo-seccion">NUESTRA HISTORIA</span>
-                    <h1>Pasión por el bienestar y el vino de autor</h1>
-                    <p>Un negocio familiar nacido con el compromiso de crear experiencias auténticas y memorables.</p>
-                </section>
+            <div className="text-center py-5 max-w-2xl mx-auto">
+                <span 
+                    className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
+                    style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', letterSpacing: '1px' }}
+                >
+                    Pasión por el bienestar y el vino de autor
+                </span>
+                <h1 className="display-5 fw-bold mb-1" style={{ color: '#3E100F' }}>
+                    Nuestra Historia
+                </h1>
+                <p className="text-secondary lead fs-6">
+                    Un negocio familiar nacido con el compromiso de crear experiencias auténticas y memorables.
+                </p>
+            </div>
 
                 <section className="nosotros-contenedor">
 

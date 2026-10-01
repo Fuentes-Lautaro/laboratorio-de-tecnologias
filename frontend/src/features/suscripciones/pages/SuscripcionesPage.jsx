@@ -31,13 +31,20 @@ export function SuscripcionesPage() {
 
   return (
     <section className="container py-5 text-center">
-      <div className="encabezado-suscripciones">
-        <h1 className="titulo-principal">Suscripciones Mensuales</h1>
-        <div className="linea-decorativa"></div>
-        <p className="descripcion-encabezado">
-          Sumate a nuestro club y recibí mes a mes una selección exclusiva, directo en la puerta de tu casa.
-        </p>
-      </div>
+      <div className="text-center mb-3 max-w-2xl mx-auto">
+        <span 
+          className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
+          style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', letterSpacing: '1px' }}
+        >
+          Nuestra comunidad
+        </span>
+          <h1 className="display-5 fw-bold mb-3" style={{ color: '#3E100F' }}>
+            Suscripciones
+          </h1>
+          <p className="text-secondary lead fs-6">
+            Descubrí nuestros planes y obtene beneficios exclusivos.
+          </p>
+        </div>
 
       {/* MENSAJE DE ERROR */}
       {error && (

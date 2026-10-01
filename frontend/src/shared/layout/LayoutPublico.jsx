@@ -1,6 +1,8 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import Navbar from './Navbar'
 import Footer from './Footer'
+
+const MARCA = 'Maria Balbina'
 
 const ENLACES = [
   { id: 1, texto: 'Inicio', destino: '/' },
@@ -11,16 +13,24 @@ const ENLACES = [
   { id: 6, texto: 'Eventos', destino: '/eventos' },
 ]
 
+const SRCFOOTER =[
+    { id: 'instagram', ruta: 'https://www.instagram.com/', img:'/img/redes/logo-instagram.png'},
+    { id: 'tiktok', ruta: 'https://www.tiktok.com/', img:'/img/redes/logo-tiktok.png'},
+    { id: 'whatsapp', ruta: 'https://wa.me/qr/H7FKDEGC7A7YD1', img:'/img/redes/logo-whatsapp.png'},
+]
+
 function LayoutPublico(){
     return(
         <div className="d-flex flex-column min-vh-100">
             <Navbar enlaces={ENLACES} />
 
-            <main className="container-fluid px-3 px-lg-5 py-4 flex-grow-1">
+            <main className="container-fluid px-3 px-lg-5 flex-grow-1">
                 <Outlet context />
             </main>
 
-            <Footer/>
+            <Footer marca={MARCA} enlaces={ENLACES} srcfooter={SRCFOOTER}/>
+
+            <ScrollRestoration />
         </div>
     )
 }

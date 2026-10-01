@@ -14,7 +14,7 @@
 }
 
 .logo-container {
-    height: 60px; 
+    height: 100px; 
     display: flex;
     align-items: center;
 }
@@ -61,6 +61,10 @@
     top: 0;
     z-index: 1020;
     background-color: var(--paneles);
+}
+
+body {
+  overflow-x: hidden;
 }
 
 @media (min-width: 992px) {
@@ -183,12 +187,16 @@ footer {
 }
 
 .footer-links {
+    color: var(--fondos-principales);
     display: flex;
     width: 100%;
-    justify-content: space-evenly;
     padding: 0;
     margin: 0;
     list-style: none;
+}
+
+.footer-link-custom.active{
+    color: var(--detalles) !important;
 }
 
 .linea-divisoria {
@@ -210,6 +218,20 @@ footer {
     text-decoration: underline;
 }
 
+.footer-redes {
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-redes img {
+    width: 35px; 
+    height: 35px;
+    object-fit: contain;
+}
 
 /*--------------------------------SECCIÓN NOSOTROS--------------------------------*/
 .nosotros-main {
@@ -254,7 +276,7 @@ footer {
 .nosotros-contenedor {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 25px 0;
+    padding: 0px 25px 0;
     display: flex;
     flex-direction: column;
     gap: 75px;
