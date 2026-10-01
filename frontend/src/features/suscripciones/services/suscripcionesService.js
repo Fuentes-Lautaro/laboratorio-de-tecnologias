@@ -25,6 +25,16 @@ export const getPlanPorNombre = async (nombre) => {
   return planEncontrado;
 };
 
+export async function getSuscripciones() {
+  const respuesta = await fetch(`${URL_BASE}/suscripciones.json`);
+  
+  if (!respuesta.ok) {
+    throw new Error('No se pudieron obtener las suscripciones');
+  }
+  
+  return respuesta.json();
+}
+
 export async function getSuscripcionActivaPorDni(clienteDni) {
   try {
     const respuesta = await fetch(`${URL_BASE}/suscripciones.json`);

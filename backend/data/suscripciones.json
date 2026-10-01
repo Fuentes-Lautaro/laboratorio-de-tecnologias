@@ -1,11 +1,65 @@
 [
   {
-    "id": 1001,
-    "clienteDni": "12345678",
-    "planId": "Esencial",
-    "fechaPago": "2026-09-27",
-    "metodoPago": "Mercado Pago",
-    "monto": 15000,
-    "estado": "Activa"
+    "id": 1,
+    "dni_cliente": "87654321",
+    "plan_id": 1,
+    "metodo_pago": "Tarjeta de Crédito",
+    "fecha_pago": "2026-10-01",
+    "monto": 25000,
+    "activa": true
+  },
+  {
+    "id": 2,
+    "dni_cliente": "23456789",
+    "plan_id": 2,
+    "metodo_pago": "Mercado Pago",
+    "fecha_pago": "2026-10-02",
+    "monto": 40000,
+    "activa": true
+  },
+  {
+    "id": 3,
+    "dni_cliente": "34567890",
+    "plan_id": 3,
+    "metodo_pago": "Transferencia Bancaria",
+    "fecha_pago": "2026-09-28",
+    "monto": 70000,
+    "activa": true
+  },
+  {
+    "id": 4,
+    "dni_cliente": "45678901",
+    "plan_id": 1,
+    "metodo_pago": "Tarjeta de Débito",
+    "fecha_pago": "2026-09-30",
+    "monto": 25000,
+    "activa": true
+  },
+  {
+    "id": 5,
+    "dni_cliente": "12345678",
+    "plan_id": 2,
+    "metodo_pago": "Efectivo",
+    "fecha_pago": "2026-07-15",
+    "monto": 40000,
+    "activa": false
+  },
+  {
+    "id": 6,
+    "dni_cliente": "11223344",
+    "plan_id": 3,
+    "metodo_pago": "Mercado Pago",
+    "fecha_pago": "2026-10-01",
+    "monto": 70000,
+    "activa": true
+  },
+  {
+    "id": 7,
+    "dni_cliente": "55667788",
+    "plan_id": 1,
+    "metodo_pago": "Tarjeta de Crédito",
+    "fecha_pago": "2026-08-10",
+    "monto": 25000,
+    "activa": false
   }
 ]
