@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nombre": "Malbec",
+        "descripcion": "Ideal para quienes desean iniciarse en el mundo del vino y descubrir nuevas etiquetas cada mes.",
+        "cantidad_vinos": 2,
+        "valor": 25000,
+        "productos_proximo_mes": ["VIN-001", "VIN-012"]
+    },
+    {
+        "id": 2,
+        "nombre": "Malbec-Rosado",
+        "descripcion": "La opción perfecta para paladares curiosos que buscan dar un salto de calidad y disfrutar de mayor variedad.",
+        "cantidad_vinos": 3,
+        "valor": 40000,
+        "productos_proximo_mes": ["VIN-005", "VIN-007", "VIN-017"]
+    },
+    {
+        "id": 3,
+        "nombre": "Reserva Especial",
+        "descripcion": "La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.",
+        "cantidad_vinos": 5,
+        "valor": 70000,
+        "productos_proximo_mes": ["VIN-002", "VIN-003", "VIN-010", "VIN-011", "VIN-018"]
+    }
+]

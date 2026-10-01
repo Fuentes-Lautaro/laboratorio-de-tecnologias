@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPlanes } from '../services/suscripcionesService';
 import { TarjetaPlan } from '../components/TarjetaPlan';
@@ -11,7 +11,6 @@ export function SuscripcionesPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Pedimos los planes de suscripción
     getPlanes()
       .then((datos) => {
         setPlanes(datos);
@@ -23,10 +22,8 @@ export function SuscripcionesPage() {
       });
   }, []);
 
-  // Función que se ejecuta al presionar "Suscribirme" en cualquier tarjeta
   const manejarSuscripcion = (nombrePlan) => {
-    // Redirige a la página de detalle/configuración del plan elegido
-    navigate(`/planesSuscripciones/${nombrePlan.toLowerCase()}`);
+    navigate(`/suscripciones/${encodeURIComponent(nombrePlan)}`);
   };
 
   return (
@@ -46,25 +43,23 @@ export function SuscripcionesPage() {
           </p>
         </div>
 
-      {/* MENSAJE DE ERROR */}
       {error && (
         <div className="alert alert-danger my-4" role="alert">
           {error}
         </div>
       )}
 
-        {/* MOSTRAR TARJETAS EN CUADRÍCULA CUANDO TERMINA DE CARGAR */}
         {!cargando && !error && (
         <div className="tablas-planes-contenedor">
-            {planes.map((planItem, index) => (
+            {planes.map((planItem) => (
             <TarjetaPlan 
-                key={index} 
+                key={planItem.id}
                 plan={planItem} 
                 onSuscribir={manejarSuscripcion} 
             />
             ))}
-  </div>
-)}
+        </div>
+      )}
     </section>
   );
 }

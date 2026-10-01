@@ -16,7 +16,7 @@ import { EventosPage } from './features/eventos';
 import { ClientesPagePrivada } from './features/clientes';
 import { ProductosPagePrivada } from './features/productos'
 import { EventosPagePrivada } from './features/eventos';
-import SuscricionesPagePrivada from './features/suscripciones/pages/SuscripcionesPagePrivada';
+import { PlanesPagePrivada } from './features/suscripciones';
 
 
 
@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
       { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
-      { path: 'planes', element: <SuscricionesPagePrivada /> },
+      { path: 'planes', element: <PlanesPagePrivada /> },
     ],
   },
 

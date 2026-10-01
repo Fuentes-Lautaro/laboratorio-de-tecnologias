@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-// Importaciones del módulo Auth
 import { 
   CardIngresoEmail, 
   CardIngresoPassword, 
@@ -10,33 +9,27 @@ import {
   iniciarSesion 
 } from '../../auth';
 
-// Importaciones de Suscripciones (Rutas corregidas con ../)
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
-import { getSuscripcionActivaPorDni, getPlanesPorNombre } from '../services/suscripcionesService';
+import { getSuscripcionActivaPorDni, getPlanPorNombre } from '../services/suscripcionesService';
 
 export function FlujoSuscripcionPage() {
   const { nombre } = useParams();
   const navigate = useNavigate();
 
-  // Estados del flujo: 'EMAIL' | 'PASSWORD' | 'REGISTRO' | 'PAGO' | 'SUSCRIPTO'
   const [paso, setPaso] = useState('EMAIL');
-  
-  // Estados de datos
   const [email, setEmail] = useState('');
   const [clienteLogueado, setClienteLogueado] = useState(null);
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
   const [suscripcionExistente, setSuscripcionExistente] = useState(null);
 
-  // Estados de interfaz
   const [cargando, setCargando] = useState(false);
   const [errorBackend, setErrorBackend] = useState('');
 
-  // 1. Cargar el plan dinámicamente desde la URL
   useEffect(() => {
     async function cargarPlan() {
       if (!nombre) return;
       try {
-        const plan = await getPlanesPorNombre(nombre);
+        const plan = await getPlanPorNombre(nombre);
         setPlanSeleccionado(plan);
       } catch (err) {
         console.error('Error al cargar datos del plan:', err);
@@ -45,7 +38,6 @@ export function FlujoSuscripcionPage() {
     cargarPlan();
   }, [nombre]);
 
-  // PASO 1: Verificar si el mail existe en clientes.json
   const handleVerificarEmail = async (emailIngresado) => {
     setCargando(true);
     setErrorBackend('');
@@ -65,17 +57,14 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 2A: Login y consulta de suscripción activa por DNI
   const handleLogin = async (clave) => {
     setCargando(true);
     setErrorBackend('');
 
     try {
-      // Autenticar credenciales
       const sesion = await iniciarSesion(email, clave);
       setClienteLogueado(sesion);
 
-      // Verificar en suscripciones.json si ya tiene suscripción activa
       const subActiva = await getSuscripcionActivaPorDni(sesion.dni);
 
       if (subActiva) {
@@ -91,7 +80,6 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 2B: Registro de cliente nuevo
   const handleRegistro = async (datosRegistro) => {
     setCargando(true);
     setErrorBackend('');
@@ -99,7 +87,6 @@ export function FlujoSuscripcionPage() {
     try {
       const nuevoCliente = { ...datosRegistro, email };
       setClienteLogueado(nuevoCliente);
-      // Un usuario registrado recién no tiene suscripción previa, pasa a pagar directamente
       setPaso('PAGO');
     } catch (error) {
       setErrorBackend(error.message || 'Error al completar el registro.');
@@ -108,8 +95,7 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 3: Confirmar Pago (Simulación de 1.5 segundos sin API externa)
-  const handleConfirmarPago = async (datosPago) => {
+  const handleConfirmarPago = async () => {
     setCargando(true);
     setErrorBackend('');
 
@@ -118,7 +104,7 @@ export function FlujoSuscripcionPage() {
 
       alert(
         `¡Pago procesado con éxito!\n\n` +
-        `Plan: ${planSeleccionado?.Nombre || 'Suscripción'}\n` +
+        `Plan: ${planSeleccionado?.nombre || 'Suscripción'}\n` +
         `Monto: $${planSeleccionado?.valor?.toLocaleString('es-AR')}\n` +
         `Titular: ${clienteLogueado?.nombre || email}`
       );
@@ -131,22 +117,19 @@ export function FlujoSuscripcionPage() {
     <section className="container py-5 d-flex justify-content-center">
       <div className="card-flow-contenedor" style={{ maxWidth: '450px', width: '100%' }}>
         
-        {/* Cabecera dinámica */}
         <div className="resumen-mini-plan mb-4 text-center">
           <span className="subtitulo-tag">Plan Seleccionado</span>
           <h2 style={{ color: 'var(--titulos, #4a1525)' }}>
-            {planSeleccionado ? planSeleccionado.Nombre : decodeURIComponent(nombre || 'Suscripción')}
+            {planSeleccionado ? planSeleccionado.nombre : decodeURIComponent(nombre || 'Suscripción')}
           </h2>
         </div>
 
-        {/* Notificaciones de error */}
         {errorBackend && (
           <div className="alert alert-danger py-2 mb-3 text-center" role="alert">
             {errorBackend}
           </div>
         )}
 
-        {/* 1. Ingreso de Correo */}
         {paso === 'EMAIL' && (
           <CardIngresoEmail
             onVerificarEmail={handleVerificarEmail}
@@ -154,7 +137,6 @@ export function FlujoSuscripcionPage() {
           />
         )}
 
-        {/* 2A. Ingreso de Contraseña */}
         {paso === 'PASSWORD' && (
           <CardIngresoPassword
             email={email}
@@ -165,7 +147,6 @@ export function FlujoSuscripcionPage() {
           />
         )}
 
-        {/* 2B. Formulario de Registro */}
         {paso === 'REGISTRO' && (
           <CardRegistro
             email={email}
@@ -175,7 +156,6 @@ export function FlujoSuscripcionPage() {
           />
         )}
 
-        {/* 3A. Estado: Ya posee suscripción activa */}
         {paso === 'SUSCRIPTO' && (
           <div className="card shadow-sm border-0 p-4 text-center">
             <h4 className="text-warning fw-bold mb-3">¡Ya tenés una suscripción!</h4>
@@ -193,7 +173,6 @@ export function FlujoSuscripcionPage() {
           </div>
         )}
 
-        {/* 3B. Estado: Formulario de Pago Simulado */}
         {paso === 'PAGO' && (
           <CardPagarSuscripcion
             plan={planSeleccionado}

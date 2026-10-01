@@ -233,6 +233,13 @@ footer {
     object-fit: contain;
 }
 
+.tablas-planes-contenedor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: stretch; /* Fuerza a que todas midan exactamente lo mismo de alto */
+}
+
 /*--------------------------------SECCIÓN NOSOTROS--------------------------------*/
 .nosotros-main {
     width: 100%;

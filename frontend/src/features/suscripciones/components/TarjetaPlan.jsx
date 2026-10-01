@@ -1,38 +1,75 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getProductos } from '../../productos';
 
-export function TarjetaPlan({ plan, onVerDetalle }) {
-
+export function TarjetaPlan({ plan }) {
   const navigate = useNavigate();
+  const [productosDelPlan, setProductosDelPlan] = useState([]);
 
-  const { Nombre, CantidadVinos, tipos, valor } = plan;
+  // Desestructuramos los campos actualizados del JSON
+  const { nombre, descripcion, cantidad_vinos, valor, productos_proximo_mes } = plan;
+
+  // Cargamos los productos y filtramos los que corresponden a este plan
+  useEffect(() => {
+    async function cargarVinosDelPlan() {
+      try {
+        const todosLosProductos = await getProductos();
+        const filtrados = todosLosProductos.filter((p) => 
+          productos_proximo_mes.includes(p.id)
+        );
+        setProductosDelPlan(filtrados);
+      } catch (error) {
+        console.error('Error al cargar los vinos del plan:', error);
+      }
+    }
+
+    if (productos_proximo_mes && productos_proximo_mes.length > 0) {
+      cargarVinosDelPlan();
+    }
+  }, [productos_proximo_mes]);
+
   const handleSuscribirme = () => {
-    // Redirige a /suscripciones/NombreDelPlan (ej: /planesSuscripciones/Esencial)
-    navigate(`/suscripciones/${encodeURIComponent(plan.Nombre)}`);
+    navigate(`/suscripciones/${encodeURIComponent(nombre)}`);
   };
 
   return (
     <table className="tabla-plan">
       <thead>
         <tr>
-          <th>PLAN {Nombre?.toUpperCase()}</th>
+          <th>PLAN {nombre?.toUpperCase()}</th>
         </tr>
       </thead>
 
       <tbody>
-        {/* Cantidad de vinos */}
+        {/* Descripción del plan */}
         <tr>
-          <td className="cantidad">
-            {CantidadVinos} {CantidadVinos === 1 ? 'vino mensual' : 'vinos mensuales'}
+          <td className="text-muted small py-2">
+            {descripcion}
           </td>
         </tr>
 
-        {/* Tipos disponibles */}
+        {/* Cantidad de vinos mensual */}
         <tr>
-          <td>
-            <strong>Tipos disponibles:</strong>
-            <br />
-            {tipos && tipos.length > 0 ? tipos.join(', ') : 'No especificado'}
+          <td className="cantidad">
+            📦 {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
+          </td>
+        </tr>
+
+        {/* Vinos incluidos para el próximo mes */}
+        <tr>
+          <td className="text-start p-3 bg-light">
+            <strong className="d-block mb-1">Vinos del próximo mes:</strong>
+            <ul className="mb-0 ps-3 small">
+              {productosDelPlan.length > 0 ? (
+                productosDelPlan.map((producto) => (
+                  <li key={producto.id}>
+                    {producto.marca} - {producto.varietal} - {producto.medida}
+                  </li>
+                ))
+              ) : (
+                <li>Próximamente más novedades</li>
+              )}
+            </ul>
           </td>
         </tr>
 
