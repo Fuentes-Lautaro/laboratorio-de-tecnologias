@@ -58,11 +58,6 @@ export function NavGestor({ sesion }) {
           <span>Suscripciones</span>
         </NavLink>
 
-        <NavLink to="/gestion/compras" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>🛍️</span>
-          <span>Compras</span>
-        </NavLink>
-
         {/* Separador de Sección */}
         <div 
           className="mt-3 mt-md-4 mb-2 px-3 fw-semibold text-uppercase" 
