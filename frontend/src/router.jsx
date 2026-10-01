@@ -13,11 +13,8 @@ import LayoutCM from './shared/layout/LayoutCM';
 import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
 import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
 import { EventosPage } from './features/eventos/pages/EventosPage';
-<<<<<<< HEAD
 import { ClientesPagePrivada } from './features/Clientes/pages/ClientesPagePrivada';
-=======
 import ProductosPagePrivada from './features/productos'
->>>>>>> seccion-productos,-layout-privado
 
 
 
@@ -52,7 +49,6 @@ export const router = createBrowserRouter([
     children: [
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
-      { path: 'productos', element: <h2>Sección Productos</h2> },
       { path: 'clientes', element: <h2>Sección Clientes</h2> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
