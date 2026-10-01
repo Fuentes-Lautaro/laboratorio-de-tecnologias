@@ -1,0 +1,1 @@
+export {default as EmpleadosPagePrivada} from './pages/EmpleadosPagePrivada'
