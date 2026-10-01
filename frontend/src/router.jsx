@@ -1,20 +1,21 @@
 import { createBrowserRouter } from 'react-router'
-import LayoutPublico from './shared/layout/LayoutPublico'
 import Spinner from './shared/components/Spinner'
-import { HomePage } from './features/home'
-import { CatalogoPage } from './features/catalogo'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
-import DetalleProductoPage from './features/catalogo/pages/DetalleProductoPage'
-import { NosotrosPages } from './features/nosotros'
-import { SuscripcionesPage } from './features/suscripciones'
-import { FlujoSuscripcionPage } from './features/suscripciones/pages/FlujoSuscripcionPage'
+import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
+import LayoutPublico from './shared/layout/LayoutPublico'
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
-import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
-import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
-import { EventosPage } from './features/eventos/pages/EventosPage';
-import { ClientesPagePrivada } from './features/Clientes/pages/ClientesPagePrivada';
-import ProductosPagePrivada from './features/productos'
+import { HomePage } from './features/home'
+import { CatalogoPage } from './features/catalogo'
+import { DetalleProductoPage } from './features/catalogo'
+import { NosotrosPage } from './features/nosotros'
+import { SuscripcionesPage } from './features/suscripciones'
+import { FlujoSuscripcionPage } from './features/suscripciones'
+import { ContactoPage } from './features/contacto';
+import { EventosPage } from './features/eventos';
+import { ClientesPagePrivada } from './features/clientes';
+import { ProductosPagePrivada } from './features/productos'
+import { EventosPagePrivada } from './features/eventos';
 
 
 
@@ -28,11 +29,12 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> }, // "/" exacto
       { path: 'catalogo', element: <CatalogoPage /> }, // "/catalogo"
       { path: 'catalogo/:id', element: <DetalleProductoPage /> }, // "/catalogo"
-      { path: '/nosotros', element: <NosotrosPages /> },
-      { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
+      { path: 'nosotros', element: <NosotrosPage /> },
+      { path: 'contacto', element: <ContactoPage /> },
       { path: 'suscripciones', element: <SuscripcionesPage /> }, // "/suscripciones"
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
       { path: 'eventos', element: <EventosPage /> }, // "/eventos"
+      { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
     ],
   },
   {
@@ -49,7 +51,6 @@ export const router = createBrowserRouter([
     children: [
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
-      { path: 'clientes', element: <h2>Sección Clientes</h2> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
       { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },

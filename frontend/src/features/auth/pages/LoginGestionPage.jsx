@@ -1,5 +1,5 @@
 import { useNavigate, Link } from 'react-router-dom';
-import FormularioLogin from '../componentes/FormularioLogin';
+import FormularioLogin from '../components/FormularioLogin';
 import { iniciarSesionEmpleado } from '../services/authService';
 
 export function LoginGestionPage() {

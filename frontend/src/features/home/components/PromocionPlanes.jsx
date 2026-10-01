@@ -2,8 +2,7 @@ import React from 'react';
 
 function PromocionPlanes() {
     return (
-        <section className="planes-seccion py-5" style={{ 
-            backgroundColor: 'var(--fondos-principales, #F9EBE0)', 
+        <section className="planes-seccion bg-light py-5" style={{ 
             width: '100vw',
             marginLeft: 'calc(-50vw + 50%)',
             marginRight: 'calc(-50vw + 50%)',

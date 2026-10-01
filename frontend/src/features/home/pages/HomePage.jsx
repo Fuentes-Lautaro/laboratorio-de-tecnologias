@@ -1,8 +1,8 @@
 import { useOutletContext } from 'react-router'
 import Spinner from '../../../shared/components/Spinner'
-import Hero from '../componentes/Hero'
-import Bienvenida from '../componentes/Bienvenida'
-import PromocionPlanes from '../componentes/PromocionPlanes'
+import Hero from '../components/Hero'
+import Bienvenida from '../components/Bienvenida'
+import PromocionPlanes from '../components/PromocionPlanes'
 function HomePage() {
 
   return (

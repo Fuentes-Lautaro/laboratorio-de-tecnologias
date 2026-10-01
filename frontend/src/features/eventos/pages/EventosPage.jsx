@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import EventoCard from '../componentes/EventoCard';
+import EventoCard from '../components/EventoCard';
 import { getEventos } from '../services/eventoService'; 
 
 export function EventosPage() {
