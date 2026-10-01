@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { obtenerClientes, crearCliente, actualizarCliente } from '../services/clienteService';
+import { getClientes, crearCliente, actualizarCliente } from '../services/clienteService';
 
 export function ClientesPagePrivada() {
   const [clientes, setClientes] = useState([]);
@@ -18,7 +18,7 @@ export function ClientesPagePrivada() {
   };
   const [formData, setFormData] = useState(estadoInicialForm);
   useEffect(() => {
-    obtenerClientes()
+    getClientes()
       .then(datos => {
         setClientes(datos);
         setCargando(false);

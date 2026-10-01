@@ -17,6 +17,7 @@ import { ClientesPagePrivada } from './features/clientes';
 import { ProductosPagePrivada } from './features/productos'
 import { EventosPagePrivada } from './features/eventos';
 import { PlanesPagePrivada } from './features/suscripciones';
+import { SuscripcionesPagePrivada } from './features/suscripciones'
 
 
 
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
+      { path: 'suscripciones', element: <SuscripcionesPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
       { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
       { path: 'planes', element: <PlanesPagePrivada /> },

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { getPlanes } from '../services/suscripcionesService'; // Ajusta la ruta a tu servicio
-import { getProductoPorId } from '../../productos'; // Ajusta la ruta según tu estructura
 
 export function PlanesPagePrivada() {
   const [planes, setPlanes] = useState([]);
