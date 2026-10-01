@@ -110,14 +110,13 @@ export function NavGestor({ sesion }) {
 
       {/* Media query para responsive en mobile y escritorio */}
       <style>{`
-        .sidebar-gestor {
-          width: 100%;
-        }
         @media (min-width: 768px) {
           .sidebar-gestor {
             width: 260px !important;
             min-width: 260px;
-            min-height: 100vh;
+            height: 100vh; /* Forzamos el alto exacto de la pantalla */
+            position: sticky; /* Mantiene el contenedor fijo */
+            top: 0; /* Lo ancla al borde superior */
           }
         }
       `}</style>

@@ -86,6 +86,7 @@ export function NavCM({ sesion }) {
             width: 260px !important;
             min-width: 260px;
             min-height: 100vh;
+            position: sticky; /* Mantiene el contenedor fijo */
           }
         }
       `}</style>
