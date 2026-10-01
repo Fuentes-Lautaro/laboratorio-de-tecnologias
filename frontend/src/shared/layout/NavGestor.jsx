@@ -57,7 +57,7 @@ export function NavGestor({ sesion }) {
           <span style={{ fontSize: '1.1rem' }}>💳</span>
           <span>Suscripciones</span>
         </NavLink>
-
+        
         {/* Separador de Sección */}
         <div 
           className="mt-3 mt-md-4 mb-2 px-3 fw-semibold text-uppercase" 
