@@ -14,7 +14,7 @@
         "valor": 50000
     },
     {
-        "Nombre": "Premiun",
+        "Nombre": "Premium",
         "Descripcion": "La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.",
         "CantidadVinos": 5,
         "tipos": ["Tinto", "Blanco", "Rosado", "Espumante"],

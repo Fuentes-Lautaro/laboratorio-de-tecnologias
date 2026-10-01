@@ -2,7 +2,7 @@ import { useOutletContext } from 'react-router'
 import GrillaProductos from '../components/GrillaProductos'
 import FiltroDesplegable from '../components/FiltroDesplegable'
 import { useFiltros } from '../hooks/useFiltros'
-import { obtenerProductos } from '../services/catalogoServices'
+import { getProductos } from '../../productos/services/productosServices'
 import { useFetch } from '../../../shared/hooks/useFetch'
 import Boton from '../../../shared/components/Boton'
 import Spinner from '../../../shared/components/Spinner'
@@ -10,7 +10,7 @@ import MensajeVacio from '../../../shared/components/MensajeVacio'
 
 function CatalogoPage() {
   const { agregarProducto } = useOutletContext()
-  const { datos: productos, cargando, error } = useFetch(obtenerProductos)
+  const { datos: productos, cargando, error } = useFetch(getProductos)
   const filtros = useFiltros(productos)
 
   if (cargando) return <Spinner texto="Cargando catálogo..." />
@@ -18,10 +18,20 @@ function CatalogoPage() {
   
   return (
     <>
-      <header className="mb-4">
-        <h1 className="h2 mb-1 titulo-catalogo b">Catálogo</h1>
-        <p className="text-body-secondary mb-0">Filtrá por marca, tipo, varietal, bodega y medida.</p>
-      </header>
+      <div className="text-center py-5 max-w-2xl mx-auto">
+        <span 
+          className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
+          style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', letterSpacing: '1px' }}
+        >
+          Nuestros productos
+        </span>
+        <h1 className="display-5 fw-bold mb-1" style={{ color: '#3E100F' }}>
+          Catalogo
+        </h1>
+        <p className="text-secondary lead fs-6">
+          Descubrí nuestros productos y senti el placer por el buen vino.
+        </p>
+      </div>
 
       <div className="row g-3">
         <aside className="col-lg-3 d-flex flex-column gap-1">

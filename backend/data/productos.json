@@ -10,7 +10,7 @@
         "bodega": "Trapiche",
         "varietal": "Malbec",
         "stock": 0,
-        "img": "/img/productos/trapiche-malbec-750.jpg",
+        "img": "/img/productos/trapiche-malbec-750.png",
         "descripcion": "Un vino de color rojo violáceo brillante, con aromas a frutos rojos frescos como ciruelas y cerezas, complementados con sutiles notas avainilladas. En boca es suave, redondo, de taninos amables y final frutal muy agradable."
     },
     {
@@ -24,7 +24,7 @@
         "bodega": "Rutini Wines",
         "varietal": "Cabernet Sauvignon",
         "stock": 20,
-        "img": "/img/productos/rutini-cabernet-750.jpg",
+        "img": "/img/productos/rutini-cabernet-750.png",
         "descripcion": "Complejo y elegante exponente de Valle de Uco. Despliega aromas a frutas negras maduras, especias como pimienta negra y notas tostadas aportadas por su crianza en roble. Posee una estructura firme, taninos sedosos y excelente potencial de guarda."
     },
     {
@@ -38,7 +38,7 @@
         "bodega": "Luigi Bosca",
         "varietal": "Pinot Noir",
         "stock": 15,
-        "img": "/img/productos/luigi-bosca-pinot-750.jpg",
+        "img": "/img/productos/luigi-bosca-pinot-750.png",
         "descripcion": "De color rojo rubí translúcido y brillante. Nariz muy expresiva con notas de cerezas, frambuesas y delicados dejos terrosos y florales. En boca se destaca por su frescura, sutileza, taninos delicados y gran fineza."
     },
     {
@@ -52,7 +52,7 @@
         "bodega": "Bodega Norton",
         "varietal": "Sauvignon Blanc",
         "stock": 30,
-        "img": "/img/productos/norton-sauvignon-750.jpg",
+        "img": "/img/productos/norton-sauvignon-750.png",
         "descripcion": "Un vino blanco vivaz y refrescante, con claros tonos verdosos. En nariz predominan notas cítricas de pomelo, lima y sutiles estallidos herbales. En boca ofrece una acidez equilibrada que aporta vivacidad y un final limpio y persistente."
     },
     {
@@ -66,7 +66,7 @@
         "bodega": "Catena Zapata",
         "varietal": "Malbec",
         "stock": 12,
-        "img": "/img/productos/catena-malbec-750.jpg",
+        "img": "/img/productos/catena-malbec-750.png",
         "descripcion": "Elaborado con uvas de viñedos de altura, ofrece una gran complejidad aromática de frutos negros maduros, notas de violetas, moca y especias dulces. De gran concentración en boca, taninos jugosos y una textura untuosa y sofisticada."
     },
     {
@@ -80,7 +80,7 @@
         "bodega": "Alamos",
         "varietal": "Torrontés",
         "stock": 25,
-        "img": "/img/productos/alamos-torrontes-750.jpg",
+        "img": "/img/productos/alamos-torrontes-750.png",
         "descripcion": "Fragante y sumamente aromático. Caracterizado por sus clásicas notas florales de azahar y jazmín, combinadas con toques cítricos y de frutas blancas de carozos. En boca es fresco, expresivo y con un paso armónico."
     },
     {
@@ -94,7 +94,7 @@
         "bodega": "Bodegas Salentein",
         "varietal": "Malbec Rosé",
         "stock": 18,
-        "img": "/img/productos/salentein-rose-750.jpg",
+        "img": "/img/productos/salentein-rose-750.png",
         "descripcion": "Un rosé elegante de color piel de cebolla brillante. Nariz delicada con aromas a frutillas, cerezas frescas y notas florales. En boca muestra una excelente acidez natural que le otorga frescura y un perfil vibrante."
     },
     {
@@ -108,7 +108,7 @@
         "bodega": "Luigi Bosca",
         "varietal": "Syrah",
         "stock": 28,
-        "img": "/img/productos/la-linda-syrah-750.jpg",
+        "img": "/img/productos/la-linda-syrah-750.png",
         "descripcion": "De color violáceo profundo e intenso. Presenta aromas especiados muy característicos, con notas de frutos negros, pimienta negra y tonos ahumados. En boca es concentrado, con taninos firmes y de gran personalidad."
     },
     {
@@ -122,7 +122,7 @@
         "bodega": "Trapiche",
         "varietal": "Chardonnay",
         "stock": 22,
-        "img": "/img/productos/trapiche-chardonnay-750.jpg",
+        "img": "/img/productos/trapiche-chardonnay-750.png",
         "descripcion": "Un blanco accesible y fresco, con aromas a manzana verde, pera y sutiles notas tropicales de ananá. En boca es untuoso pero equilibrado por una vivaz acidez que realza su perfil frutado."
     },
     {
@@ -136,7 +136,7 @@
         "bodega": "Rutini Wines",
         "varietal": "Chardonnay",
         "stock": 14,
-        "img": "/img/productos/rutini-chardonnay-750.jpg",
+        "img": "/img/productos/rutini-chardonnay-750.png",
         "descripcion": "De gran complejidad gracias a su paso parcial por barricas de roble. Combina notas de frutas maduras como ananá y durazno blanco con matices de vainilla y manteca. En boca es estructurado, elegante y cremoso."
     },
     {
@@ -150,7 +150,7 @@
         "bodega": "Catena Zapata",
         "varietal": "Chardonnay",
         "stock": 10,
-        "img": "/img/productos/catena-chardonnay-750.jpg",
+        "img": "/img/productos/catena-chardonnay-750.png",
         "descripcion": "Proveniente de viñedos de altura, ofrece una nariz cítrica punzante con notas de pera, manzana verde y notas minerales. Su paso por roble le aporta cuerpo, textura sedosa y un final largo y persistente."
     },
     {
@@ -164,7 +164,7 @@
         "bodega": "Alamos",
         "varietal": "Malbec",
         "stock": 35,
-        "img": "/img/productos/alamos-malbec-750.jpg",
+        "img": "/img/productos/alamos-malbec-750.png",
         "descripcion": "Vino estructurado y accesible que refleja la tipicidad del Malbec mendocino. Cuenta con notas de ciruelas maduras, moras y toques de chocolate. En boca tiene taninos redondos y un carácter amable."
     },
     {
@@ -178,7 +178,7 @@
         "bodega": "Bodegas Salentein",
         "varietal": "Cabernet Sauvignon",
         "stock": 16,
-        "img": "/img/productos/salentein-cabernet-750.jpg",
+        "img": "/img/productos/salentein-cabernet-750.png",
         "descripcion": "Con expresión típica de Valle de Uco, destaca notas de cassis, pimiento morrón asado y especias. En boca presenta buen cuerpo, taninos firmes y maduros, con un elegante final especiado."
     },
     {
@@ -192,7 +192,7 @@
         "bodega": "Bodega Norton",
         "varietal": "Merlot",
         "stock": 24,
-        "img": "/img/productos/norton-merlot-750.jpg",
+        "img": "/img/productos/norton-merlot-750.png",
         "descripcion": "Un tinto amigable y redondo. Ofrece aromas francos a frutos rojos maduros, ciruelas y sutiles notas de especias dulces. En boca se destaca por su paso amable, taninos suaves y gran versatilidad gastronómica."
     },
     {
@@ -206,7 +206,7 @@
         "bodega": "Luigi Bosca",
         "varietal": "Riesling",
         "stock": 9,
-        "img": "/img/productos/luigi-bosca-riesling-750.jpg",
+        "img": "/img/productos/luigi-bosca-riesling-750.png",
         "descripcion": "Un exponente blanco sofisticado y aromático, con notas cítricas marcadas, toques minerales y sutiles notas florales. En boca muestra una acidez vibrante, excelente tensión y un final fresco muy persistente."
     },
     {
@@ -220,7 +220,7 @@
         "bodega": "Luigi Bosca",
         "varietal": "Viognier",
         "stock": 19,
-        "img": "/img/productos/la-linda-viognier-750.jpg",
+        "img": "/img/productos/la-linda-viognier-750.png",
         "descripcion": "Vino blanco expresivo de color amarillo verdoso brillante. Destacan aromas a duraznos blancos, damascos y sutiles notas florales. En boca es untuoso, fresco, con volumen y un retrogusto sumamente frutal."
     },
     {
@@ -234,7 +234,7 @@
         "bodega": "Trapiche",
         "varietal": "Malbec",
         "stock": 5,
-        "img": "/img/productos/trapiche-magnum-1500.jpg",
+        "img": "/img/productos/trapiche-magnum-1500.png",
         "descripcion": "Versión en formato Magnum de este clásico Malbec mendocino. Concentra aromas a frutos rojos y negros maduros, con toques de roble. En boca es amplio, estructurado, redondo y de gran capacidad para compartir."
     },
     {
@@ -248,7 +248,7 @@
         "bodega": "Rutini Wines",
         "varietal": "Malbec",
         "stock": 8,
-        "img": "/img/productos/rutini-apartado-750.jpg",
+        "img": "/img/productos/rutini-apartado-750.png",
         "descripcion": "Un vino de alta gama complejo y exclusivo. Despliega una paleta aromática rica en frutos negros confitados, notas de tabaco, chocolate y especias finas. En boca es voluptuoso, potente, de taninos terciopelados y gran profundidad."
     }
 ]

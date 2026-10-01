@@ -63,6 +63,10 @@
     background-color: var(--paneles);
 }
 
+body {
+  overflow-x: hidden;
+}
+
 @media (min-width: 992px) {
     .navbar-toggler {
         display: none;
@@ -272,7 +276,7 @@ footer {
 .nosotros-contenedor {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 25px 0;
+    padding: 0px 25px 0;
     display: flex;
     flex-direction: column;
     gap: 75px;

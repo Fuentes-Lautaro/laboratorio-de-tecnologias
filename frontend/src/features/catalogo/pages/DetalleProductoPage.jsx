@@ -1,6 +1,6 @@
 import { Link, useOutletContext, useParams } from 'react-router'
 import DetalleProducto from '../components/DetalleProducto'
-import { obtenerProductoPorId } from '../services/catalogoServices'
+import { getProductoPorId } from '../../productos/services/productosServices'
 import { useFetch } from '../../../shared/hooks/useFetch'
 import Spinner from '../../../shared/components/Spinner'
 import MensajeVacio from '../../../shared/components/MensajeVacio'
@@ -8,7 +8,7 @@ import MensajeVacio from '../../../shared/components/MensajeVacio'
 function DetalleProductoPage() {
   const { id } = useParams()
   const { agregarProducto } = useOutletContext()
-  const { datos: producto, cargando, error } = useFetch(obtenerProductoPorId, id)
+  const { datos: producto, cargando, error } = useFetch(getProductoPorId, id)
 
   if (cargando) return <Spinner texto="Cargando producto..." />
 

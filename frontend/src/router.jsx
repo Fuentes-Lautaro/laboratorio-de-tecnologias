@@ -13,6 +13,7 @@ import LayoutCM from './shared/layout/LayoutCM';
 import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
 import { EventosPagePrivada } from './features/eventos/pages/EventosPagePrivada';
 import { EventosPage } from './features/eventos/pages/EventosPage';
+import ProductosPagePrivada from './features/productos'
 
 
 
@@ -47,7 +48,7 @@ export const router = createBrowserRouter([
     children: [
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <h2>Sección Clientes</h2> },
-      { path: 'productos', element: <h2>Sección Productos</h2> },
+      { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'compras', element: <h2>Sección Compras</h2> },
       { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
       { path: 'planes', element: <h2>Sección Planes (Solo Gerente)</h2> },
