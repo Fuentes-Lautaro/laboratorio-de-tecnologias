@@ -16,7 +16,7 @@ import { EventosPage } from './features/eventos';
 import { ClientesPagePrivada } from './features/clientes';
 import { ProductosPagePrivada } from './features/productos'
 import { EventosPagePrivada } from './features/eventos';
-
+import {EmpleadosPagePrivada} from './features/empleados'
 
 
 export const router = createBrowserRouter([
@@ -52,8 +52,7 @@ export const router = createBrowserRouter([
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
-      { path: 'compras', element: <h2>Sección Compras</h2> },
-      { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
+      { path: 'empleados', element: <EmpleadosPagePrivada /> },
       { path: 'planes', element: <h2>Sección Planes (Solo Gerente)</h2> },
     ],
   },
