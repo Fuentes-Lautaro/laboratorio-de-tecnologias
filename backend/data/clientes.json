@@ -7,7 +7,8 @@
     "mail": "cliente@ejemplo.com",
     "direccion": "Av. Illia 123, San Luis",
     "rol": "Cliente",
-    "clave": "123456"
+    "clave": "123456",
+    "activo": false
   },
   {
     "dni": "87654321",
@@ -17,7 +18,8 @@
     "mail": "maria@balbina.com",
     "direccion": "Ruta 146 Km 12, San Luis",
     "rol": "Cliente",
-    "clave": "123456"
+    "clave": "123456",
+    "activo": true
   },
   {
     "dni": "23456789",
@@ -27,7 +29,8 @@
     "mail": "test@correo.com",
     "direccion": "San Martín 450, San Luis",
     "rol": "Cliente",
-    "clave": "123456"
+    "clave": "123456",
+    "activo": true
   },
   {
     "dni": "34567890",
@@ -37,7 +40,8 @@
     "mail": "ana.lucero@gmail.com",
     "direccion": "Pedernera 789, San Luis",
     "rol": "Cliente",
-    "clave": "123456"
+    "clave": "123456",
+    "activo": true
   },
   {
     "dni": "45678901",
@@ -47,7 +51,8 @@
     "mail": "lucas.rodriguez@hotmail.com",
     "direccion": "Junín 1012, San Luis",
     "rol": "Cliente",
-    "clave": "123456"
+    "clave": "123456",
+    "activo": true
   }
 ]
     

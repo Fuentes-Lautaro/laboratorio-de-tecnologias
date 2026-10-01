@@ -1,0 +1,1 @@
+export {default as ClientesPagePrivada} from './pages/ClientesPagePrivada'
