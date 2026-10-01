@@ -54,7 +54,7 @@ export function NavGestor({ sesion }) {
         </NavLink>
 
         <NavLink to="/gestion/suscripciones" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>o</span>
+          <span style={{ fontSize: '1.1rem' }}>💳</span>
           <span>Suscripciones</span>
         </NavLink>
 

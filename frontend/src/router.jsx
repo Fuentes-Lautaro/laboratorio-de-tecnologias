@@ -56,9 +56,8 @@ export const router = createBrowserRouter([
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'suscripciones', element: <SuscripcionesPagePrivada /> },
-      { path: 'empleados', element: <h2>Sección Empleados (Solo Gerente)</h2> },
-      { path: 'planes', element: <PlanesPagePrivada /> },
       { path: 'empleados', element: <EmpleadosPagePrivada /> },
+      { path: 'planes', element: <PlanesPagePrivada /> },
     ],
   },
 
