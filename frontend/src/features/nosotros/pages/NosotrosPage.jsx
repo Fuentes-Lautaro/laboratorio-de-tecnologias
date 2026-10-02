@@ -23,7 +23,7 @@ function NostrosPages() {
 
                     <article className="nosotros-bloque">
                         <div className="nosotros-imagen">
-                            <img src="/imgNosotros/maria-historia.jpg" alt="Historia de María"/>
+                            <img src="./img/nosotros/maria-historia.jpg" alt="Historia de María"/>
                         </div>
 
                         <div className="nosotros-texto">
@@ -40,7 +40,7 @@ function NostrosPages() {
 
                     <article className="nosotros-bloque bloque-invertido">
                         <div className="nosotros-imagen">
-                            <img src="/imgNosotros/balbina-historia.jpg" alt="Historia de Balbina"/>
+                            <img src="./img/nosotros/balbina-historia.jpg" alt="Historia de Balbina"/>
                         </div>
 
                         <div className="nosotros-texto">
@@ -58,7 +58,7 @@ function NostrosPages() {
 
                     <article className="nosotros-bloque">
                         <div className="nosotros-imagen">
-                            <img src="/img/logo-redondo.png" alt="El legado de María Balbina"/>
+                            <img src="/img/nosotros/legado-maria-balbina.jpeg" alt="El legado de María Balbina"/>
                         </div>
 
                         <div className="nosotros-texto">
