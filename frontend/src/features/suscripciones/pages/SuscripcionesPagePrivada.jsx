@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getSuscripciones } from '../services/suscripcionesService';
 import { getClientes } from '../../clientes';
 import { getPlanes } from '../services/suscripcionesService';
-import TablaSuscripciones from '../components/TablaSuscripciones';
+import TablaSuscripciones from '../components/TablaSuscripcionesPrivada';
 import Modal from '../../../shared/components/Modal';
 
 export function SuscripcionesPagePrivada() {

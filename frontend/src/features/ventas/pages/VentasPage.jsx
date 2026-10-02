@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getVentas, crearVenta } from '../services/ventaService';
 import { getProductos } from '../../productos/services/productosServices';
+import TablaVentas from '../components/TablaVentas';
+import Modal from '../../../shared/components/Modal';
 
 export function VentasPage() {
   const [ventas, setVentas] = useState([]);
@@ -27,7 +29,7 @@ export function VentasPage() {
     Promise.all([getVentas(), getProductos()])
       .then(([datosVentas, datosProductos]) => {
         setVentas(datosVentas);
-        setProductosDisponibles(datosProductos);
+        setProductosDisponibles(datosProductos || []);
         setCargando(false);
       })
       .catch(err => {
@@ -36,6 +38,30 @@ export function VentasPage() {
       });
   }, []);
 
+  // --- FUNCIÓN PARA MOSTRAR TODOS LOS DATOS DEL PRODUCTO ---
+const getDetalleProducto = (productoIdOrItem) => {
+    const productoId = productoIdOrItem?.productoCodigo || productoIdOrItem?.id || productoIdOrItem;
+    
+    if (!productoId) return 'Producto desconocido';
+
+    const prod = productosDisponibles.find(p => 
+      String(p.id) === String(productoId) || String(p.codigo) === String(productoId)
+    );
+
+    if (prod) {
+      const marca = prod.marca || '';
+      const tipo = prod.tipo || '';
+      const varietal = prod.varietal || '';
+      const bodega = prod.bodega || '';
+      const medida = prod.medida || '';
+
+      return [marca, tipo, varietal, bodega, medida].filter(Boolean).join(' - ');
+    }
+
+    return productoIdOrItem.nombre || productoIdOrItem.productoCodigo || productoId;
+  };
+
+  // --- LÓGICA DE FILTRADO ---
   const ventasFiltradas = ventas.filter((v) => {
     const busqueda = terminoBusqueda.toLowerCase();
     const codigoCoincide = v.codigo?.toLowerCase().includes(busqueda);
@@ -57,7 +83,7 @@ export function VentasPage() {
 
     const nuevoItem = {
       productoCodigo: productoEncontrado.id,
-      nombre: `${productoEncontrado.marca || ''} ${productoEncontrado.varietal || productoEncontrado.nombre || ''}`.trim(),
+      nombre: getDetalleProducto(productoEncontrado),
       precioU: Number(productoEncontrado.precio),
       cantidad: Number(cantidad),
       subtotal: Number(productoEncontrado.precio) * Number(cantidad)
@@ -145,94 +171,88 @@ export function VentasPage() {
             </tr>
           </thead>
           <tbody>
-            {ventasFiltradas.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="text-center py-4 text-muted">No hay ventas registradas.</td>
-              </tr>
-            ) : (
-              ventasFiltradas.map((v) => (
-                <tr key={v.codigo || v.id}>
-                  <td className="fw-semibold">{v.codigo}</td>
-                  <td>{v.fecha}</td>
-                  <td>{v.clienteDni || 'Consumidor Final'}</td>
-                  <td>{v.empleadoDni || 'Sin asignar'}</td>
-                  <td><span className="badge bg-light text-dark border">{v.metodoPago}</span></td>
-                  <td className="fw-bold text-success">${Number(v.monto || v.total || 0).toLocaleString()}</td>
-                  <td className="text-end">
-                    <button 
-                      className="btn btn-sm btn-outline-secondary"
-                      onClick={() => handleVerDetalle(v)}
-                    >
-                      Ver Detalle
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
+            <TablaVentas ventas={ventasFiltradas} onVerDetalle={handleVerDetalle} />
           </tbody>
         </table>
       </div>
 
       {/* DETALLE */}
       {mostrarModalVer && ventaSeleccionada && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content border-0 shadow-lg">
-              <div className="modal-header text-white" style={{ backgroundColor: 'var(--titulos, #3E100F)' }}>
-                <h5 className="modal-title fw-bold">Detalle de Venta: {ventaSeleccionada.codigo}</h5>
-                <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalVer(false)}></button>
-              </div>
-              <div className="modal-body p-4">
-                <div className="row mb-3">
-                  <div className="col-md-4"><strong>Fecha:</strong> {ventaSeleccionada.fecha}</div>
-                  <div className="col-md-4"><strong>Cliente DNI:</strong> {ventaSeleccionada.clienteDni || 'Consumidor Final'}</div>
-                  <div className="col-md-4"><strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}</div>
-                </div>
-                <h6 className="fw-bold mt-4 mb-2">Productos Comprados:</h6>
-                <div className="table-responsive border rounded">
-                  <table className="table table-sm mb-0 align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th className="ps-2">Producto</th>
-                        <th>Cant.</th>
-                        <th>P. Unitario</th>
-                        <th className="text-end pe-2">Subtotal</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ventaSeleccionada.items && ventaSeleccionada.items.map((item, index) => (
-                        <tr key={index}>
-                          <td className="ps-2">{item.nombre || item.productoCodigo}</td>
-                          <td>{item.cantidad}</td>
-                          <td>${Number(item.precioU || item.precioUnitario || 0).toLocaleString()}</td>
-                          <td className="text-end pe-2">${Number(item.subtotal || (item.precioUnitario * item.cantidad) || 0).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="d-flex justify-content-end align-items-center mt-3">
-                  <h5 className="fw-bold m-0">Total Final: <span className="text-success">${Number(ventaSeleccionada.monto || ventaSeleccionada.total || 0).toLocaleString()}</span></h5>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setMostrarModalVer(false)}>Cerrar</button>
-              </div>
-            </div>
+        <Modal titulo={`Detalle de Venta: ${ventaSeleccionada.codigo}`} onClose={() => setMostrarModalVer(false)}>
+          <div className="row mb-3">
+            <div className="col-md-4"><strong>Fecha:</strong> {ventaSeleccionada.fecha}</div>
+            <div className="col-md-4"><strong>Cliente DNI:</strong> {ventaSeleccionada.clienteDni || 'Consumidor Final'}</div>
+            <div className="col-md-4"><strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}</div>
           </div>
-        </div>
+          <h6 className="fw-bold mt-4 mb-2">Productos Comprados:</h6>
+          <div className="table-responsive border rounded">
+            <table className="table table-sm mb-0 align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th className="ps-2">Producto (Marca - Tipo - Varietal - Bodega - Medida)</th>
+                  <th>Cant.</th>
+                  <th>P. Unitario</th>
+                  <th className="text-end pe-2">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ventaSeleccionada.items && ventaSeleccionada.items.map((item, index) => (
+                  <tr key={index}>
+                    <td className="ps-2">{getDetalleProducto(item)}</td>
+                    <td>{item.cantidad}</td>
+                    <td>${Number(item.precioU || item.precioUnitario || 0).toLocaleString()}</td>
+                    <td className="text-end pe-2">${Number(item.subtotal || (item.precioUnitario * item.cantidad) || 0).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="d-flex justify-content-end align-items-center mt-3">
+            <h5 className="fw-bold m-0">Total Final: <span className="text-success">${Number(ventaSeleccionada.monto || ventaSeleccionada.total || 0).toLocaleString()}</span></h5>
+          </div>
+          <div className="modal-footer px-0 pb-0 mt-3 border-0">
+            <button type="button" className="btn btn-secondary" onClick={() => setMostrarModalVer(false)}>Cerrar</button>
+          </div>
+        </Modal>
       )}
 
       {/* NUEVA VENTA */}
       {mostrarModalForm && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content rounded-4 border-0 shadow">
-              <div className="modal-header border-bottom-0 pb-0">
-                <h5 className="modal-title fw-bold" style={{ color: 'var(--titulos, #3E100F)' }}>
-                  Registrar Nueva Venta
-                </h5>
-                <button type="button" className="btn-close" onClick={() => setMostrarModalForm(false)}></button>
+        <Modal titulo="Registrar Nueva Venta" onClose={() => setMostrarModalForm(false)}>
+          <form onSubmit={handleSubmitVenta}>
+            <div className="row g-3 mb-3">
+              <div className="col-md-6">
+                <label className="form-label small fw-bold">DNI del Cliente (Opcional)</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Ej: 87654321" 
+                  value={clienteDni} 
+                  onChange={(e) => setClienteDni(e.target.value)} 
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label small fw-bold">DNI del Empleado</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  placeholder="Ej: 31987654" 
+                  value={empleadoDni} 
+                  onChange={(e) => setEmpleadoDni(e.target.value)} 
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label small fw-bold">Método de Pago</label>
+                <select 
+                  className="form-select" 
+                  value={metodoPago} 
+                  onChange={(e) => setMetodoPago(e.target.value)}
+                >
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Tarjeta de Débito">Tarjeta de Débito</option>
+                  <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                  <option value="Transferencia">Transferencia</option>
+                </select>
               </div>
               
               <form onSubmit={handleSubmitVenta}>
@@ -349,8 +369,83 @@ export function VentasPage() {
                 </div>
               </form>
             </div>
-          </div>
-        </div>
+
+            <hr />
+            <h6 className="fw-bold mb-3">Seleccionar Productos del Catálogo</h6>
+            
+            <div className="row g-2 align-items-end mb-3">
+              <div className="col-md-7">
+                <label className="form-label small text-muted">Producto</label>
+                <select 
+                  className="form-select"
+                  value={productoSeleccionadoId}
+                  onChange={(e) => setProductoSeleccionadoId(e.target.value)}
+                >
+                  <option value="">Seleccione un producto...</option>
+                  {productosDisponibles.map((prod) => (
+                    <option key={prod.id} value={prod.id}>
+                      {prod.marca} - {prod.tipo} - {prod.varietal} - {prod.bodega} - {prod.medida} (${Number(prod.precio).toLocaleString()}) [Stock: {prod.stock}]
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <label className="form-label small text-muted">Cantidad</label>
+                <input 
+                  type="number" 
+                  min="1" 
+                  className="form-control" 
+                  value={cantidad} 
+                  onChange={(e) => setCantidad(e.target.value)} 
+                />
+              </div>
+              <div className="col-md-2">
+                <button type="button" className="btn btn-outline-dark w-100" onClick={handleAgregarItem}>
+                  + Item
+                </button>
+              </div>
+            </div>
+
+            {/* Tabla del Carrito Temporal */}
+            <div className="table-responsive border rounded mb-3">
+              <table className="table table-sm mb-0 align-middle">
+                <thead className="table-light">
+                  <tr>
+                    <th className="ps-2">Producto</th>
+                    <th>Cant.</th>
+                    <th>P. Unitario</th>
+                    <th className="text-end pe-2">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {carrito.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="text-center text-muted py-3">No hay productos agregados.</td>
+                    </tr>
+                  ) : (
+                    carrito.map((item, index) => (
+                      <tr key={index}>
+                        <td className="ps-2">{item.nombre}</td>
+                        <td>{item.cantidad}</td>
+                        <td>${Number(item.precioU).toLocaleString()}</td>
+                        <td className="text-end pe-2">${item.subtotal.toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="d-flex justify-content-end align-items-center">
+              <h5 className="fw-bold m-0">Total: <span className="text-success">${totalVenta.toLocaleString()}</span></h5>
+            </div>
+
+            <div className="d-flex gap-2 justify-content-end mt-4">
+              <button type="button" className="btn btn-light" onClick={() => setMostrarModalForm(false)}>Cancelar</button>
+              <button type="submit" className="btn text-white" style={{ backgroundColor: 'var(--titulos, #3E100F)' }}>Confirmar Venta</button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );
