@@ -25,11 +25,8 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
   return (
     <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
       <div className="row g-0 h-100">
-        {/* Columna de la Imagen (Izquierda) */}
-        <div 
-            className="col-4 d-flex justify-content-center align-items-center p-0" 
-            style={{ backgroundColor: '#F3EFEA', overflow: 'hidden', height: '100%' }}
-        >
+        {/* Columna de la Imagen */}
+        <div className="col-4 d-flex justify-content-center align-items-center p-0" style={{ backgroundColor: '#F3EFEA', overflow: 'hidden', height: '100%' }}>
             <img
                 src={img || FALLBACK_IMAGEN}
                 alt={marca || tipo || 'Producto'}
@@ -38,13 +35,10 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             />
         </div>
 
-        {/* Columna de los Datos (Derecha) */}
+        {/* Columna de los Datos */}
         <div className="col-8 d-flex flex-column">
           <div className="card-header bg-transparent border-0 pt-2 px-3 pb-0 d-flex justify-content-between align-items-center">
-            <span 
-              className="badge rounded-pill px-2.5 py-1" 
-              style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', fontSize: '0.75rem' }}
-            >
+            <span className="badge rounded-pill px-2.5 py-1" style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', fontSize: '0.75rem' }}>
               {tipo || bodega || 'Vino'} {anio ? `(${anio})` : ''}
             </span>
             
@@ -83,7 +77,6 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             </div>
           </div>
 
-          {/* Botones de acción en el panel de gestión */}
           {esGestion && (
             <div className="card-footer bg-light border-0 p-2 d-flex gap-2 justify-content-end">
               {onVer && (

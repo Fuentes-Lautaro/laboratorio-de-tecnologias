@@ -13,7 +13,6 @@ function Navbar({ enlaces, sesion }) {
             if (sesion?.dni) {
                 try {
                     const suscripcion = await getSuscripcionActivaPorDni(sesion.dni);
-                    // Si la función retorna datos válidos, consideramos que tiene suscripción activa
                     setTieneSuscripcion(Boolean(suscripcion));
                 } catch (error) {
                     console.error('Error al verificar la suscripción:', error);
@@ -63,7 +62,7 @@ function Navbar({ enlaces, sesion }) {
                                         </Link>
                                     </li>
 
-                                    {/* Se muestra solo si la función asíncrona confirmó la suscripción activa */}
+                                    {/* Se muestra solo si la función confirmó la suscripción activa */}
                                     {tieneSuscripcion && (
                                         <li>
                                             <Link className="dropdown-item" to="/mi-suscripcion">
@@ -92,7 +91,6 @@ function Navbar({ enlaces, sesion }) {
                     </div>
                 </div>
 
-                {/* --- FILA INFERIOR: Enlaces --- */}
                 <div className="w-100 navbar-sticky-bottom">
                     <div className="w-100 d-flex justify-content-end align-items-center py-1 d-lg-none">
                         <button
@@ -124,7 +122,6 @@ function Navbar({ enlaces, sesion }) {
                         </ul>
                     </div>
                 </div>
-
             </div>
         </nav>
     );

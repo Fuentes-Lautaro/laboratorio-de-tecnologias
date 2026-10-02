@@ -6,8 +6,6 @@ import Modal from '../../../shared/components/Modal';   // Ajustá la ruta hacia
 export function ClientesPagePrivada() {
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
-  
-  // Estado para la búsqueda
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
   
   // Estados para modales
@@ -16,8 +14,16 @@ export function ClientesPagePrivada() {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   
   const estadoInicialForm = {
-    dni: '', nombre: '', fechaNac: '', telefono: '', mail: '', direccion: '', clave: '', activo: true
+    dni: '', 
+    nombre: '', 
+    fechaNac: '', 
+    telefono: '', 
+    mail: '', 
+    direccion: '', 
+    clave: '', 
+    activo: true
   };
+
   const [formData, setFormData] = useState(estadoInicialForm);
 
   useEffect(() => {
@@ -29,7 +35,6 @@ export function ClientesPagePrivada() {
       .catch(console.error);
   }, []);
 
-  // --- LÓGICA DE FILTRADO ---
   const clientesFiltrados = clientes.filter((cliente) => {
     const busquedaMinuscula = terminoBusqueda.toLowerCase();
     const coincideNombre = cliente.nombre.toLowerCase().includes(busquedaMinuscula);
@@ -37,7 +42,6 @@ export function ClientesPagePrivada() {
     return coincideNombre || coincideDni;
   });
 
-  // --- MANEJADORES DE ACCIONES ---
   const handleNuevo = () => {
     setClienteSeleccionado(null);
     setFormData(estadoInicialForm);
@@ -138,7 +142,7 @@ export function ClientesPagePrivada() {
         </table>
       </div>
 
-      {/* Formulario ABM (Reutilizando Modal) */}
+      {/* Formulario ABM */}
       {mostrarModalForm && (
         <Modal 
           titulo={clienteSeleccionado ? 'Editar Cliente' : 'Nuevo Cliente'} 
@@ -183,7 +187,7 @@ export function ClientesPagePrivada() {
         </Modal>
       )}
       
-      {/* Vista de Detalle (Reutilizando Modal) */}
+      {/* Vista de Detalle */}
       {mostrarModalVer && clienteSeleccionado && (
         <Modal 
           titulo="Detalle del Cliente" 

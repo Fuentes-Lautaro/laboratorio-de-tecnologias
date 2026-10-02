@@ -10,7 +10,6 @@ export function PerfilPage() {
     // Estados para los datos editables del formulario de perfil
     const [formData, setFormData] = useState({
         nombre: '',
-        apellido: '',
         email: '',
         telefono: '',
         direccion: '',
@@ -28,23 +27,23 @@ export function PerfilPage() {
         const usuarioSesion = obtenerSesion();
         if (usuarioSesion) {
             setSesion(usuarioSesion);
-            // Simulamos la carga de datos iniciales del usuario (puedes completarlo trayendo el cliente completo por DNI si lo deseas)
             setFormData({
                 nombre: usuarioSesion.nombre || '',
-                apellido: usuarioSesion.apellido || '',
                 email: usuarioSesion.email || '',
                 telefono: usuarioSesion.telefono || '',
                 direccion: usuarioSesion.direccion || '',
-                fechaNacimiento: usuarioSesion.fechaNacimiento || '',
+                fechaNacimiento: usuarioSesion.fechaNac || '',
             });
         }
         setCargando(false);
     }, []);
 
+    //Se activa cuando hay un cambio
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
+
 
     const handlePassChange = (e) => {
         const { name, value } = e.target;
@@ -57,9 +56,6 @@ export function PerfilPage() {
         setMensajeExito('');
 
         try {
-            // Aquí puedes llamar a tu servicio para actualizar los datos en el backend/JSON del cliente
-            // Por ejemplo: actualizarCliente(sesion.dni, formData);
-            
             setMensajeExito('¡Tus datos personales se han actualizado correctamente!');
         } catch (err) {
             setError('No se pudieron guardar los cambios. Intentá nuevamente.');
@@ -82,9 +78,6 @@ export function PerfilPage() {
         }
 
         try {
-            // Aquí llamas a tu servicio de cambio de clave
-            // cambiarClave(sesion.dni, passData.passwordActual, passData.passwordNueva);
-
             setMensajeExito('¡Tu contraseña se ha modificado con éxito!');
             setPassData({ passwordActual: '', passwordNueva: '', confirmarPassword: '' });
         } catch (err) {
@@ -140,7 +133,7 @@ export function PerfilPage() {
                         <form onSubmit={handleSubmitPerfil}>
                             <div className="row g-3">
                                 <div className="col-md-6">
-                                    <label className="form-label fw-semibold text-muted small">Nombre</label>
+                                    <label className="form-label fw-semibold text-muted small">Nombre y Apellido</label>
                                     <input
                                         type="text"
                                         className="form-control rounded-pill px-3"
@@ -148,16 +141,6 @@ export function PerfilPage() {
                                         value={formData.nombre}
                                         onChange={handleInputChange}
                                         required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-semibold text-muted small">Apellido</label>
-                                    <input
-                                        type="text"
-                                        className="form-control rounded-pill px-3"
-                                        name="apellido"
-                                        value={formData.apellido}
-                                        onChange={handleInputChange}
                                     />
                                 </div>
                                 <div className="col-md-6">
@@ -221,7 +204,7 @@ export function PerfilPage() {
                         </form>
                     </div>
 
-                    {/* Formulario de Cambio de Clave */}
+                    {/* Formulario de Cambio de Contrasenia */}
                     <div className="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
                         <h4 className="fw-bold mb-4" style={{ color: 'var(--titulos, #581845)' }}>
                             🔒 Cambiar Contraseña

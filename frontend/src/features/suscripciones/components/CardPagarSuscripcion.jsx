@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver, cargando }) {
   const [metodoPago, setMetodoPago] = useState('mercadopago');
 
-  // Fecha dinámica del día de hoy
   const fechaHoy = new Date().toLocaleDateString('es-AR', {
     day: '2-digit',
     month: '2-digit',
@@ -12,7 +11,7 @@ export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver,
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // No llama a ninguna API, solo dispara la función que simula el proceso
+    //LLAMADO A LA API?
     onConfirmarPago({
       fechaPago: new Date().toISOString().split('T')[0],
       metodoPago: 'Mercado Pago',
@@ -77,7 +76,7 @@ export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver,
           </div>
         </div>
 
-        {/* Botón Pagar (sin API) */}
+        {/* Botón Pagar */}
         <div className="d-grid gap-2">
           <button
             type="submit"

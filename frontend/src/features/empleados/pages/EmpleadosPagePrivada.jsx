@@ -136,7 +136,7 @@ export function EmpleadosPagePrivada() {
         </table>
       </div>
 
-      {/* Modal Reutilizable para Formulario */}
+      {/* Formulario */}
       {mostrarModalForm && (
         <Modal 
           titulo={empleadoSeleccionado ? 'Editar Empleado' : 'Nuevo Empleado'} 

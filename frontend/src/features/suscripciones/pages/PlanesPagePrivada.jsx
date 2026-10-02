@@ -138,7 +138,7 @@ export function PlanesPagePrivada() {
         </table>
       </div>
 
-      {/* Formulario ABM usando el Modal Reutilizable */}
+      {/* Formulario ABM */}
       {mostrarModalForm && (
         <Modal titulo={planSeleccionado ? 'Editar Plan' : 'Nuevo Plan'} onClose={() => setMostrarModalForm(false)}>
           <form onSubmit={handleSubmit} className="row g-3">
@@ -166,7 +166,7 @@ export function PlanesPagePrivada() {
         </Modal>
       )}
       
-      {/* Vista de Detalle usando el Modal Reutilizable */}
+      {/* Detalle */}
       {mostrarModalVer && planSeleccionado && (
         <Modal titulo="Detalle del Plan" onClose={() => setMostrarModalVer(false)}>
           <div className="mb-3">

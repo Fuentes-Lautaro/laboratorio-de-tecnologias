@@ -21,7 +21,7 @@ export function LoginGestionPage() {
 
   return (
     <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: 'var(--fondos-principales)' }}>
-      {/* 1. HEADER / NAV EXCLUSIVO DE GESTIÓN */}
+      {/* 1. NAV EXCLUSIVO DE GESTIÓN */}
       <header className="py-3 px-4 shadow-sm" style={{ backgroundColor: 'var(--paneles)' }}>
         <div className="container-fluid d-flex justify-content-between align-items-center max-width-1200">
           <div className="d-flex align-items-center gap-2">
@@ -44,7 +44,7 @@ export function LoginGestionPage() {
         </div>
       </header>
 
-      {/* 2. CONTENIDO PRINCIPAL / FORMULARIO */}
+      {/* 2. FORMULARIO */}
       <main className="flex-grow-1 d-flex align-items-center justify-content-center py-4 px-3">
         <div style={{ maxWidth: '440px', width: '100%' }}>
           
@@ -73,7 +73,7 @@ export function LoginGestionPage() {
             </div>
           </div>
 
-            {/* Desplegable de Credenciales */}
+            {/* Desplegable de Credenciales de Ejemplo */}
             <details className="mt-3 text-center">
             <summary 
                 className="user-select-none small text-uppercase fw-semibold cursor-pointer"
@@ -112,7 +112,7 @@ export function LoginGestionPage() {
         </div>
       </main>
 
-      {/* 3. FOOTER MINIMALISTA DE SISTEMA */}
+      {/* 3. FOOTER EXCLUSIVO GESTION */}
       <footer 
         className="py-3 text-center text-white-50 fs-7"
         style={{ 

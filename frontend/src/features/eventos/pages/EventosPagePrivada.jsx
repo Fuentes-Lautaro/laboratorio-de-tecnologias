@@ -16,12 +16,10 @@ export function EventosPagePrivada() {
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
-  // Estados para Modales
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [eventoEditando, setEventoEditando] = useState(null); // null = Crear, objeto = Editar
   const [eventoAEliminar, setEventoAEliminar] = useState(null);
 
-  // Estado del Formulario
   const [formData, setFormData] = useState(FORM_INICIAL);
 
   useEffect(() => {
@@ -39,7 +37,6 @@ export function EventosPagePrivada() {
     }
   };
 
-  // --- MANEJO DE CREAR Y EDITAR ---
   const handleAbrirCrear = () => {
     setEventoEditando(null);
     setFormData(FORM_INICIAL);
@@ -67,11 +64,9 @@ export function EventosPagePrivada() {
     e.preventDefault();
     try {
       if (eventoEditando) {
-        // EDICIÓN
         const guardado = await actualizarEvento(eventoEditando.id, formData);
         setEventos(eventos.map((ev) => (ev.id === eventoEditando.id ? { ...ev, ...guardado } : ev)));
       } else {
-        // CREACIÓN
         const nuevo = await crearEvento(formData);
         setEventos([...eventos, nuevo]);
       }
@@ -81,7 +76,6 @@ export function EventosPagePrivada() {
     }
   };
 
-  // --- MANEJO DE ELIMINAR ---
   const handleSolicitarEliminar = (id) => {
     const encontrado = eventos.find((ev) => ev.id === id);
     if (encontrado) setEventoAEliminar(encontrado);
@@ -100,7 +94,7 @@ export function EventosPagePrivada() {
 
   return (
     <div className="container-fluid py-3">
-      {/* Encabezado con Botón Crear */}
+      {/* Encabezado */}
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-3 border-bottom">
         <div>
           <h2 className="fw-bold mb-1" style={{ color: '#3E100F' }}>Gestión de Eventos</h2>
@@ -115,7 +109,7 @@ export function EventosPagePrivada() {
         </button>
       </div>
 
-      {/* Grilla de Eventos */}
+      {/* Grilla */}
       {cargando ? (
         <div className="text-center py-5">
           <div className="spinner-border text-warning" role="status"></div>
@@ -234,7 +228,7 @@ export function EventosPagePrivada() {
         </div>
       )}
 
-     
+      {/* ELIMINACION */}
       {eventoAEliminar && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">

@@ -10,13 +10,13 @@ export function useFiltros(productos) {
 
   const lista = productos ?? []
 
-  const marcas = [...new Set(lista.map((p) => p.marca))]            //filtro las marcas que hay al menos 1 en stock
-  const tipos = [...new Set(lista.map((p) => p.tipo))]              //filtro los tipos que hay al menos 1 en stock
-  const medidas = [...new Set(lista.map((p) => p.medida))]          //filtro las medidas que hay al menos 1 en stock
-  const bodegas = [...new Set(lista.map((p) => p.bodega))]          //filtro las bodegas que hay al menos 1 en stock
-  const varietales = [...new Set(lista.map((p) => p.varietal))]     //filtro los varietales que hay al menos 1 en stock
+  const marcas = [...new Set(lista.map((p) => p.marca))]
+  const tipos = [...new Set(lista.map((p) => p.tipo))]
+  const medidas = [...new Set(lista.map((p) => p.medida))]
+  const bodegas = [...new Set(lista.map((p) => p.bodega))]
+  const varietales = [...new Set(lista.map((p) => p.varietal))]
 
-  const textoBuscado = busqueda.trim().toLowerCase()                //convierte a minuscula todo lo que el usuario escriba en el buscador
+  const textoBuscado = busqueda.trim().toLowerCase()
 
   const productosFiltrados = lista.filter(
     (p) =>

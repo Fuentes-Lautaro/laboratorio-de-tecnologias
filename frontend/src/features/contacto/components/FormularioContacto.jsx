@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react'
-import Boton from '../../../shared/components/Boton'
 import { esEmailValido, esRequerido, tieneLongitudMinima } from '../../../shared/utils/validaciones'
 
 const VALORES_INICIALES = {
@@ -185,7 +184,7 @@ function FormularioContacto() {
         </label>
       </div>
 
-      {/* Botón de Enviar personalizado con el color borravino */}
+      {/* Botón de Enviar */}
       <button
         type="submit"
         className="btn w-100 py-2 text-white fw-semibold shadow-sm rounded-2 transition-all"

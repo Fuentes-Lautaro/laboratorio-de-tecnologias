@@ -13,7 +13,7 @@ function ContactoPage() {
     <div className="bg-light min-vh-100 py-5">
       <div className="container">
         
-        {/* Encabezado / Hero con el estilo consistente */}
+        {/* Encabezado */}
         <div className="text-center mb-5 max-w-2xl mx-auto">
           <span 
             className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
@@ -29,10 +29,8 @@ function ContactoPage() {
           </p>
         </div>
 
-        {/* Grilla principal de contenido */}
         <div className="row g-4 g-lg-5 align-items-stretch">
-          
-          {/* Columna de Información de Contacto */}
+          {/* Información de Contacto */}
           <div className="col-lg-5">
             <div className="bg-white rounded-3 shadow-sm p-4 h-100 d-flex flex-column justify-content-between border-0">
               <div>
@@ -57,7 +55,7 @@ function ContactoPage() {
             </div>
           </div>
 
-          {/* Columna del Formulario con la Tarjeta contenedora */}
+          {/* Formulario */}
           <div className="col-lg-7">
             <Tarjeta titulo="Envianos tu consulta" className="border-0 shadow-sm rounded-3">
               <FormularioContacto />

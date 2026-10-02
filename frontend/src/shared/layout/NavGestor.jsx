@@ -18,10 +18,8 @@ export function NavGestor({ sesion }) {
     transition: 'all 0.15s ease'
   });
 
-  // Normalizamos el rol a minúsculas para comparar con seguridad
   const rolUsuario = sesion?.rol?.toLowerCase() || '';
 
-  // Definimos la regla: solo el gerente ve la sección de administración
   const esGerente = rolUsuario === 'gerente';
 
   return (
@@ -32,7 +30,7 @@ export function NavGestor({ sesion }) {
         borderRight: '1px solid rgba(255, 255, 255, 0.08)'
       }}
     >
-      {/* Encabezado: Panel + Usuario */}
+      {/* Encabezado */}
       <div className="pb-3 mb-3 mb-md-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <h5 className="fw-bold text-white mb-1" style={{ fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           Panel Gestión
@@ -42,7 +40,7 @@ export function NavGestor({ sesion }) {
         </div>
       </div>
 
-      {/* Navegación Principal (Visible para Vendedor y Gerente) */}
+      {/* Navegación Principal */}
       <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
 
         <NavLink to="/gestion" end style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
@@ -70,7 +68,7 @@ export function NavGestor({ sesion }) {
           <span>Suscripciones</span>
         </NavLink>
         
-        {/* Sección de Administración: EXCLUSIVO para Gerente */}
+        {/* Sección de Administración */}
         {esGerente && (
           <>
             <div 
@@ -97,7 +95,7 @@ export function NavGestor({ sesion }) {
         )}
       </nav>
 
-      {/* Pie con Botón de Cerrar Sesión */}
+      {/* Botón de Cerrar Sesión */}
       <div className="pt-3 mt-auto border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <button
           onClick={handleCerrarSesion}
@@ -124,7 +122,6 @@ export function NavGestor({ sesion }) {
         </button>
       </div>
 
-      {/* Media query para responsive en mobile y escritorio */}
       <style>{`
         @media (min-width: 768px) {
           .sidebar-gestor {

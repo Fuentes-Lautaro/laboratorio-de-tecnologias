@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export function CardIngresoPassword({ email, onLogin, onVolver, cargando }) {
+export function CardIngresoContrasenia({ email, onLogin, onVolver, cargando }) {
   const [clave, setClave] = useState('');
 
   const handleSubmit = (e) => {
@@ -68,4 +68,4 @@ export function CardIngresoPassword({ email, onLogin, onVolver, cargando }) {
   );
 }
 
-export default CardIngresoPassword;
+export default CardIngresoContrasenia;

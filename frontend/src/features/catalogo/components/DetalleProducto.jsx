@@ -34,7 +34,6 @@ function DetalleProducto({ producto, onAgregar }) {
                     <p className="mb-1"><strong>Medida:</strong> {producto.medida} ml</p>
                 </div>
 
-                {/* Descripción del producto */}
                 <div className="mb-4">
                     <h5 className="fw-bold mb-2">Descripción</h5>
                     <p className="text-muted">{producto.descripcion}</p>

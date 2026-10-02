@@ -10,7 +10,6 @@ export function VerSuscripcionPage() {
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
-    // Obtenemos la sesión activa directamente con tu función
     const sesion = obtenerSesion();
     const clienteDni = sesion ? sesion.dni : null;
     const clienteNombre = sesion ? sesion.nombre : null;
@@ -25,12 +24,10 @@ export function VerSuscripcionPage() {
                     return;
                 }
 
-                // 1. Buscamos si este cliente tiene una suscripción activa usando su DNI
                 const subActiva = await getSuscripcionActivaPorDni(clienteDni);
                 setSuscripcion(subActiva);
 
                 if (subActiva) {
-                    // 2. Buscamos los detalles del plan para mostrar la descripción y los vinos
                     const planes = await getPlanes();
                     const planEncontrado = planes.find(
                         (p) => p.nombre.toLowerCase().trim() === subActiva.planNombre.toLowerCase().trim()
@@ -78,7 +75,6 @@ export function VerSuscripcionPage() {
         );
     }
 
-    // Si no hay sesión iniciada
     if (!sesion) {
         return (
             <div className="container py-5 text-center">
@@ -97,7 +93,6 @@ export function VerSuscripcionPage() {
         );
     }
 
-    // Si tiene sesión pero no una suscripción activa
     if (!suscripcion) {
         return (
             <div className="container py-5 text-center">

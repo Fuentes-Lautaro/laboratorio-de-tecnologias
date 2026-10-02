@@ -12,13 +12,11 @@ export function PromocionPlanes() {
     useEffect(() => {
         async function cargarDatos() {
             try {
-                // Obtenemos los planes y los productos en paralelo para mapear los vinos
                 const [datosPlanes, todosLosProductos] = await Promise.all([
                     getPlanes(),
                     getProductos()
                 ]);
                 
-                // Creamos un diccionario para buscar productos rápidamente por su ID
                 const prodMap = {};
                 todosLosProductos.forEach(p => {
                     prodMap[p.id] = p;
@@ -45,7 +43,7 @@ export function PromocionPlanes() {
         }}>
             <div className="container py-4">
 
-                {/* Encabezado de la Sección */}
+                {/* Encabezado */}
                 <div className="text-center mb-5">
                     <h2 className="fw-bold fs-1 mb-2" style={{ color: 'var(--titulos)' }}>
                         Elegí tu suscripción
@@ -55,7 +53,7 @@ export function PromocionPlanes() {
                     </p>
                 </div>
 
-                {/* Grilla de Tarjetas Propias */}
+                {/* Grilla de Tarjetas */}
                 <div className="row g-4 align-items-stretch justify-content-center mb-5">
                     {cargando ? (
                         <p className="text-center">Cargando planes...</p>
@@ -72,7 +70,6 @@ export function PromocionPlanes() {
                                             PLAN {nombre?.toUpperCase()}
                                         </div>
 
-                                        {/* Cuerpo con la información */}
                                         <div className="p-4 d-flex flex-column flex-grow-1 text-center">
                                             
                                             {/* Descripción */}
@@ -128,10 +125,9 @@ export function PromocionPlanes() {
                         onMouseLeave={(e) => e.target.style.opacity = '1'}
                         onClick={() => navigate('/suscripciones')}
                     >
-                        Ver todos los planes ✨
+                        Ver todos los planes
                     </button>
                 </div>
-
             </div>
         </section>
     );

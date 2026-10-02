@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import EventoCard from '../components/EventoCard';
 import { getEventos } from '../services/eventoService'; 
 
@@ -25,7 +25,7 @@ export function EventosPage() {
     <div className="bg-light min-vh-100 py-5">
       <div className="container">
         
-        {/* Encabezado / Hero */}
+        {/* Encabezado */}
         <div className="text-center mb-5 max-w-2xl mx-auto">
           <span 
             className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
@@ -51,7 +51,7 @@ export function EventosPage() {
           </div>
         ) : (
           <>
-            {/* Grilla de Tarjetas */}
+            {/* Grilla */}
             {eventos.length > 0 ? (
               <div className="row g-4">
                 {eventos.map((evento) => (
@@ -61,7 +61,6 @@ export function EventosPage() {
                 ))}
               </div>
             ) : (
-              /* Estado Vacío */
               <div className="text-center py-5 bg-white rounded-3 shadow-sm p-4">
                 <span style={{ fontSize: '2.5rem' }}>🍷</span>
                 <h5 className="fw-bold mt-3 mb-1" style={{ color: '#3E100F' }}>

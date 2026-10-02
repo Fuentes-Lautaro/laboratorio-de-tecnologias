@@ -6,18 +6,14 @@ export async function getEmpleados() {
     return await res.json();
 }
 
-
-//  Crear empleado (Simulado en memoria)
 export async function crearEmpleado(nuevoEmpleado) {
   return { id: Date.now(), ...nuevoEmpleado };
 }
 
-// Actualizar empleado (Simulado en memoria)
 export async function actualizarEmpleado(id, empleadoActualizado) {
   return { id, ...empleadoActualizado };
 }
 
-//  Eliminar empleado (Simulado en memoria)
 export async function eliminarEmpleado(id) {
   return true;
 }

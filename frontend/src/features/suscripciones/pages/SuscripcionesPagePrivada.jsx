@@ -148,7 +148,7 @@ export function SuscripcionesPagePrivada() {
         </table>
       </div>
       
-      {/* Modal Reutilizable de Ver Detalle */}
+      {/* Detalle */}
       {mostrarModalVer && suscripcionSeleccionada && (
         <Modal titulo="Detalle de la Suscripción" onClose={() => setMostrarModalVer(false)}>
           <div className="mb-3">

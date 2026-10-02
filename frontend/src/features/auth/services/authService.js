@@ -12,19 +12,12 @@ export async function verificarEmailExistente(email) {
   const usuarios = await respuesta.json()
   const emailLimpio = email.trim().toLowerCase()
 
-  // Compara contra las propiedades 'mail' o 'email' por compatibilidad                   ****revisar*****
   return usuarios.some(
-    (u) => (u.mail && u.mail.trim().toLowerCase() === emailLimpio) ||
-           (u.email && u.email.trim().toLowerCase() === emailLimpio)
+    (u) => (u.mail && u.mail.trim().toLowerCase() === emailLimpio)
   )
 }
 
-// ====================================================================================
-// 1. INICIO DE SESIÓN PARA CLIENTES (Tienda / Suscripciones)
-// ====================================================================================
-/**
- * Valida credenciales contra clientes.json y guarda la sesión en sessionStorage.
- */
+//FUNCIONES PARA INICIO DE SESION DE CLIENTES
 export async function iniciarSesion(email, password) {
   const respuesta = await fetch(`${URL_BASE}/clientes.json`)
   if (!respuesta.ok) {
@@ -46,7 +39,10 @@ export async function iniciarSesion(email, password) {
   const sesion = { 
     dni: cliente.dni, 
     nombre: cliente.nombre, 
-    email: cliente.mail || cliente.email, 
+    email: cliente.mail, 
+    telefono: cliente.telefono,
+    direccion: cliente.direccion,
+    fechaNac: cliente.fechaNac,
     rol: cliente.rol 
   }
   
@@ -61,9 +57,7 @@ export function redirigirSiHaySesion() {
   return null
 }
 
-// ====================================================================================
-// 2. INICIO DE SESIÓN PARA EMPLEADOS (Panel de Gestión)
-// ====================================================================================
+//FUNCIONES DE INICIO DE SESION PARA EMPLEADOS
 export async function iniciarSesionEmpleado(email, password) {
   const respuesta = await fetch(`${URL_BASE}/empleados.json`)
   if (!respuesta.ok) {
@@ -74,7 +68,7 @@ export async function iniciarSesionEmpleado(email, password) {
   const emailLimpio = email.trim().toLowerCase()
 
   const empleado = empleados.find((e) => {
-    const mailEmp = (e.mail || e.email || '').trim().toLowerCase()
+    const mailEmp = (e.mail || '').trim().toLowerCase()
     return mailEmp === emailLimpio && String(e.clave || e.password) === String(password)
   })
 
@@ -95,7 +89,14 @@ export async function iniciarSesionEmpleado(email, password) {
   return sesion
 }
 
+export function redirigirSiHaySesionPrivado() {
+  if (obtenerSesion()) {
+    throw redirect('/gestion')
+  }
+  return null
+}
 
+//FUNCIONES DE USO DE AMBOS PERFILES
 export function obtenerSesion() {
   try {
     return JSON.parse(sessionStorage.getItem(CLAVE_SESION))
@@ -120,11 +121,4 @@ export function protegerRuta() {
     throw redirect('/');
   }
   return sesion;
-}
-
-export function redirigirSiHaySesionPrivado() {
-  if (obtenerSesion()) {
-    throw redirect('/gestion')
-  }
-  return null
 }

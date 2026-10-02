@@ -39,21 +39,18 @@ export function TarjetaPlan({ plan }) {
       </thead>
 
       <tbody>
-        {/* Descripción del plan */}
         <tr>
           <td className="text-muted small py-2">
             {descripcion}
           </td>
         </tr>
 
-        {/* Cantidad de vinos mensual */}
         <tr>
           <td className="cantidad">
             📦 {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
           </td>
         </tr>
 
-        {/* Vinos incluidos para el próximo mes */}
         <tr>
           <td className="text-start p-3 bg-light">
             <strong className="d-block mb-1">Vinos del próximo mes:</strong>
@@ -71,14 +68,12 @@ export function TarjetaPlan({ plan }) {
           </td>
         </tr>
 
-        {/* Precio */}
         <tr className="precio">
           <td>
             ${typeof valor === 'number' ? valor.toLocaleString('es-AR') : valor} / mes
           </td>
         </tr>
 
-        {/* Botón de acción */}
         <tr className="fila-botones">
           <td>
             <button 

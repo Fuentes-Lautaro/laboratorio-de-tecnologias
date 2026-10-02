@@ -1,4 +1,3 @@
-// children permite agregar una acción opcional (un botón o un enlace).
 function MensajeVacio({ titulo, texto, children }) {
   return (
     <div className="text-center py-5 px-3 border rounded-3 bg-body-tertiary">

@@ -6,10 +6,8 @@ export default function LayoutCM() {
 
   return (
     <div className="d-flex flex-column flex-md-row min-vh-100">
-      {/* Menú de navegación adaptativo */}
       <NavCM sesion={sesion} />
 
-      {/* Contenido principal de la página */}
       <main className="flex-grow-1 p-3 p-md-4 bg-light overflow-auto">
         <Outlet />
       </main>

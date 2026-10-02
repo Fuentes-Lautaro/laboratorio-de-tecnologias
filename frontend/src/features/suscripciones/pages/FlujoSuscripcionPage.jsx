@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { 
   CardIngresoEmail, 
-  CardIngresoPassword, 
+  CardIngresoContrasenia, 
   CardRegistro, 
   verificarEmailExistente,
   iniciarSesion 
@@ -138,7 +138,7 @@ export function FlujoSuscripcionPage() {
         )}
 
         {paso === 'PASSWORD' && (
-          <CardIngresoPassword
+          <CardIngresoContrasenia
             email={email}
             onLogin={handleLogin}
             onVolver={() => setPaso('EMAIL')}

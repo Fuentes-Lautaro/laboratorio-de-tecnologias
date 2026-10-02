@@ -47,23 +47,6 @@ export function FormularioLogin({ onIngresar }) {
 
   return (
     <form ref={formularioRef} onSubmit={handleSubmit} noValidate className="p-1">
-
-      {/* Alerta de Error de Servidor */}
-      {errorServidor && (
-        <div 
-          className="alert py-2 px-3 small rounded-3 mb-4 d-flex align-items-center gap-2"
-          role="alert"
-          style={{ 
-            backgroundColor: 'rgba(100, 20, 27, 0.08)', 
-            border: '1px solid var(--titulos, #64141B)',
-            color: 'var(--titulos, #64141B)'
-          }}
-        >
-          <span>⚠️</span>
-          <div>{errorServidor}</div>
-        </div>
-      )}
-
       {/* Campo Email */}
       <div className="mb-3">
         <label 
@@ -96,7 +79,7 @@ export function FormularioLogin({ onIngresar }) {
         )}
       </div>
 
-      {/* Campo Contraseña */}
+      {/* Campo Contrasenia */}
       <div className="mb-4">
         <label 
           htmlFor="password" 
@@ -146,7 +129,7 @@ export function FormularioLogin({ onIngresar }) {
         </div>
       </div>
 
-      {/* Botón Principal corporativo */}
+      {/* Botón Principal */}
       <button 
         type="submit" 
         className="btn w-100 py-2.5 fw-bold text-uppercase d-flex align-items-center justify-content-center gap-2 shadow-sm" 

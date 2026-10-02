@@ -2,7 +2,7 @@ import { Outlet, useLoaderData } from 'react-router-dom';
 import { NavGestor } from './NavGestor';
 
 export default function LayoutAdministrador() {
-  const sesion = useLoaderData(); // Obtiene la sesión validada desde el loader de React Router
+  const sesion = useLoaderData();
 
   return (
     <div className="d-flex flex-column flex-md-row min-vh-100">

@@ -10,7 +10,7 @@ function Footer({ marca, enlaces, srcfooter }) {
     <footer className="w-100 overflow-hidden">
       <div className="footer-contenedor container-fluid px-3 px-md-5 py-1">
 
-        {/* Enlaces de navegación principales */}
+        {/* Enlaces */}
         <div className="row justify-content-center text-center mb-0">
           <div className="col-12">
             <ul className="d-flex flex-column flex-lg-row justify-content-center align-items-center gap-3 gap-lg-5 pb-1 footer-links list-unstyled mb-0">
@@ -48,7 +48,7 @@ function Footer({ marca, enlaces, srcfooter }) {
 
         <hr className="linea-divisoria mx-auto w-100" />
 
-        {/* Marca y Derechos Reservados */}
+        {/* Marca */}
         <div className="row text-center">
           <div className="col-12 px-1">
             <p className="mb-1 text-light fw-semibold">{marca}</p>

@@ -1,11 +1,8 @@
-// Fallback limpio que solo se activa si la foto no existe
-const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
-
 export function EventoCard({ evento, esGestion = false, onEditar, onEliminar }) {
   const { nombre, fecha, descripcion, cantAsistentes, imagenUrl } = evento;
 
   const handleImageError = (e) => {
-    e.target.onerror = null; // Evita bucles infinitos en consola
+    e.target.onerror = null;
     e.target.src = FALLBACK_IMAGEN;
   };
 

@@ -3,19 +3,18 @@ import '../../../styles/variables.css'
 
 const Bienvenida = () => {
   return (
-    // py-5 da padding vertical (arriba y abajo) usando Bootstrap
     <section className="informacion-bienvenida py-5"
     style={{
-        backgroundColor: 'var(--paneles)', // Usando la variable CSS para el color primario
+        backgroundColor: 'var(--paneles)',
         width: '100vw',
         marginLeft: 'calc(-50vw + 50%)',
         marginRight: 'calc(-50vw + 50%)',
-        marginTop: '-1.5rem' // Cancela el espacio blanco superior del main
+        marginTop: '-1.5rem'
 
     }}>
       <div className="container">
         
-        {/* Título de la sección */}
+        {/* Título */}
         <div className="row justify-content-center mb-5 text-center">
           <div className="col-12 col-md-8 info-titulo">
             <span className="text-uppercase tracking-wide" style={{ color: '#ffffff' }} > MARÍA BALBINA</span>
@@ -29,7 +28,7 @@ const Bienvenida = () => {
           </div>
         </div>
 
-        {/* Grid de tarjetas (Cards) */}
+        {/* Grilla de tarjetas */}
         <div className="row g-4 justify-content-center">
           
           {/* Tarjeta 1 */}

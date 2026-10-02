@@ -1,4 +1,3 @@
-// La tarjeta contenedora de la clase 2 (diseño B): aporta el marco, children el contenido.
 function Tarjeta({ titulo, children, className = '' }) {
   return (
     <div className={`card shadow-sm ${className}`}>

@@ -21,12 +21,10 @@ export function ProductosPagePrivada() {
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
-  // Estados para Modales
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
 
-  // Estado del Formulario
   const [formData, setFormData] = useState(FORM_INICIAL);
 
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
@@ -55,7 +53,6 @@ export function ProductosPagePrivada() {
     }
   };
 
-  // --- MANEJO DE CREAR Y EDITAR ---
   const handleAbrirCrear = () => {
     setProductoEditando(null);
     setFormData(FORM_INICIAL);
@@ -90,11 +87,9 @@ export function ProductosPagePrivada() {
     e.preventDefault();
     try {
       if (productoEditando) {
-        // EDICIÓN
         const guardado = await actualizarProducto(productoEditando.id, formData);
         setProductos(productos.map((ev) => (ev.id === produtoEditando.id ? { ...ev, ...guardado } : ev)));
       } else {
-        // CREACIÓN
         const nuevo = await crearProducto(formData);
         setProductos([...productos, nuevo]);
       }
@@ -108,7 +103,6 @@ export function ProductosPagePrivada() {
     setTerminoBusqueda(e.target.value);
   };
 
-  // --- MANEJO DE ELIMINAR ---
   const handleSolicitarEliminar = (id) => {
     const encontrado = productos.find((pr) => pr.id === id);
     if (encontrado) setProductoAEliminar(encontrado);
@@ -127,7 +121,7 @@ export function ProductosPagePrivada() {
 
   return (
     <div className="container-fluid py-3">
-      {/* Encabezado con Botón Crear */}
+      {/* Encabezado */}
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-3 border-bottom">
         <div>
           <h2 className="fw-bold mb-1" style={{ color: '#3E100F' }}>Gestión de Productos</h2>
@@ -195,7 +189,6 @@ export function ProductosPagePrivada() {
                 <div className="modal-body p-4">
                     <div className="row g-3">
 
-                        {/* Marca */}
                         <div className="col-12 col-md-6">
                             <label className="form-label small fw-bold">Marca</label>
                             <input
@@ -209,7 +202,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Tipo */}
                         <div className="col-12 col-md-6">
                             <label className="form-label small fw-bold">Tipo</label>
                             <input
@@ -223,7 +215,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>    
 
-                        {/* Bodega */}
                         <div className="col-12 col-md-6">
                             <label className="form-label small fw-bold">Bodega</label>
                             <input
@@ -236,7 +227,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Varietal */}
                         <div className="col-12 col-md-6">
                             <label className="form-label small fw-bold">Varietal</label>
                             <input
@@ -249,7 +239,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Precio */}
                         <div className="col-12 col-md-4">
                             <label className="form-label small fw-bold">Precio</label>
                             <input
@@ -263,7 +252,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Costo */}
                         <div className="col-12 col-md-4">
                             <label className="form-label small fw-bold">Costo</label>
                             <input
@@ -276,7 +264,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Stock */}
                         <div className="col-12 col-md-4">
                             <label className="form-label small fw-bold">Stock</label>
                             <input
@@ -290,7 +277,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Año */}
                         <div className="col-12 col-md-4">
                             <label className="form-label small fw-bold">Año</label>
                             <input
@@ -303,7 +289,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Medida */}
                         <div className="col-12 col-md-8">
                             <label className="form-label small fw-bold">Medida</label>
                             <input
@@ -316,7 +301,6 @@ export function ProductosPagePrivada() {
                             />          
                         </div>
 
-                        {/* Imagen / Ruta */}
                         <div className="col-12">
                             <label className="form-label small fw-bold">Ruta de Imagen (`/public`)</label>
                             <input
@@ -329,7 +313,6 @@ export function ProductosPagePrivada() {
                             />
                         </div>
 
-                        {/* Descripción */}
                         <div className="col-12">
                             <label className="form-label small fw-bold">Descripción</label>
                                 <textarea

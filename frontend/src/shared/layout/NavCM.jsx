@@ -9,7 +9,6 @@ export function NavCM({ sesion }) {
     navigate('/login-gestion', { replace: true });
   };
 
-  // Estilo minimalista neutro (sin fondos pesados)
   const getNavLinkStyle = ({ isActive }) => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
     color: isActive ? 'var(--detalles)' : 'rgba(255, 255, 255, 0.65)',
@@ -27,7 +26,7 @@ export function NavCM({ sesion }) {
         borderRight: '1px solid rgba(255, 255, 255, 0.08)' 
       }}
     >
-      {/* Encabezado: Panel + Usuario */}
+      {/* Encabezado */}
       <div className="pb-3 mb-3 mb-md-4 border-bottom" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <h5 className="fw-bold text-white mb-1" style={{ fontSize: '1.25rem', letterSpacing: '0.5px' }}>
           Panel CM
@@ -49,7 +48,7 @@ export function NavCM({ sesion }) {
         </NavLink>
       </nav>
 
-      {/* Pie con Botón de Cerrar Sesión */}
+      {/* Botón de Cerrar Sesión */}
       <div className="pt-3 mt-auto border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         <button
           onClick={handleCerrarSesion}
@@ -76,7 +75,6 @@ export function NavCM({ sesion }) {
         </button>
       </div>
 
-      {/* Media query para adaptar ancho según el dispositivo */}
       <style>{`
         .sidebar-cm {
           width: 100%;

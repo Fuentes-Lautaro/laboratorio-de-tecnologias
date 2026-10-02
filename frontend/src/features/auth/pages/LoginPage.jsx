@@ -32,7 +32,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        {/* Usuarios de prueba */}
+        {/* Deplegable de Usuarios de Ejemplo */}
         <details className="mt-2 text-center">
           <summary 
             className="user-select-none small text-uppercase fw-semibold cursor-pointer" 

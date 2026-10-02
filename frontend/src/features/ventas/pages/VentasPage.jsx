@@ -8,25 +8,21 @@ export function VentasPage() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estados para la búsqueda
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
 
-  // Estados para modales
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [mostrarModalVer, setMostrarModalVer] = useState(false);
   const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
 
-  // Campos del formulario de Nueva Venta
   const [clienteDni, setClienteDni] = useState('');
   const [empleadoDni, setEmpleadoDni] = useState('');
   const [metodoPago, setMetodoPago] = useState('Efectivo');
   
-  // Carrito / Ítems de la venta actual
+  //USAMOS VARIABLE CARRITO O LE PONEMOS OTRO NOMBRE? 
   const [carrito, setCarrito] = useState([]);
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState('');
   const [cantidad, setCantidad] = useState(1);
 
-  // Cargar ventas y productos al iniciar la página mediante servicios
   useEffect(() => {
     Promise.all([getVentas(), getProductos()])
       .then(([datosVentas, datosProductos]) => {
@@ -40,7 +36,6 @@ export function VentasPage() {
       });
   }, []);
 
-  // --- LÓGICA DE FILTRADO ---
   const ventasFiltradas = ventas.filter((v) => {
     const busqueda = terminoBusqueda.toLowerCase();
     const codigoCoincide = v.codigo?.toLowerCase().includes(busqueda);
@@ -48,13 +43,11 @@ export function VentasPage() {
     return codigoCoincide || clienteCoincide;
   });
 
-  // Manejador para ver el detalle de una venta existente
   const handleVerDetalle = (venta) => {
     setVentaSeleccionada(venta);
     setMostrarModalVer(true);
   };
 
-  // Agregar producto seleccionado al carrito
   const handleAgregarItem = (e) => {
     e.preventDefault();
     if (!productoSeleccionadoId) return;
@@ -77,7 +70,6 @@ export function VentasPage() {
 
   const totalVenta = carrito.reduce((acc, item) => acc + item.subtotal, 0);
 
-  // Guardar nueva venta
   const handleSubmitVenta = async (e) => {
     e.preventDefault();
     if (carrito.length === 0) {
@@ -99,7 +91,6 @@ export function VentasPage() {
       const guardada = await crearVenta(nuevaVenta);
       setVentas([guardada, ...ventas]);
       setMostrarModalForm(false);
-      // Limpiar formulario y carrito
       setCarrito([]);
       setClienteDni('');
       setEmpleadoDni('');
@@ -182,7 +173,7 @@ export function VentasPage() {
         </table>
       </div>
 
-      {/* MODAL: VER DETALLE DE VENTA */}
+      {/* DETALLE */}
       {mostrarModalVer && ventaSeleccionada && (
         <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -232,7 +223,7 @@ export function VentasPage() {
         </div>
       )}
 
-      {/* MODAL: REGISTRAR NUEVA VENTA */}
+      {/* NUEVA VENTA */}
       {mostrarModalForm && (
         <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -318,7 +309,6 @@ export function VentasPage() {
                     </div>
                   </div>
 
-                  {/* Tabla del Carrito Temporal */}
                   <div className="table-responsive border rounded mb-3">
                     <table className="table table-sm mb-0 align-middle">
                       <thead className="table-light">
