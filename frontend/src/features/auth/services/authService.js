@@ -114,7 +114,7 @@ export function protegerRuta() {
 
 export function redirigirSiHaySesion() {
   if (obtenerSesion()) {
-    throw redirect('/')
+    throw redirect('/gestion')
   }
   return null
 }
