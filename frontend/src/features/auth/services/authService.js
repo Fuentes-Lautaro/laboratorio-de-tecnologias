@@ -107,7 +107,7 @@ export function cerrarSesion() {
 export function protegerRuta() {
   const sesion = obtenerSesion()
   if (!sesion) {
-    throw redirect('/login')
+    throw redirect('/login-gestion')
   }
   return sesion
 }
