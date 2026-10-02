@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router'
 import Spinner from './shared/components/Spinner'
 import NoEncontradaPage from './shared/pages/NoEncontradaPage'
-import { LoginGestionPage, protegerRuta, redirigirSiHaySesion } from './features/auth';
 import LayoutPublico from './shared/layout/LayoutPublico'
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
@@ -13,6 +12,7 @@ import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones'
 import { ContactoPage } from './features/contacto';
 import { EventosPage } from './features/eventos';
+import { LoginPage, LoginGestionPage, protegerRuta, redirigirSiHaySesion, redirigirSiHaySesionPrivado, obtenerSesion } from './features/auth';
 import { ClientesPagePrivada } from './features/clientes';
 import { ProductosPagePrivada } from './features/productos'
 import { EventosPagePrivada } from './features/eventos';
@@ -29,24 +29,26 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <LayoutPublico />,
+    loader: obtenerSesion,
     errorElement: <NoEncontradaPage />,
     children: [
-      { index: true, element: <HomePage /> }, // "/" exacto
-      { path: 'catalogo', element: <CatalogoPage /> }, // "/catalogo"
-      { path: 'catalogo/:id', element: <DetalleProductoPage /> }, // "/catalogo"
+      { index: true, element: <HomePage /> },
+      { path: 'login', element: <LoginPage />, loader: redirigirSiHaySesion},
+      { path: 'catalogo', element: <CatalogoPage /> },
+      { path: 'catalogo/:id', element: <DetalleProductoPage /> },
       { path: 'nosotros', element: <NosotrosPage /> },
       { path: 'contacto', element: <ContactoPage /> },
-      { path: 'suscripciones', element: <SuscripcionesPage /> }, // "/suscripciones"
-      { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> }, // "/suscripciones/:nombre"
-      { path: 'eventos', element: <EventosPage /> }, // "/eventos"
-      { path: '*', element: <NoEncontradaPage /> }, // cualquier otra URL
+      { path: 'suscripciones', element: <SuscripcionesPage /> },
+      { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> },
+      { path: 'eventos', element: <EventosPage /> },
+      { path: '*', element: <NoEncontradaPage /> },
     ],
   },
   {
-        path: 'login-gestion',
-        element: <LoginGestionPage />,
-        loader: redirigirSiHaySesion, // Si ya hay sesión iniciada, evita volver a mostrar el formulario[cite: 4]
-      },
+    path: 'login-gestion',
+    element: <LoginGestionPage />,
+    loader: redirigirSiHaySesionPrivado, // Si ya hay sesión iniciada, evita volver a mostrar el formulario
+  },
 
   // Panel Interno de Administración (Vendedor / Gerente)
   {

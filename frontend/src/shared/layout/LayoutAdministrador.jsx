@@ -6,7 +6,6 @@ export default function LayoutAdministrador() {
 
   return (
     <div className="d-flex flex-column flex-md-row min-vh-100">
-      {/* Navegación responsiva */}
       <NavGestor sesion={sesion} />
 
       {/* Contenido principal */}

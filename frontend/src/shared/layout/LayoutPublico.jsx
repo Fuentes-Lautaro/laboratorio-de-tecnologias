@@ -1,4 +1,4 @@
-import { Outlet, ScrollRestoration } from 'react-router-dom';
+import { Outlet, ScrollRestoration, useLoaderData } from 'react-router-dom';
 import Navbar from './Navbar'
 import Footer from './Footer'
 
@@ -20,9 +20,11 @@ const SRCFOOTER =[
 ]
 
 function LayoutPublico(){
+    const sesion = useLoaderData();
+
     return(
         <div className="d-flex flex-column min-vh-100">
-            <Navbar enlaces={ENLACES} />
+            <Navbar enlaces={ ENLACES } sesion = {sesion} />
 
             <main className="container-fluid bg-light px-3 px-lg-5 flex-grow-1">
                 <Outlet context />

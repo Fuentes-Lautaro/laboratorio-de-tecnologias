@@ -47,23 +47,6 @@ export function FormularioLogin({ onIngresar }) {
 
   return (
     <form ref={formularioRef} onSubmit={handleSubmit} noValidate className="p-1">
-      
-      {/* Cabecera visual del formulario */}
-      <div className="text-center mb-4">
-        <span 
-          className="text-uppercase small fw-semibold tracking-wide d-block mb-1"
-          style={{ color: 'var(--detalles, #B5865A)', letterSpacing: '2px', fontSize: '0.75rem' }}
-        >
-          ✦ MARÍA BALBINA ✦
-        </span>
-        <h4 className="fw-bold m-0" style={{ color: 'var(--titulos, #64141B)' }}>
-          Ingreso al Sistema
-        </h4>
-        <div 
-          className="mx-auto mt-2" 
-          style={{ width: '45px', height: '2px', backgroundColor: 'var(--detalles, #B5865A)', borderRadius: '2px' }}
-        />
-      </div>
 
       {/* Alerta de Error de Servidor */}
       {errorServidor && (

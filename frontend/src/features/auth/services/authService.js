@@ -43,8 +43,6 @@ export async function iniciarSesion(email, password) {
     throw new Error('Email o contraseña incorrectos.')
   }
 
-  // Guardamos la sesión con el DNI (clave fundamental para consultar suscripciones)
-  // Nunca guardamos la contraseña en la sesión.
   const sesion = { 
     dni: cliente.dni, 
     nombre: cliente.nombre, 
@@ -54,6 +52,13 @@ export async function iniciarSesion(email, password) {
   
   sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion))
   return sesion
+}
+
+export function redirigirSiHaySesion() {
+  if (obtenerSesion()) {
+    throw redirect('/')
+  }
+  return null
 }
 
 // ====================================================================================
@@ -82,7 +87,7 @@ export async function iniciarSesionEmpleado(email, password) {
     dni: empleado.dni, 
     nombre: empleado.nombre, 
     email: empleado.mail || empleado.email, 
-    rol: empleado.rol, // Gerente, CM, Empleado
+    rol: empleado.rol,
     tipo: 'empleado'
   }
   
@@ -103,16 +108,21 @@ export function cerrarSesion() {
   sessionStorage.removeItem(CLAVE_SESION)
 }
 
-// React Router: Loaders
 export function protegerRuta() {
-  const sesion = obtenerSesion()
+  const sesion = obtenerSesion();
   if (!sesion) {
-    throw redirect('/login-gestion')
+    throw redirect('/login-gestion');
   }
-  return sesion
+  const rol = sesion.rol?.toLowerCase() || '';
+  const rolesPermitidos = ['gerente', 'vendedor', 'cm'];
+
+  if (!rolesPermitidos.includes(rol)) {
+    throw redirect('/');
+  }
+  return sesion;
 }
 
-export function redirigirSiHaySesion() {
+export function redirigirSiHaySesionPrivado() {
   if (obtenerSesion()) {
     throw redirect('/gestion')
   }

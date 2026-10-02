@@ -45,24 +45,27 @@ export function LoginGestionPage() {
       </header>
 
       {/* 2. CONTENIDO PRINCIPAL / FORMULARIO */}
-      <main className="flex-grow-1 d-flex align-items-center justify-content-center py-5 px-3">
+      <main className="flex-grow-1 d-flex align-items-center justify-content-center py-4 px-3">
         <div style={{ maxWidth: '440px', width: '100%' }}>
           
          
           <div 
-            className="card border-0 shadow-lg rounded-4 overflow-hidden mb-4"
+            className="card border-0 shadow-lg rounded-4 overflow-hidden mb-2"
             style={{ backgroundColor: '#ffffff'}}
           >
             <div 
-              className="py-4 px-3 text-center text-white"
+              className="py-3 px-3 text-center text-white"
               style={{ backgroundColor: 'var(--paneles)' }}
             >
-              <h1 className="h4 fw-bold mb-1" style={{ color: 'var(--fondos-principales, #Fff)' }}>
+              <h1 className="h4 fw-bold mb-2" style={{ color: 'var(--fondos-principales, #Fff)' }}>
                 Acceso al Sistema
               </h1>
-              <p className="small mb-0 opacity-75" style={{ color: 'var(--detalles, #B5865A)' }}>
-                Ingrese sus credenciales de empleado
-              </p>
+              <span 
+                className="text-uppercase small fw-semibold tracking-wide d-block mb-2"
+                style={{ color: 'var(--detalles, #B5865A)', letterSpacing: '2px', fontSize: '0.75rem' }}
+              >
+                ✦ MARÍA BALBINA ✦
+              </span>
             </div>
 
             <div className="p-4">
