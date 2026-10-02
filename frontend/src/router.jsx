@@ -19,7 +19,7 @@ import { EventosPagePrivada } from './features/eventos';
 import { PlanesPagePrivada } from './features/suscripciones';
 import { EmpleadosPagePrivada } from './features/empleados'
 import { SuscripcionesPagePrivada } from './features/suscripciones'
-
+import { VentasPage } from './features/ventas'
 
 
 export const router = createBrowserRouter([
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
     element: <LayoutAdministrador />,
     loader: protegerRuta,
     children: [
-      { path: 'ventas', element: <h2>Sección Ventas</h2> },
+      { path: 'ventas', element: <VentasPage /> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'suscripciones', element: <SuscripcionesPagePrivada /> },
