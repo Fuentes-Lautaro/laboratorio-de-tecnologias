@@ -6,10 +6,8 @@ export function TarjetaPlan({ plan }) {
   const navigate = useNavigate();
   const [productosDelPlan, setProductosDelPlan] = useState([]);
 
-  // Desestructuramos los campos actualizados del JSON
   const { nombre, descripcion, cantidad_vinos, valor, productos_proximo_mes } = plan;
 
-  // Cargamos los productos y filtramos los que corresponden a este plan
   useEffect(() => {
     async function cargarVinosDelPlan() {
       try {
@@ -33,7 +31,7 @@ export function TarjetaPlan({ plan }) {
   };
 
   return (
-    <table className="tabla-plan">
+    <table className="tabla-plan h-100 w-100 m-0">
       <thead>
         <tr>
           <th>PLAN {nombre?.toUpperCase()}</th>
