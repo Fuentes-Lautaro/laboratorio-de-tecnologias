@@ -29,9 +29,20 @@ export function ProductosPagePrivada() {
   // Estado del Formulario
   const [formData, setFormData] = useState(FORM_INICIAL);
 
+  const [terminoBusqueda, setTerminoBusqueda] = useState('');
+
   useEffect(() => {
     cargarLista();
   }, []);
+
+  const productosFiltrados = productos.filter((producto) => {
+    const busquedaMinuscula = terminoBusqueda.toLowerCase();
+    const coincideMarca = producto.marca.toLowerCase().includes(busquedaMinuscula);
+    const coincideTipo = producto.tipo.toLowerCase().includes(busquedaMinuscula);
+    const coincideVarietal = producto.varietal.toLowerCase().includes(busquedaMinuscula);
+    const coincideBodega = producto.bodega.toLowerCase().includes(busquedaMinuscula);
+    return coincideMarca || coincideTipo || coincideVarietal || coincideBodega;
+  });
 
   const cargarLista = async () => {
     try {
@@ -93,6 +104,10 @@ export function ProductosPagePrivada() {
     }
   };
 
+  const handleBusquedaChange = (e) => {
+    setTerminoBusqueda(e.target.value);
+  };
+
   // --- MANEJO DE ELIMINAR ---
   const handleSolicitarEliminar = (id) => {
     const encontrado = productos.find((pr) => pr.id === id);
@@ -127,6 +142,17 @@ export function ProductosPagePrivada() {
         </button>
       </div>
 
+      <div className="mb-3">
+        <input 
+          type="text" 
+          className="form-control" 
+          placeholder="Buscar producto por marca, tipo, varietal o bodega..." 
+          value={terminoBusqueda}
+          onChange={handleBusquedaChange}
+          style={{ maxWidth: '500px' }}
+        />
+      </div>
+      
       {/* Grilla de Productos */}
       {cargando ? (
         <div className="text-center py-5">
@@ -135,7 +161,7 @@ export function ProductosPagePrivada() {
         </div>
       ) : (
         <div className="row g-4">
-          {productos.map((producto) => (
+          {productosFiltrados.map((producto) => (
             <div key={producto.id} className="col-12 col-md-6 col-lg-4">
               <ProductoCard
                 producto={producto}

@@ -1,7 +1,7 @@
 // Fallback limpio que solo se activa si la foto no existe
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
-export function ProductoCard({ producto, esGestion = false, onEditar, onEliminar }) {
+export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onEliminar }) {
   const { 
     id, 
     marca, 
@@ -18,7 +18,7 @@ export function ProductoCard({ producto, esGestion = false, onEditar, onEliminar
   } = producto;
 
   const handleImageError = (e) => {
-    e.target.onerror = null; // Evita bucles infinitos en consola
+    e.target.onerror = null;
     e.target.src = FALLBACK_IMAGEN;
   };
 
@@ -66,14 +66,12 @@ export function ProductoCard({ producto, esGestion = false, onEditar, onEliminar
               </h6>
             )}
 
-            {/* Descripción: Se muestra SOLO si NO estamos en gestión */}
             {!esGestion && (
               <p className="card-text text-secondary small mb-2" style={{ lineHeight: '1.4' }}>
                 {descripcion || 'Sin descripción disponible.'}
               </p>
             )}
 
-            {/* Costo: Se muestra SOLO si ESTAMOS en gestión */}
             {esGestion && costo && (
               <div className="text-muted small mb-1">
                 <strong>Costo:</strong> {costo}
@@ -88,12 +86,21 @@ export function ProductoCard({ producto, esGestion = false, onEditar, onEliminar
           {/* Botones de acción en el panel de gestión */}
           {esGestion && (
             <div className="card-footer bg-light border-0 p-2 d-flex gap-2 justify-content-end">
+              {onVer && (
+                <button
+                  onClick={() => onVer(producto)}
+                  className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
+                  style={{ fontSize: '0.8rem' }}
+                >
+                  👁️ Ver
+                </button>
+              )}
               <button
                 onClick={() => onEditar(producto)}
                 className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
                 style={{ fontSize: '0.8rem' }}
               >
-                ✏ Editar
+                ✏️ Editar
               </button>
               <button
                 onClick={() => onEliminar(id)}

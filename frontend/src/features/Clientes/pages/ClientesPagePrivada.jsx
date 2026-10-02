@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getClientes, crearCliente, actualizarCliente } from '../services/clienteService';
+import TablaClientes from '../components/TablaClientes'; // Ajustá la ruta según tu estructura de carpetas
+import Modal from '../../../shared/components/Modal';   // Ajustá la ruta hacia tu modal genérico
 
 export function ClientesPagePrivada() {
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
   
-  // estado para la búsqueda
+  // Estado para la búsqueda
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
   
   // Estados para modales
@@ -17,6 +19,7 @@ export function ClientesPagePrivada() {
     dni: '', nombre: '', fechaNac: '', telefono: '', mail: '', direccion: '', clave: '', activo: true
   };
   const [formData, setFormData] = useState(estadoInicialForm);
+
   useEffect(() => {
     getClientes()
       .then(datos => {
@@ -27,7 +30,6 @@ export function ClientesPagePrivada() {
   }, []);
 
   // --- LÓGICA DE FILTRADO ---
-  // Filtramos los clientes en base al texto ingresado en el buscador (por nombre o DNI)
   const clientesFiltrados = clientes.filter((cliente) => {
     const busquedaMinuscula = terminoBusqueda.toLowerCase();
     const coincideNombre = cliente.nombre.toLowerCase().includes(busquedaMinuscula);
@@ -85,7 +87,6 @@ export function ClientesPagePrivada() {
     setFormData({ ...formData, [name]: value });
   };
 
-  // El cambio en el input de búsqueda actualiza el estado directamente
   const handleBusquedaChange = (e) => {
     setTerminoBusqueda(e.target.value);
   };
@@ -127,140 +128,85 @@ export function ClientesPagePrivada() {
             </tr>
           </thead>
           <tbody>
-            {/* Ahora mapeamos clientesFiltrados en lugar del estado crudo 'clientes' */}
-            {clientesFiltrados.length > 0 ? (
-              clientesFiltrados.map(cliente => (
-                <tr key={cliente.dni} style={{ opacity: cliente.activo ? 1 : 0.6 }}>
-                  <td className="fw-semibold">{cliente.nombre}</td>
-                  <td>{cliente.dni}</td>
-                  <td>{cliente.mail}</td>
-                  <td>
-                    <span className={`badge bg-${cliente.activo ? 'success' : 'secondary'} bg-opacity-25 text-${cliente.activo ? 'success' : 'secondary'}`}>
-                      {cliente.activo ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </td>
-                  <td className="text-end">
-                    <div className="d-flex gap-2 justify-content-end">
-                      <button 
-                        onClick={() => handleVer(cliente)} 
-                        className="btn btn-sm btn-light d-flex align-items-center gap-1 border shadow-sm"
-                        style={{ color: 'var(--paneles, #3E100F)', fontSize: '0.85rem' }}
-                      >
-                        👁️ Ver
-                      </button>
-                      
-                      <button 
-                        onClick={() => handleEditar(cliente)} 
-                        className="btn btn-sm btn-light d-flex align-items-center gap-1 border shadow-sm"
-                        style={{ color: 'var(--paneles, #3E100F)', fontSize: '0.85rem' }}
-                      >
-                        ✏️ Editar
-                      </button>
-                      
-                      <button 
-                        onClick={() => handleToggleEstado(cliente)} 
-                        className={`btn btn-sm d-flex align-items-center gap-1 shadow-sm ${cliente.activo ? 'btn-outline-danger' : 'btn-outline-success'}`}
-                        style={{ fontSize: '0.85rem' }}
-                      >
-                        {cliente.activo ? '🚫 Baja' : '✅ Alta'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="text-center py-4 text-muted">
-                  No se encontraron clientes con "{terminoBusqueda}".
-                </td>
-              </tr>
-            )}
+            <TablaClientes 
+              clientes={clientesFiltrados} 
+              onVer={handleVer} 
+              onEditar={handleEditar} 
+              onToggleEstado={handleToggleEstado} 
+            />
           </tbody>
         </table>
       </div>
 
-      {/*  Formulario ABM */}
+      {/* Formulario ABM (Reutilizando Modal) */}
       {mostrarModalForm && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <form className="modal-content" onSubmit={handleSubmit}>
-              <div className="modal-header">
-                <h5 className="modal-title fw-bold">{clienteSeleccionado ? 'Editar Cliente' : 'Nuevo Cliente'}</h5>
-                <button type="button" className="btn-close" onClick={() => setMostrarModalForm(false)}></button>
+        <Modal 
+          titulo={clienteSeleccionado ? 'Editar Cliente' : 'Nuevo Cliente'} 
+          onClose={() => setMostrarModalForm(false)}
+        >
+          <form onSubmit={handleSubmit} className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label small text-muted">DNI</label>
+              <input type="text" className="form-control" name="dni" value={formData.dni} onChange={handleChange} required disabled={!!clienteSeleccionado} />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label small text-muted">Nombre Completo</label>
+              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} required />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label small text-muted">Fecha de Nacimiento</label>
+              <input type="date" className="form-control" name="fechaNac" value={formData.fechaNac} onChange={handleChange} required />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label small text-muted">Teléfono</label>
+              <input type="text" className="form-control" name="telefono" value={formData.telefono} onChange={handleChange} required />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label small text-muted">Mail</label>
+              <input type="email" className="form-control" name="mail" value={formData.mail} onChange={handleChange} required />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label small text-muted">Dirección</label>
+              <input type="text" className="form-control" name="direccion" value={formData.direccion} onChange={handleChange} required />
+            </div>
+            {!clienteSeleccionado && (
+              <div className="col-md-6">
+                <label className="form-label small text-muted">Clave Inicial</label>
+                <input type="password" className="form-control" name="clave" value={formData.clave} onChange={handleChange} required />
               </div>
-              <div className="modal-body p-4 row g-3">
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">DNI</label>
-                  <input type="text" className="form-control" name="dni" value={formData.dni} onChange={handleChange} required disabled={!!clienteSeleccionado} />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">Nombre Completo</label>
-                  <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} required />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">Fecha de Nacimiento</label>
-                  <input type="date" className="form-control" name="fechaNac" value={formData.fechaNac} onChange={handleChange} required />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">Teléfono</label>
-                  <input type="text" className="form-control" name="telefono" value={formData.telefono} onChange={handleChange} required />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">Mail</label>
-                  <input type="email" className="form-control" name="mail" value={formData.mail} onChange={handleChange} required />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small text-muted">Dirección</label>
-                  <input type="text" className="form-control" name="direccion" value={formData.direccion} onChange={handleChange} required />
-                </div>
-                {!clienteSeleccionado && (
-                  <div className="col-md-6">
-                    <label className="form-label small text-muted">Clave Inicial</label>
-                    <input type="password" className="form-control" name="clave" value={formData.clave} onChange={handleChange} required />
-                  </div>
-                )}
-              </div>
-              <div className="modal-footer border-0">
-                <button type="button" className="btn btn-light" onClick={() => setMostrarModalForm(false)}>Cancelar</button>
-                <button type="submit" className="btn text-white" style={{ backgroundColor: 'var(--paneles)' }}>Guardar</button>
-              </div>
-            </form>
-          </div>
-        </div>
+            )}
+            <div className="modal-footer border-0 px-0 pb-0 pt-3 w-100 d-flex justify-content-end gap-2">
+              <button type="button" className="btn btn-light" onClick={() => setMostrarModalForm(false)}>Cancelar</button>
+              <button type="submit" className="btn text-white" style={{ backgroundColor: 'var(--paneles)' }}>Guardar</button>
+            </div>
+          </form>
+        </Modal>
       )}
       
-      {/* -Vista de Tarjeta (Ver Detalle) */}
+      {/* Vista de Detalle (Reutilizando Modal) */}
       {mostrarModalVer && clienteSeleccionado && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content border-0 shadow-lg">
-              <div className="card border-0">
-                <div className="card-header text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--titulos)' }}>
-                  <h5 className="mb-0 fw-bold">Detalle del Cliente</h5>
-                  <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalVer(false)}></button>
-                </div>
-                <div className="card-body p-4">
-                  <div className="mb-3">
-                    <h4 className="fw-bold text-dark mb-0">{clienteSeleccionado.nombre}</h4>
-                    <span className={`badge bg-${clienteSeleccionado.activo ? 'success' : 'secondary'} mt-1`}>
-                      {clienteSeleccionado.activo ? 'Usuario Activo' : 'Usuario Inactivo'}
-                    </span>
-                  </div>
-                  <ul className="list-group list-group-flush">
-                    <li className="list-group-item px-0"><strong>DNI:</strong> {clienteSeleccionado.dni}</li>
-                    <li className="list-group-item px-0"><strong>Email:</strong> {clienteSeleccionado.mail}</li>
-                    <li className="list-group-item px-0"><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</li>
-                    <li className="list-group-item px-0"><strong>Nacimiento:</strong> {clienteSeleccionado.fechaNac}</li>
-                    <li className="list-group-item px-0"><strong>Dirección:</strong> {clienteSeleccionado.direccion}</li>
-                    <li className="list-group-item px-0"><strong>Rol en sistema:</strong> {clienteSeleccionado.rol}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+        <Modal 
+          titulo="Detalle del Cliente" 
+          onClose={() => setMostrarModalVer(false)}
+        >
+          <div className="mb-3">
+            <h4 className="fw-bold text-dark mb-0">{clienteSeleccionado.nombre}</h4>
+            <span className={`badge bg-${clienteSeleccionado.activo ? 'success' : 'secondary'} mt-1`}>
+              {clienteSeleccionado.activo ? 'Usuario Activo' : 'Usuario Inactivo'}
+            </span>
           </div>
-        </div>
+          <ul className="list-group list-group-flush">
+            <li className="list-group-item px-0"><strong>DNI:</strong> {clienteSeleccionado.dni}</li>
+            <li className="list-group-item px-0"><strong>Email:</strong> {clienteSeleccionado.mail}</li>
+            <li className="list-group-item px-0"><strong>Teléfono:</strong> {clienteSeleccionado.telefono}</li>
+            <li className="list-group-item px-0"><strong>Nacimiento:</strong> {clienteSeleccionado.fechaNac}</li>
+            <li className="list-group-item px-0"><strong>Dirección:</strong> {clienteSeleccionado.direccion}</li>
+            <li className="list-group-item px-0"><strong>Rol en sistema:</strong> {clienteSeleccionado.rol}</li>
+          </ul>
+        </Modal>
       )}
     </div>
   );
 }
+
 export default ClientesPagePrivada;
