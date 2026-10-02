@@ -138,7 +138,7 @@ export function ProductosPagePrivada() {
           className="btn text-white fw-semibold px-3 py-2 d-flex align-items-center justify-content-center gap-2 rounded-2"
           style={{ backgroundColor: 'var(--detalles, #B5865A)' }}
         >
-          <span>➕</span> Nuevo Producto
+          <span>+</span> Nuevo Producto
         </button>
       </div>
 
