@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { cerrarSesion } from '../../features/auth/services/authService';
+import { cerrarSesion } from '../../features/auth/services/authService.js';
 
 export function NavCM({ sesion }) {
   const navigate = useNavigate();

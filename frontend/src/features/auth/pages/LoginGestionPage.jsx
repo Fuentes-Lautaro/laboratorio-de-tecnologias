@@ -1,6 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
 import FormularioLogin from '../components/FormularioLogin';
-import { iniciarSesionEmpleado } from '../services/authService';
+import { iniciarSesionEmpleado } from '../services/authService.js';
 
 export function LoginGestionPage() {
   const navigate = useNavigate();

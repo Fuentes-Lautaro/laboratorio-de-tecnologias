@@ -13,4 +13,4 @@ export {
   cerrarSesion,
   protegerRuta,
   redirigirSiHaySesion
-} from './services/authService';
+} from './services/authService.js';

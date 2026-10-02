@@ -18,6 +18,12 @@ export function NavGestor({ sesion }) {
     transition: 'all 0.15s ease'
   });
 
+  // Normalizamos el rol a minúsculas para comparar con seguridad
+  const rolUsuario = sesion?.rol?.toLowerCase() || '';
+
+  // Definimos la regla: solo el gerente ve la sección de administración
+  const esGerente = rolUsuario === 'gerente';
+
   return (
     <aside 
       className="d-flex flex-column p-3 p-md-4 sidebar-gestor"
@@ -32,11 +38,11 @@ export function NavGestor({ sesion }) {
           Panel Gestión
         </h5>
         <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
-          {sesion?.nombre || 'Sofía Martínez'} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'gerente'})</span>
+          {sesion?.nombre || 'Usuario'} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'rol'})</span>
         </div>
       </div>
 
-      {/* Navegación Principal */}
+      {/* Navegación Principal (Visible para Vendedor y Gerente) */}
       <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
         <NavLink to="/gestion/ventas" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
           <span style={{ fontSize: '1.1rem' }}>🛒</span>
@@ -58,27 +64,31 @@ export function NavGestor({ sesion }) {
           <span>Suscripciones</span>
         </NavLink>
         
-        {/* Separador de Sección */}
-        <div 
-          className="mt-3 mt-md-4 mb-2 px-3 fw-semibold text-uppercase" 
-          style={{ 
-            color: 'rgba(255, 255, 255, 0.4)', 
-            fontSize: '0.78rem', 
-            letterSpacing: '1.5px'
-          }}
-        >
-          Administración
-        </div>
+        {/* Sección de Administración: EXCLUSIVO para Gerente */}
+        {esGerente && (
+          <>
+            <div 
+              className="mt-3 mt-md-4 mb-2 px-3 fw-semibold text-uppercase" 
+              style={{ 
+                color: 'rgba(255, 255, 255, 0.4)', 
+                fontSize: '0.78rem', 
+                letterSpacing: '1.5px'
+              }}
+            >
+              Administración
+            </div>
 
-        <NavLink to="/gestion/empleados" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>👔</span>
-          <span>Empleados</span>
-        </NavLink>
+            <NavLink to="/gestion/empleados" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
+              <span style={{ fontSize: '1.1rem' }}>👔</span>
+              <span>Empleados</span>
+            </NavLink>
 
-        <NavLink to="/gestion/planes" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>📋</span>
-          <span>Planes</span>
-        </NavLink>
+            <NavLink to="/gestion/planes" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
+              <span style={{ fontSize: '1.1rem' }}>📋</span>
+              <span>Planes</span>
+            </NavLink>
+          </>
+        )}
       </nav>
 
       {/* Pie con Botón de Cerrar Sesión */}
@@ -114,9 +124,9 @@ export function NavGestor({ sesion }) {
           .sidebar-gestor {
             width: 260px !important;
             min-width: 260px;
-            height: 100vh; /* Forzamos el alto exacto de la pantalla */
-            position: sticky; /* Mantiene el contenedor fijo */
-            top: 0; /* Lo ancla al borde superior */
+            height: 100vh;
+            position: sticky;
+            top: 0;
           }
         }
       `}</style>
