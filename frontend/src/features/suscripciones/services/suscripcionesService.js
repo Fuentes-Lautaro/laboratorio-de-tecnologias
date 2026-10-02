@@ -55,3 +55,13 @@ export async function getSuscripcionActivaPorDni(clienteDni) {
     throw error;
   }
 }
+
+export async function getRegistrosMes() {
+  const respuesta = await fetch(`${URL_BASE}/registroMes.json`);
+  
+  if (!respuesta.ok){
+    throw new Error(`Error ${respuesta.status}: No se pudieron obtener los registros de los meses`);
+  }
+  
+  return await respuesta.json();
+}

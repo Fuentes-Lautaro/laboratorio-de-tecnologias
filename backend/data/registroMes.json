@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "plan_id": 1,
+    "periodo": "2026-09",
+    "productos": ["VIN-014", "VIN-008"]
+  },
+  {
+    "id": 2,
+    "plan_id": 1,
+    "periodo": "2026-10",
+    "productos": ["VIN-001", "VIN-012"]
+  },
+  {
+    "id": 3,
+    "plan_id": 2,
+    "periodo": "2026-09",
+    "productos": ["VIN-005", "VIN-007", "VIN-009"]
+  },
+  {
+    "id": 4,
+    "plan_id": 2,
+    "periodo": "2026-10",
+    "productos": ["VIN-005", "VIN-007", "VIN-017"]
+  },
+  {
+    "id": 5,
+    "plan_id": 3,
+    "periodo": "2026-10",
+    "productos": ["VIN-002", "VIN-003", "VIN-010", "VIN-011", "VIN-018"]
+  }
+]
