@@ -1,0 +1,82 @@
+[
+  {
+    "codigo": "VTA-1712061101",
+    "fecha": "2026-10-02",
+    "clienteDni": "12345678",
+    "empleadoDni": "31987654",
+    "monto": 30000,
+    "metodoPago": "Efectivo"
+  },
+  {
+    "codigo": "VTA-1712061102",
+    "fecha": "2026-10-02",
+    "clienteDni": "87654321",
+    "empleadoDni": "31987654",
+    "monto": 135000,
+    "metodoPago": "Tarjeta de Crédito"
+  },
+  {
+    "codigo": "VTA-1712061103",
+    "fecha": "2026-10-03",
+    "clienteDni": null,
+    "empleadoDni": "31987654",
+    "monto": 14000,
+    "metodoPago": "Efectivo"
+  },
+  {
+    "codigo": "VTA-1712061104",
+    "fecha": "2026-10-03",
+    "clienteDni": "23456789",
+    "empleadoDni": "31987654",
+    "monto": 62000,
+    "metodoPago": "Transferencia"
+  },
+  {
+    "codigo": "VTA-1712061105",
+    "fecha": "2026-10-04",
+    "clienteDni": "34567890",
+    "empleadoDni": "31987654",
+    "monto": 22000,
+    "metodoPago": "Tarjeta de Débito"
+  },
+  {
+    "codigo": "VTA-1712061106",
+    "fecha": "2026-10-04",
+    "clienteDni": null,
+    "empleadoDni": "31987654",
+    "monto": 35000,
+    "metodoPago": "MercadoPago"
+  },
+  {
+    "codigo": "VTA-1712061107",
+    "fecha": "2026-10-05",
+    "clienteDni": "45678901",
+    "empleadoDni": "31987654",
+    "monto": 51000,
+    "metodoPago": "Tarjeta de Crédito"
+  },
+  {
+    "codigo": "VTA-1712061108",
+    "fecha": "2026-10-05",
+    "clienteDni": "56789012",
+    "empleadoDni": "31987654",
+    "monto": 18000,
+    "metodoPago": "Efectivo"
+  },
+  {
+    "codigo": "VTA-1712061109",
+    "fecha": "2026-10-06",
+    "clienteDni": null,
+    "empleadoDni": "31987654",
+    "monto": 28000,
+    "metodoPago": "Transferencia"
+  },
+  {
+    "codigo": "VTA-1712061110",
+    "fecha": "2026-10-06",
+    "clienteDni": "78901234",
+    "empleadoDni": "31987654",
+    "monto": 84000,
+    "metodoPago": "MercadoPago"
+  }
+]

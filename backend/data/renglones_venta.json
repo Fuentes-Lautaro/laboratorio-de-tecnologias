@@ -1,0 +1,72 @@
+[
+  {
+    "id": 101,
+    "ventaCodigo": "VTA-1712061101",
+    "productoCodigo": "PROD-001",
+    "cantidad": 2,
+    "precioUnitario": 15000
+  },
+  {
+    "id": 102,
+    "ventaCodigo": "VTA-1712061102",
+    "productoCodigo": "PROD-003",
+    "cantidad": 3,
+    "precioUnitario": 45000
+  },
+  {
+    "id": 103,
+    "ventaCodigo": "VTA-1712061103",
+    "productoCodigo": "PROD-007",
+    "cantidad": 1,
+    "precioUnitario": 14000
+  },
+  {
+    "id": 104,
+    "ventaCodigo": "VTA-1712061104",
+    "productoCodigo": "PROD-002",
+    "cantidad": 2,
+    "precioUnitario": 31000
+  },
+  {
+    "id": 105,
+    "ventaCodigo": "VTA-1712061105",
+    "productoCodigo": "PROD-004",
+    "cantidad": 1,
+    "precioUnitario": 22000
+  },
+  {
+    "id": 106,
+    "ventaCodigo": "VTA-1712061106",
+    "productoCodigo": "PROD-005",
+    "cantidad": 1,
+    "precioUnitario": 35000
+  },
+  {
+    "id": 107,
+    "ventaCodigo": "VTA-1712061107",
+    "productoCodigo": "PROD-006",
+    "cantidad": 3,
+    "precioUnitario": 17000
+  },
+  {
+    "id": 108,
+    "ventaCodigo": "VTA-1712061108",
+    "productoCodigo": "PROD-008",
+    "cantidad": 1,
+    "precioUnitario": 18000
+  },
+  {
+    "id": 109,
+    "ventaCodigo": "VTA-1712061109",
+    "productoCodigo": "PROD-009",
+    "cantidad": 2,
+    "precioUnitario": 14000
+  },
+  {
+    "id": 110,
+    "ventaCodigo": "VTA-1712061110",
+    "productoCodigo": "PROD-010",
+    "cantidad": 2,
+    "precioUnitario": 42000
+  }
+]
