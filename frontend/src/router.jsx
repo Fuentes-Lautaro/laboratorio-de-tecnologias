@@ -22,6 +22,8 @@ import { SuscripcionesPagePrivada } from './features/suscripciones'
 import { VentasPage } from './features/ventas'
 import { EstadisticasPage } from './features/estadisticas'
 import { VerSuscripcionPage } from './features/suscripciones/pages/VerSuscripcionPage';
+import { PerfilPage } from './features/clientes'
+
 
 
 export const router = createBrowserRouter([
@@ -43,6 +45,7 @@ export const router = createBrowserRouter([
       { path: 'eventos', element: <EventosPage /> },
       { path: '*', element: <NoEncontradaPage /> },
       { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
+      { path: 'perfil', element: <PerfilPage /> },
     ],
   },
   {
