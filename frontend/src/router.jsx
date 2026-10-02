@@ -21,7 +21,7 @@ import { EmpleadosPagePrivada } from './features/empleados'
 import { SuscripcionesPagePrivada } from './features/suscripciones'
 import { VentasPage } from './features/ventas'
 import { EstadisticasPage } from './features/estadisticas'
-
+import { VerSuscripcionPage } from './features/suscripciones/pages/VerSuscripcionPage';
 
 
 export const router = createBrowserRouter([
@@ -42,6 +42,7 @@ export const router = createBrowserRouter([
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> },
       { path: 'eventos', element: <EventosPage /> },
       { path: '*', element: <NoEncontradaPage /> },
+      { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
     ],
   },
   {

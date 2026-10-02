@@ -45,13 +45,28 @@ export async function getSuscripcionActivaPorDni(clienteDni) {
 
     const suscripciones = await respuesta.json();
 
-    const suscripcionActiva = suscripciones.find(
-      (sub) => String(sub.clienteDni) === String(clienteDni) && sub.estado === 'Activa'
-    );
+    // 1. Buscamos la suscripción donde el DNI coincida y 'activa' sea true
+    const suscripcionActiva = suscripciones.find((sub) => {
+      return String(sub.dni_cliente).trim() === String(clienteDni).trim() && 
+             sub.activa === true;
+    });
 
-    return suscripcionActiva || null;
+    if (!suscripcionActiva) return null;
+
+    // 2. Como el JSON guarda 'plan_id' (ej: 1, 2 o 3), buscamos el nombre del plan para que la vista lo muestre bien
+    const respuestaPlanes = await fetch(`${URL_BASE}/planes.json`); // O tu función getPlanes()
+    const planes = await respuestaPlanes.json();
+    const planEncontrado = planes.find(p => p.id === suscripcionActiva.plan_id);
+
+    // Devolvemos el objeto enriquecido con el nombre del plan
+    return {
+      ...suscripcionActiva,
+      planNombre: planEncontrado ? planEncontrado.nombre : 'Especial'
+    };
+
   } catch (error) {
     console.error('Error al obtener la suscripción activa:', error);
     throw error;
   }
 }
+
