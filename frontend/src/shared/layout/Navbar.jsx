@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useRevalidator } from 'react-router-dom';
 import { cerrarSesion } from '../../features/auth';
 import { getSuscripcionActivaPorDni } from '../../features/suscripciones'; // Ajusta la ruta según la ubicación de tu servicio
 
 function Navbar({ enlaces, sesion }) {
     const navigate = useNavigate();
     const [tieneSuscripcion, setTieneSuscripcion] = useState(false);
+    const revalidator = useRevalidator();
 
-    // Verificamos si el usuario tiene una suscripción activa cada vez que cambia la sesión
     useEffect(() => {
         async function verificarSuscripcion() {
             if (sesion?.dni) {
@@ -29,6 +29,7 @@ function Navbar({ enlaces, sesion }) {
 
     const handleCerrarSesion = () => {
         cerrarSesion();
+        revalidator.revalidate();
         navigate('/', { replace: true });
     };
 

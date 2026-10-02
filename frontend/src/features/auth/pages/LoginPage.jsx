@@ -3,16 +3,17 @@ import FormularioLogin from '../components/FormularioLogin';
 import { iniciarSesion } from '../services/authService.js';
 
 export function LoginPage() {
-        const navigate = useNavigate();
-        const revalidator = useRevalidator();
-        const handleIngresar = async ({ email, password }) => {
-        const sesion = await iniciarSesion(email, password);
+  const navigate = useNavigate();
+  const revalidator = useRevalidator();
+
+  const handleIngresar = async ({ email, password }) => {
+    const sesion = await iniciarSesion(email, password);
     
-        if (sesion) {
-            revalidator.revalidate(); 
-            navigate('/', { replace: true });
-        }
-    };
+    if (sesion) {
+      revalidator.revalidate(); 
+      navigate('/', { replace: true });
+    }
+  };
 
   return (
     <div className="d-flex flex-column align-items-center justify-content-center py-5 my-auto">
