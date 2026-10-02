@@ -189,7 +189,7 @@ const getDetalleProducto = (productoIdOrItem) => {
             <table className="table table-sm mb-0 align-middle">
               <thead className="table-light">
                 <tr>
-                  <th className="ps-2">Producto (Marca - Tipo - Varietal - Bodega - Medida)</th>
+                  <th className="ps-2">Producto</th>
                   <th>Cant.</th>
                   <th>P. Unitario</th>
                   <th className="text-end pe-2">Subtotal</th>
@@ -254,120 +254,6 @@ const getDetalleProducto = (productoIdOrItem) => {
                   <option value="Transferencia">Transferencia</option>
                 </select>
               </div>
-              
-              <form onSubmit={handleSubmitVenta}>
-                <div className="modal-body p-4">
-                  <div className="row g-3 mb-3">
-                    <div className="col-md-6">
-                      <label className="form-label small fw-bold">DNI del Cliente (Opcional)</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="Ej: 87654321" 
-                        value={clienteDni} 
-                        onChange={(e) => setClienteDni(e.target.value)} 
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label small fw-bold">DNI del Empleado</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="Ej: 31987654" 
-                        value={empleadoDni} 
-                        onChange={(e) => setEmpleadoDni(e.target.value)} 
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="form-label small fw-bold">Método de Pago</label>
-                      <select 
-                        className="form-select" 
-                        value={metodoPago} 
-                        onChange={(e) => setMetodoPago(e.target.value)}
-                      >
-                        <option value="Efectivo">Efectivo</option>
-                        <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-                        <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-                        <option value="Transferencia">Transferencia</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <hr />
-                  <h6 className="fw-bold mb-3">Seleccionar Productos del Catálogo</h6>
-                  
-                  <div className="row g-2 align-items-end mb-3">
-                    <div className="col-md-7">
-                      <label className="form-label small text-muted">Producto</label>
-                      <select 
-                        className="form-select"
-                        value={productoSeleccionadoId}
-                        onChange={(e) => setProductoSeleccionadoId(e.target.value)}
-                      >
-                        <option value="">Seleccione un producto...</option>
-                        {productosDisponibles.map((prod) => (
-                          <option key={prod.id} value={prod.id}>
-                            {prod.marca || prod.nombre} - {prod.varietal || ''} (${Number(prod.precio).toLocaleString()}) [Stock: {prod.stock}]
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="col-md-3">
-                      <label className="form-label small text-muted">Cantidad</label>
-                      <input 
-                        type="number" 
-                        min="1" 
-                        className="form-control" 
-                        value={cantidad} 
-                        onChange={(e) => setCantidad(e.target.value)} 
-                      />
-                    </div>
-                    <div className="col-md-2">
-                      <button type="button" className="btn btn-outline-dark w-100" onClick={handleAgregarItem}>
-                        + Item
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="table-responsive border rounded mb-3">
-                    <table className="table table-sm mb-0 align-middle">
-                      <thead className="table-light">
-                        <tr>
-                          <th className="ps-2">Producto</th>
-                          <th>Cant.</th>
-                          <th>P. Unitario</th>
-                          <th className="text-end pe-2">Subtotal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {carrito.length === 0 ? (
-                          <tr>
-                            <td colSpan="4" className="text-center text-muted py-3">No hay productos agregados.</td>
-                          </tr>
-                        ) : (
-                          carrito.map((item, index) => (
-                            <tr key={index}>
-                              <td className="ps-2">{item.nombre}</td>
-                              <td>{item.cantidad}</td>
-                              <td>${Number(item.precioU).toLocaleString()}</td>
-                              <td className="text-end pe-2">${item.subtotal.toLocaleString()}</td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="d-flex justify-content-end align-items-center">
-                    <h5 className="fw-bold m-0">Total: <span className="text-success">${totalVenta.toLocaleString()}</span></h5>
-                  </div>
-
-                  <div className="d-flex gap-2 justify-content-end mt-4">
-                    <button type="button" className="btn btn-light" onClick={() => setMostrarModalForm(false)}>Cancelar</button>
-                    <button type="submit" className="btn text-white" style={{ backgroundColor: 'var(--titulos, #3E100F)' }}>Confirmar Venta</button>
-                  </div>
-                </div>
-              </form>
             </div>
 
             <hr />
