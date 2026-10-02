@@ -13,7 +13,7 @@ export function LoginGestionPage() {
     if (rol === 'cm') {
       navigate('/cm/eventos', { replace: true });
     } else if (['vendedor', 'gerente', 'empleado', 'gestor', 'administrador'].includes(rol)) {
-      navigate('/gestion/ventas', { replace: true });
+      navigate('/gestion', { replace: true });
     } else {
       throw new Error('El usuario no posee permisos para acceder al área de gestión.');
     }

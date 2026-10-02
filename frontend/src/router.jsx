@@ -54,8 +54,8 @@ export const router = createBrowserRouter([
     element: <LayoutAdministrador />,
     loader: protegerRuta,
     children: [
-      { path: 'ventas', element: <h2>Sección Ventas</h2> },
-      { path: '', element: <EstadisticasPage /> },
+      { index: true, element: <EstadisticasPage /> },
+      { path: 'ventas', element: <VentasPage /> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'suscripciones', element: <SuscripcionesPagePrivada /> },

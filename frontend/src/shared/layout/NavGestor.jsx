@@ -45,7 +45,7 @@ export function NavGestor({ sesion }) {
       {/* Navegación Principal (Visible para Vendedor y Gerente) */}
       <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
 
-        <NavLink to="/gestion/estadisticas" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
+        <NavLink to="/gestion" end style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
           <span style={{ fontSize: '1.1rem' }}>📊</span>
           <span>Estadísticas</span>
         </NavLink>

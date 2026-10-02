@@ -7,12 +7,6 @@ import Spinner from '../../../shared/components/Spinner'
 import MensajeVacio from '../../../shared/components/MensajeVacio'
 import {formatearPrecio} from '../../../shared/utils/formato'
 
-const COLOR_ESTADO = {
-  pendiente: 'warning',
-  enviado: 'info',
-  entregado: 'success',
-}
-
 function EstadisticasPage() {
   const { usuario } = useOutletContext() || { usuario: { nombre: 'Usuario' } }
   const { datos: resumen, cargando, error } = useFetch(obtenerResumen)
