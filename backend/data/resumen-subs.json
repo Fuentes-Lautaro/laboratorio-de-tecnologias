@@ -1,0 +1,15 @@
+{
+  "totalIngresosMensuales": 135000,
+  "suscripcionesActivas": 3,
+  "clientesRegistrados": 12,
+  "planMasVendido": "Malbec-Rosado",
+  "distribucionPorPlan": [
+    { "planId": 1, "nombre": "Malbec", "cantidadSuscripciones": 1, "ingresos": 25000 },
+    { "planId": 2, "nombre": "Malbec-Rosado", "cantidadSuscripciones": 2, "ingresos": 80000 },
+    { "planId": 3, "nombre": "Reserva Especial", "cantidadSuscripciones": 0, "ingresos": 0 }
+  ],
+  "metodosPagoMasUsados": [
+    { "metodo": "Tarjeta de Crédito", "cantidad": 2, "porcentaje": 66.7 },
+    { "metodo": "Transferencia", "cantidad": 1, "porcentaje": 33.3 }
+  ]
+}

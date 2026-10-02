@@ -19,6 +19,7 @@ import { EventosPagePrivada } from './features/eventos';
 import { PlanesPagePrivada } from './features/suscripciones';
 import { EmpleadosPagePrivada } from './features/empleados'
 import { SuscripcionesPagePrivada } from './features/suscripciones'
+import { EstadisticasPage } from './features/estadisticas'
 
 
 
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
     loader: protegerRuta,
     children: [
       { path: 'ventas', element: <h2>Sección Ventas</h2> },
+      { path: 'estadisticas', element: <EstadisticasPage /> },
       { path: 'clientes', element: <ClientesPagePrivada /> },
       { path: 'productos', element: <ProductosPagePrivada /> },
       { path: 'suscripciones', element: <SuscripcionesPagePrivada /> },
