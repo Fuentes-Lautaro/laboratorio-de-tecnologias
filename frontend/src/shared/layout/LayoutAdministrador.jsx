@@ -11,7 +11,7 @@ export default function LayoutAdministrador() {
 
       {/* Contenido principal */}
       <main className="flex-grow-1 p-3 p-md-4 bg-light overflow-auto">
-        <Outlet />
+        <Outlet context={{ usuario: sesion?.usuario || sesion }} />
       </main>
     </div>
   );
