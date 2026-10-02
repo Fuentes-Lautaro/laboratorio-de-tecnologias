@@ -45,7 +45,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
               className="badge rounded-pill px-2.5 py-1" 
               style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', fontSize: '0.75rem' }}
             >
-              🍷 {tipo || bodega || 'Vino'} {anio ? `(${anio})` : ''}
+              {tipo || bodega || 'Vino'} {anio ? `(${anio})` : ''}
             </span>
             
             {esGestion && (
