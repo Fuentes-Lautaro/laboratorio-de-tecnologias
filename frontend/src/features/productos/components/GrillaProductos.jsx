@@ -1,4 +1,4 @@
-import CardProducto from './CardProducto'
+import CardProducto from '../components/ProductoCard'
 
 function GrillaProductos({ productos, onAgregar}) {
     return (

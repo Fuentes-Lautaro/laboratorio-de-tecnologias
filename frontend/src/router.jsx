@@ -5,8 +5,8 @@ import LayoutPublico from './shared/layout/LayoutPublico'
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
 import { HomePage } from './features/home'
-import { CatalogoPage } from './features/catalogo'
-import { DetalleProductoPage } from './features/catalogo'
+import { CatalogoPage } from './features/productos'
+import { DetalleProductoPage } from './features/productos'
 import { NosotrosPage } from './features/nosotros'
 import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones'

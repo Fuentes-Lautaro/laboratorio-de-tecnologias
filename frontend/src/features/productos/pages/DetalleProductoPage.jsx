@@ -1,6 +1,6 @@
 import { Link, useOutletContext, useParams } from 'react-router'
 import DetalleProducto from '../components/DetalleProducto'
-import { getProductoPorId } from '../../productos/services/productosServices'
+import { getProductoPorId } from '../services/productosServices'
 import { useFetch } from '../../../shared/hooks/useFetch'
 import Spinner from '../../../shared/components/Spinner'
 import MensajeVacio from '../../../shared/components/MensajeVacio'

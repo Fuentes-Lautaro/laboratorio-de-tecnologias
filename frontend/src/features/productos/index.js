@@ -1,3 +1,5 @@
 export { getProductos } from './services/productosServices'
 export { getProductoPorId } from './services/productosServices'
 export { default as ProductosPagePrivada} from './pages/ProductosPagePrivada'
+export { default as CatalogoPage } from './pages/CatalogoPage'
+export { default as DetalleProductoPage } from './pages/DetalleProductoPage'

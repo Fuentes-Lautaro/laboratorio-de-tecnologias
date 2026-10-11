@@ -51,7 +51,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
 
           <div className="card-body px-3 py-2 flex-grow-1">
             <h5 className="card-title fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.05rem' }}>
-              {marca} {varietal ? `- ${varietal}` : ''} {medida ? `(${medida})` : ''}
+              {marca} {varietal ? `- ${varietal}` : ''} {medida ? `(${medida} ml)`  : ''}
             </h5>
             
             {bodega && (
