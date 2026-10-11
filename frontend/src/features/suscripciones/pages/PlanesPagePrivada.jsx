@@ -310,7 +310,7 @@ export function PlanesPagePrivada() {
             <h4 className="fw-bold text-dark mb-1">{planSeleccionado.nombre}</h4>
             <p className="text-muted small mb-2">{planSeleccionado.descripcion}</p>
             <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
-              📦 {planSeleccionado.cantidad_vinos} vinos mensuales
+              {planSeleccionado.cantidad_vinos} vinos mensuales
             </span>
           </div>
 
@@ -336,7 +336,7 @@ export function PlanesPagePrivada() {
                       const prodInfo = productosDisponibles.find(p => p.id == prodId);
                       return (
                         <li key={idx} className="list-group-item bg-transparent border-0 py-1 text-dark">
-                          🍷 {prodInfo ? `${prodInfo.marca} - ${prodInfo.tipo} - ${prodInfo.varietal} - ${prodInfo.bodega} - ${prodInfo.medida}` : prodId}
+                          {prodInfo ? `${prodInfo.marca} - ${prodInfo.tipo} - ${prodInfo.varietal} - ${prodInfo.bodega} - ${prodInfo.medida}` : prodId}
                         </li>
                       );
                     })}

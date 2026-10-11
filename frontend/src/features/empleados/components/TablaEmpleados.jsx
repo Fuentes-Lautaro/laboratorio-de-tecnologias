@@ -44,14 +44,14 @@ export function TablaEmpleados({ empleados, getEstiloRol, onEditar, onToggleEsta
                 className="btn btn-sm btn-light d-flex align-items-center gap-1 border shadow-sm"
                 style={{ color: 'var(--paneles, #3E100F)', fontSize: '0.85rem' }}
               >
-                ✏️ Editar
+                Editar
               </button>
               <button 
                 onClick={() => onToggleEstado(empleado)} 
                 className={`btn btn-sm d-flex align-items-center gap-1 shadow-sm ${empleado.activo ? 'btn-outline-danger' : 'btn-outline-success'}`}
                 style={{ fontSize: '0.85rem' }}
               >
-                {empleado.activo ? '🚫 Baja' : '✅ Alta'}
+                {empleado.activo ? 'Baja' : 'Alta'}
               </button>
             </div>
           </td>

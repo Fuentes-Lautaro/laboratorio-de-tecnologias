@@ -44,27 +44,22 @@ export function NavGestor({ sesion }) {
       <nav className="nav nav-pills flex-column gap-1 mb-3 mb-md-auto">
 
         <NavLink to="/gestion" end style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>📊</span>
           <span>Estadísticas</span>
         </NavLink>
 
         <NavLink to="/gestion/ventas" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>🛒</span>
           <span>Ventas</span>
         </NavLink>
 
         <NavLink to="/gestion/clientes" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>👥</span>
           <span>Clientes</span>
         </NavLink>
 
         <NavLink to="/gestion/productos" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>📦</span>
           <span>Productos</span>
         </NavLink>
 
         <NavLink to="/gestion/suscripciones" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-          <span style={{ fontSize: '1.1rem' }}>💳</span>
           <span>Suscripciones</span>
         </NavLink>
         
@@ -83,12 +78,10 @@ export function NavGestor({ sesion }) {
             </div>
 
             <NavLink to="/gestion/empleados" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-              <span style={{ fontSize: '1.1rem' }}>👔</span>
               <span>Empleados</span>
             </NavLink>
 
             <NavLink to="/gestion/planes" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
-              <span style={{ fontSize: '1.1rem' }}>📋</span>
               <span>Planes</span>
             </NavLink>
           </>
@@ -117,7 +110,6 @@ export function NavGestor({ sesion }) {
             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
           }}
         >
-          <span>🚪</span>
           <span>Cerrar Sesión</span>
         </button>
       </div>

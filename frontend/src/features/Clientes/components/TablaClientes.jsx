@@ -28,7 +28,7 @@ export function TablaClientes({ clientes, onVer, onEditar, onToggleEstado }) {
                 className="btn btn-sm btn-light d-flex align-items-center gap-1 border shadow-sm"
                 style={{ color: 'var(--paneles, #3E100F)', fontSize: '0.85rem' }}
               >
-                👁 Ver
+                Ver
               </button>
               
               <button 
@@ -36,7 +36,7 @@ export function TablaClientes({ clientes, onVer, onEditar, onToggleEstado }) {
                 className="btn btn-sm btn-light d-flex align-items-center gap-1 border shadow-sm"
                 style={{ color: 'var(--paneles, #3E100F)', fontSize: '0.85rem' }}
               >
-                ✏️ Editar
+                Editar
               </button>
               
               <button 
@@ -44,7 +44,7 @@ export function TablaClientes({ clientes, onVer, onEditar, onToggleEstado }) {
                 className={`btn btn-sm d-flex align-items-center gap-1 shadow-sm ${cliente.activo ? 'btn-outline-danger' : 'btn-outline-success'}`}
                 style={{ fontSize: '0.85rem' }}
               >
-                {cliente.activo ? '🚫 Baja' : '✅ Alta'}
+                {cliente.activo ? 'Baja' : 'Alta'}
               </button>
             </div>
           </td>

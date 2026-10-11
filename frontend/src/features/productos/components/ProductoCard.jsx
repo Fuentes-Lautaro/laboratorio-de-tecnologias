@@ -44,7 +44,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             
             {esGestion && (
               <span className="small text-muted" style={{ fontSize: '0.8rem' }}>
-                📦 Stock: {stock}
+                Stock: {stock}
               </span>
             )}
           </div>
@@ -85,7 +85,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
                   className="btn btn-sm btn-outline-primary d-flex align-items-center gap-1"
                   style={{ fontSize: '0.8rem' }}
                 >
-                  👁️ Ver
+                  Ver
                 </button>
               )}
               <button
@@ -93,14 +93,14 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
                 className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
                 style={{ fontSize: '0.8rem' }}
               >
-                ✏️ Editar
+                Editar
               </button>
               <button
                 onClick={() => onEliminar(id)}
                 className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
                 style={{ fontSize: '0.8rem' }}
               >
-                🗑️ Eliminar
+                Eliminar
               </button>
             </div>
           )}

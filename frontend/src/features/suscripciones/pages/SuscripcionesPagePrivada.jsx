@@ -156,10 +156,10 @@ export function SuscripcionesPagePrivada() {
             <p className="text-muted small mb-2">Plan: <strong>{obtenerNombrePlan(suscripcionSeleccionada.plan_id)}</strong></p>
             <div className="d-flex gap-2 align-items-center mt-2 flex-wrap">
               <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
-                💳 {suscripcionSeleccionada.metodo_pago}
+                {suscripcionSeleccionada.metodo_pago}
               </span>
               <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
-                📅 {suscripcionSeleccionada.fecha_pago}
+                {suscripcionSeleccionada.fecha_pago}
               </span>
               <span className={`badge bg-${suscripcionSeleccionada.activa ? 'success' : 'secondary'} bg-opacity-25 text-${suscripcionSeleccionada.activa ? 'success' : 'secondary'}`}>
                 {suscripcionSeleccionada.activa ? 'Activa' : 'Inactiva'}

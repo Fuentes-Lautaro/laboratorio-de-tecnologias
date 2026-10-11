@@ -24,10 +24,10 @@ export function EventoCard({ evento, esGestion = false, onEditar, onEliminar }) 
           className="badge rounded-pill px-2.5 py-1" 
           style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', fontSize: '0.75rem' }}
         >
-          📅 {fecha}
+          {fecha}
         </span>
         <span className="small text-muted" style={{ fontSize: '0.8rem' }}>
-          👥 {cantAsistentes} cupos
+          {cantAsistentes} cupos
         </span>
       </div>
 

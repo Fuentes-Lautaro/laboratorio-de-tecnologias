@@ -47,7 +47,7 @@ export function TarjetaPlan({ plan }) {
 
         <tr>
           <td className="cantidad">
-            📦 {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
+            {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
           </td>
         </tr>
 

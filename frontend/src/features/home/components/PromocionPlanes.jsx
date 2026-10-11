@@ -79,7 +79,7 @@ export function PromocionPlanes() {
 
                                             {/* Cantidad de vinos */}
                                             <div className="mb-3 fw-semibold">
-                                                📦 {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
+                                                {cantidad_vinos} {cantidad_vinos === 1 ? 'vino mensual' : 'vinos mensuales'}
                                             </div>
 
                                             {/* Vinos del próximo mes */}
