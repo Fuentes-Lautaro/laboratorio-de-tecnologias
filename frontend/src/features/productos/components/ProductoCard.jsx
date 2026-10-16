@@ -50,31 +50,35 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
           </div>
 
           <div className="card-body px-3 py-2 flex-grow-1">
-            <h5 className="card-title fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.05rem' }}>
-              {marca} {varietal ? `- ${varietal}` : ''} {medida ? `(${medida} ml)`  : ''}
+            <h5 className="card-title fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.50rem' }}>
+              {marca}
             </h5>
-            
+
+            {varietal && (
+              <h6 className="small mb-2" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.10rem' }}>
+                {varietal}
+              </h6>
+            )}
+
             {bodega && (
               <h6 className="text-muted small mb-2" style={{ fontSize: '0.85rem' }}>
                 Bodega: {bodega}
               </h6>
             )}
 
-            {!esGestion && (
-              <p className="card-text text-secondary small mb-2" style={{ lineHeight: '1.4' }}>
-                {descripcion || 'Sin descripción disponible.'}
-              </p>
-            )}
+            <div className="card-text text-secondary small mb-2" style={{ lineHeight: '1.6' }}>
+              <p>{medida}ml</p>
+            </div>
+
+            <div className="fw-bold mt-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.1rem' }}>
+              <strong>$</strong>{precio} 
+            </div>
 
             {esGestion && costo && (
               <div className="text-muted small mb-1">
-                <strong>Costo:</strong> {costo}
+                <strong>Costo: $</strong> {costo}
               </div>
             )}
-
-            <div className="fw-bold mt-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.1rem' }}>
-              {precio}
-            </div>
           </div>
 
           {esGestion && (
