@@ -178,9 +178,9 @@ export function ProductosPagePrivada() {
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#1C1614' }}>
+              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#64141B' }}>
                 <h5 className="modal-title fw-bold fs-6">
-                  {productoEditando ? '✏️ Editar Producto' : '✨ Crear Nuevo Producto'}
+                  {productoEditando ? 'Editar Producto' : 'Crear Nuevo Producto'}
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalForm(false)}></button>
               </div>

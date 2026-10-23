@@ -4,7 +4,7 @@ export function Modal({ titulo, children, onClose }) {
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content border-0 shadow-lg">
           <div className="card border-0">
-            <div className="card-header text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--titulos, #3E100F)' }}>
+            <div className="card-header text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: 'var(--titulos, #64141B)' }}>
               <h5 className="mb-0 fw-bold">{titulo}</h5>
               <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
             </div>

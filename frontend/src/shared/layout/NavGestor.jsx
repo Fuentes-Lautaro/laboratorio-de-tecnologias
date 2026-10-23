@@ -12,7 +12,7 @@ export function NavGestor({ sesion }) {
   const getNavLinkStyle = ({ isActive }) => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
     color: isActive ? 'var(--detalles)' : 'rgba(255, 255, 255, 0.65)',
-    borderLeft: isActive ? '3px solid var(--detalles, #B5865A)' : '3px solid transparent',
+    borderLeft: isActive ? '3px solid var(--, #B5865A)' : '3px solid transparent',
     fontSize: '0.95rem',
     fontWeight: isActive ? '600' : '400',
     transition: 'all 0.15s ease'
@@ -26,7 +26,7 @@ export function NavGestor({ sesion }) {
     <aside 
       className="d-flex flex-column p-3 p-md-4 sidebar-gestor"
       style={{ 
-        backgroundColor: '#1C1614',
+        backgroundColor: '#3E100F',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)'
       }}
     >

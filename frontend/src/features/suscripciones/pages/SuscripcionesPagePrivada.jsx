@@ -108,7 +108,7 @@ export function SuscripcionesPagePrivada() {
     <div className="p-4">
       {/* Encabezado */}
       <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-        <h3 className="fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)' }}>🍷 Suscripciones</h3>
+        <h3 className="fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)' }}>Suscripciones</h3>
       </div>
 
       {/* Buscador */}

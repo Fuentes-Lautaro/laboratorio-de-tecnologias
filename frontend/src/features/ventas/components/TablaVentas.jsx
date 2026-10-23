@@ -20,7 +20,7 @@ export function TablaVentas({ ventas, onVerDetalle }) {
           <td>
             <span className="badge bg-light text-dark border">{v.metodoPago}</span>
           </td>
-          <td className="fw-bold text-success">
+          <td className="fw-bold" style={{ color: 'var(--titulos, #64141B)' }}>
             ${Number(v.monto || v.total || 0).toLocaleString()}
           </td>
           <td className="text-end">

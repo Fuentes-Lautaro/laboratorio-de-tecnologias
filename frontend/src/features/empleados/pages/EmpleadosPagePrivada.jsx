@@ -80,11 +80,11 @@ export function EmpleadosPagePrivada() {
     switch(rol) {
       case 'gerente':
       case 'Gerente':
-        return { backgroundColor: 'var(--titulos, #64141B)', color: '#FFF' };
+        return { backgroundColor: 'var(--titulos, #3E100F)', color: '#FFF' };
       case 'CM':
-        return { backgroundColor: 'var(--detalles, #B5865A)', color: '#3E100F' };
+        return { backgroundColor: 'var(--titulos, #3E100F)', color: '#FFF' };
       default:
-        return { backgroundColor: 'var(--referencias, #513B2A)', color: '#FFF' };
+        return { backgroundColor: 'var(--titulos, #3E100F)', color: '#FFF' };
     }
   };
 

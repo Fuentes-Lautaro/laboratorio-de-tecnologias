@@ -208,7 +208,7 @@ const getDetalleProducto = (productoIdOrItem) => {
             </table>
           </div>
           <div className="d-flex justify-content-end align-items-center mt-3">
-            <h5 className="fw-bold m-0">Total Final: <span className="text-success">${Number(ventaSeleccionada.monto || ventaSeleccionada.total || 0).toLocaleString()}</span></h5>
+            <h5 className="fw-bold m-0">Total Final: <span style={{ color: 'var(--titulos, #64141B)' }}>${Number(ventaSeleccionada.monto || ventaSeleccionada.total || 0).toLocaleString()}</span></h5>
           </div>
           <div className="modal-footer px-0 pb-0 mt-3 border-0">
             <button type="button" className="btn btn-secondary" onClick={() => setMostrarModalVer(false)}>Cerrar</button>
@@ -323,7 +323,7 @@ const getDetalleProducto = (productoIdOrItem) => {
             </div>
 
             <div className="d-flex justify-content-end align-items-center">
-              <h5 className="fw-bold m-0">Total: <span className="text-success">${totalVenta.toLocaleString()}</span></h5>
+              <h5 className="fw-bold m-0">Total: <span style={{ color: 'var(--titulos, #64141B)' }}>${totalVenta.toLocaleString()}</span></h5>
             </div>
 
             <div className="d-flex gap-2 justify-content-end mt-4">
