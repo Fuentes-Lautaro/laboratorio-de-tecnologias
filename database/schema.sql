@@ -41,3 +41,12 @@ CREATE TABLE productos (
     p_imagen_url VARCHAR(200),
     p_stock INT NOT NULL DEFAULT 0 CHECK (p_stock >= 0)
 );
+
+CREATE TABLE planes (
+    ps_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ps_nombre VARCHAR(100) NOT NULL,
+    ps_descripcion TEXT,
+    ps_cantidad_vinos INT NOT NULL CHECK (ps_cantidad_vinos > 0),
+    ps_valor NUMERIC(10, 2) NOT NULL CHECK (ps_valor >= 0),
+    ps_activo BOOLEAN NOT NULL DEFAULT TRUE
+);

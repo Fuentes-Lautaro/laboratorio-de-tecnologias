@@ -77,3 +77,11 @@ VALUES
 
 ('Rutini', 'tinto', 24000.00, 14500.00, 2018, '750', 'Rutini Wines', 'Malbec', 8, '/img/productos/rutini-apartado-750.png', 
 'Un vino de alta gama complejo y exclusivo. Despliega una paleta aromática rica en frutos negros confitados, notas de tabaco, chocolate y especias finas. En boca es voluptuoso, potente, de taninos terciopelados y gran profundidad.');
+
+INSERT INTO planes (ps_nombre, ps_descripcion, ps_cantidad_vinos, ps_valor, ps_activo)
+VALUES
+('Malbec', 'Ideal para quienes desean iniciarse en el mundo del vino y descubrir nuevas etiquetas cada mes.', 2, 25000.00, TRUE),
+
+('Malbec-Rosado', 'La opción perfecta para paladares curiosos que buscan dar un salto de calidad y disfrutar de mayor variedad.', 3, 40000.00, TRUE),
+
+('Reserva Especial', 'La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.', 5, 70000.00, TRUE);
