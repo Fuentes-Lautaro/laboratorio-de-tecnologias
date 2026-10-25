@@ -24,8 +24,8 @@ export function useFiltros(productos) {
       (tiposSeleccionados.length === 0 || tiposSeleccionados.includes(p.tipo)) &&
       (varietalesSeleccionados.length === 0 || varietalesSeleccionados.includes(p.varietal)) &&
       (medidasSeleccionadas.length === 0 || medidasSeleccionadas.includes(p.medida)) &&
-      (bodegasSeleccionadas.length === 0 || bodegasSeleccionadas.includes(p.bodega)) &&
-      p.marca.toLowerCase().includes(textoBuscado),
+      (bodegasSeleccionadas.length === 0 || bodegasSeleccionadas.includes(p.bodega)) //&&
+      //p.marca.toLowerCase().includes(textoBuscado),
   )
 
   const hayFiltrosActivos = 

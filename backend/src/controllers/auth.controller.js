@@ -69,7 +69,7 @@ export const todos = async (req, res, next) => {
     const { rows } = await pool.query(
       `SELECT p.pe_id, p.pe_dni, p.pe_nombre, p.pe_fechaNac, p.pe_telefono, p.pe_mail, p.pe_direccion, p.pe_activo
       FROM personas p
-      INNER JOIN clientes c ON p.pe_id = c.cli_codigo
+      INNER JOIN clientes c ON p.pe_id = c.cli_id
       ORDER BY  p.pe_activo DESC, p.pe_nombre ASC`);
     res.json(rows)
   }

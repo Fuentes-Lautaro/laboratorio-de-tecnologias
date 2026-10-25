@@ -1,5 +1,7 @@
 --EJECUTAR LA PRIMERA VEZ PARA QUE CREE LA BASE DE DATOS:
 -- psql -U postgres -f database/schema.sql
+DROP DATABASE "maria-balbina-lab";
+
 CREATE DATABASE "maria-balbina-lab";
 
 \c "maria-balbina-lab"
@@ -17,10 +19,25 @@ CREATE TABLE personas (
 );
 
 CREATE TABLE clientes (
-    cli_codigo INT PRIMARY KEY REFERENCES personas(pe_id) ON DELETE CASCADE
+    cli_id INT PRIMARY KEY REFERENCES personas(pe_id) ON DELETE CASCADE
 );
 
 CREATE TABLE personal (
-    pers_codigo INT PRIMARY KEY REFERENCES personas(pe_id) ON DELETE CASCADE,
+    pers_id INT PRIMARY KEY REFERENCES personas(pe_id) ON DELETE CASCADE,
     p_rol VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE productos (
+    p_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    p_marca VARCHAR(50) NOT NULL,
+    p_tipo VARCHAR(50) NOT NULL,
+    p_precio NUMERIC(10, 2) NOT NULL CHECK (p_precio >= 0),
+    p_costo NUMERIC(10, 2) NOT NULL CHECK (p_costo >= 0),
+    p_anio INT CHECK (p_anio BETWEEN 1800 AND EXTRACT(YEAR FROM CURRENT_DATE)),
+    p_medida VARCHAR(20),
+    p_varietal VARCHAR(50),
+    p_bodega VARCHAR(50),
+    p_descripcion VARCHAR(500),
+    p_imagen_url VARCHAR(200),
+    p_stock INT NOT NULL DEFAULT 0 CHECK (p_stock >= 0)
 );

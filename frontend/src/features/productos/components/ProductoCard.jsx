@@ -3,18 +3,18 @@ const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2
 
 export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onEliminar }) {
   const { 
-    id, 
-    marca, 
-    tipo, 
-    precio, 
-    costo,
-    stock, 
-    img, 
-    descripcion, 
-    bodega, 
-    varietal, 
-    anio, 
-    medida 
+    p_id: id, 
+    p_marca: marca, 
+    p_tipo: tipo, 
+    p_precio: precio, 
+    p_costo: costo,
+    p_anio: anio, 
+    p_medida: medida,
+    p_varietal: varietal, 
+    p_bodega: bodega, 
+    p_descripcion: descripcion, 
+    p_imagen_url: img, 
+    p_stock: stock
   } = producto;
 
   const handleImageError = (e) => {

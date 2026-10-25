@@ -10,11 +10,11 @@ const FORM_INICIAL = {
   costo: '',
   anio: '',
   medida: '',
-  bodega: '',
   varietal: '',
-  stock: 0,
-  img: '',
+  bodega: '',
   descripcion: '',
+  img: '',
+  stock: 0,
 };
 
 export function ProductosPagePrivada() {
@@ -35,10 +35,10 @@ export function ProductosPagePrivada() {
 
   const productosFiltrados = productos.filter((producto) => {
     const busquedaMinuscula = terminoBusqueda.toLowerCase();
-    const coincideMarca = producto.marca.toLowerCase().includes(busquedaMinuscula);
-    const coincideTipo = producto.tipo.toLowerCase().includes(busquedaMinuscula);
-    const coincideVarietal = producto.varietal.toLowerCase().includes(busquedaMinuscula);
-    const coincideBodega = producto.bodega.toLowerCase().includes(busquedaMinuscula);
+    const coincideMarca = producto.p_marca.toLowerCase().includes(busquedaMinuscula);
+    const coincideTipo = producto.p_tipo.toLowerCase().includes(busquedaMinuscula);
+    const coincideVarietal = producto.p_varietal.toLowerCase().includes(busquedaMinuscula);
+    const coincideBodega = producto.p_bodega.toLowerCase().includes(busquedaMinuscula);
     return coincideMarca || coincideTipo || coincideVarietal || coincideBodega;
   });
 
@@ -62,18 +62,18 @@ export function ProductosPagePrivada() {
   const handleAbrirEditar = (producto) => {
     setProductoEditando(producto);
     setFormData({
-        id: producto.id || '',
-        marca: producto.marca || '',
-        tipo: producto.tipo || '',
-        precio: producto.precio || '',
-        costo: producto.costo || '',
-        anio: producto.anio || '',
-        medida: producto.medida || 0,
-        bodega: producto.bodega || '',
-        varietal: producto.varietal || '',
-        stock: producto.stock || 0,
-        img: producto.img || '',
-        descripcion: producto.descripcion || '',
+        id: producto.p_id || '',
+        marca: producto.p_marca || '',
+        tipo: producto.p_tipo || '',
+        precio: producto.p_precio || '',
+        costo: producto.p_costo || '',
+        anio: producto.p_anio || '',
+        medida: producto.p_medida || 0,
+        bodega: producto.p_bodega || '',
+        varietal: producto.p_varietal || '',
+        stock: producto.p_stock || 0,
+        img: producto.p_img || '',
+        descripcion: producto.p_descripcion || '',
     });
     setMostrarModalForm(true);
   };
@@ -156,7 +156,7 @@ export function ProductosPagePrivada() {
       ) : (
         <div className="row g-4">
           {productosFiltrados.map((producto) => (
-            <div key={producto.id} className="col-12 col-md-6 col-lg-4">
+            <div key={producto.p_id} className="col-12 col-md-6 col-lg-4">
               <ProductoCard
                 producto={producto}
                 esGestion={true}
