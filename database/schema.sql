@@ -50,3 +50,30 @@ CREATE TABLE planes (
     ps_valor NUMERIC(10, 2) NOT NULL CHECK (ps_valor >= 0),
     ps_activo BOOLEAN NOT NULL DEFAULT TRUE
 );
+
+CREATE TABLE evento (
+    e_id SERIAL PRIMARY KEY,
+    e_nombre VARCHAR(100) NOT NULL,
+    e_fecha DATE NOT NULL,
+    e_descripcion TEXT,
+    e_cant_asist INT,
+    e_url_imagen VARCHAR(255)
+);
+
+CREATE TABLE venta (
+    v_codigo VARCHAR(50) PRIMARY KEY, 
+    v_fecha TIMESTAMP NOT NULL,
+    cliente_id INT REFERENCES clientes(cli_id) ON DELETE SET NULL, 
+    personal_id INT REFERENCES personal(pers_id) ON DELETE SET NULL, 
+    evento_id INT REFERENCES evento(e_id) ON DELETE SET NULL, 
+    v_total NUMERIC(10, 2) NOT NULL,
+    v_metodo_pago VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE reglones_venta (
+    iv_id SERIAL PRIMARY KEY,
+    venta_codigo VARCHAR(50) NOT NULL REFERENCES venta(v_codigo) ON DELETE CASCADE,
+    producto_codigo INT NOT NULL REFERENCES productos(p_id),
+    iv_cantidad INT NOT NULL,
+    iv_precio_unidad NUMERIC(10, 2) NOT NULL
+);

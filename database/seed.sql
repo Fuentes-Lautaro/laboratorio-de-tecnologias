@@ -85,3 +85,49 @@ VALUES
 ('Malbec-Rosado', 'La opción perfecta para paladares curiosos que buscan dar un salto de calidad y disfrutar de mayor variedad.', 3, 40000.00, TRUE),
 
 ('Reserva Especial', 'La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.', 5, 70000.00, TRUE);
+
+
+-- =========================================================
+-- INSERCIÓN DE CLIENTES DE PRUEBA (Necesarios para asociar a las ventas)
+-- =========================================================
+INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
+VALUES ('12345678', 'Lucía Gomez', '1990-05-10', '2664332211', 'lucia@gmail.com', 'San Martín 100, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', true);
+
+INSERT INTO clientes (cli_id)
+VALUES (LASTVAL());
+
+INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
+VALUES ('87654321', 'Martín Pedernera', '1985-11-20', '2664778899', 'martin@gmail.com', 'Rivadavia 500, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', true);
+
+INSERT INTO clientes (cli_id)
+VALUES (LASTVAL());
+
+
+--INSERCION DE VENTAS
+INSERT INTO venta (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
+VALUES 
+(
+    'VTA-1712', 
+    '2026-10-02 14:30:00', 
+    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), 
+    (SELECT pers_id FROM personal p JOIN personas per ON p.pers_id = per.pe_id WHERE per.pe_dni = '28123456'), 
+    NULL, 
+    35000.00, 
+    'Efectivo'
+),
+(
+    'VTA-1823', 
+    '2026-10-03 18:00:00', 
+    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '87654321'), 
+    (SELECT pers_id FROM personal p JOIN personas per ON p.pers_id = per.pe_id WHERE per.pe_dni = '31987654'), 
+    NULL, 
+    24000.00, 
+    'MercadoPago'
+);
+
+
+INSERT INTO reglones_venta (venta_codigo, producto_codigo, iv_cantidad, iv_precio_unidad)
+VALUES 
+('VTA-1712', 1, 2, 6500.00),  
+('VTA-1712', 5, 1, 22000.00),  
+('VTA-1823', 18, 1, 24000.00); 
