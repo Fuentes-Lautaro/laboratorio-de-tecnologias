@@ -1,38 +1,55 @@
-// Fallback limpio que solo se activa si la foto no existe
+import React from 'react';
+import { Link } from 'react-router-dom';
+
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
 export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onEliminar }) {
-  const { 
-    p_id: id, 
-    p_marca: marca, 
-    p_tipo: tipo, 
-    p_precio: precio, 
-    p_costo: costo,
-    p_anio: anio, 
-    p_medida: medida,
-    p_varietal: varietal, 
-    p_bodega: bodega, 
-    p_descripcion: descripcion, 
-    p_imagen_url: img, 
-    p_stock: stock
-  } = producto;
+  if (!producto) return null;
+
+  // Soporta tanto las claves de PostgreSQL (p_) como el formato plano
+  const id = producto.p_id ?? producto.id;
+  const marca = producto.p_marca ?? producto.marca ?? '';
+  const tipo = producto.p_tipo ?? producto.tipo ?? '';
+  const precio = producto.p_precio ?? producto.precio ?? 0;
+  const costo = producto.p_costo ?? producto.costo ?? '';
+  const anio = producto.p_anio ?? producto.anio ?? '';
+  const medida = producto.p_medida ?? producto.medida ?? '';
+  const varietal = producto.p_varietal ?? producto.varietal ?? '';
+  const bodega = producto.p_bodega ?? producto.bodega ?? '';
+  const img = producto.p_imagen_url ?? producto.p_img ?? producto.img ?? '';
+  const stock = producto.p_stock ?? producto.stock ?? 0;
 
   const handleImageError = (e) => {
     e.target.onerror = null;
     e.target.src = FALLBACK_IMAGEN;
   };
 
+  // Ruta hacia la página de detalle (ajustá si tu router usa /productos/:id)
+  const rutaDetalle = `/catalogo/${id}`;
+
   return (
     <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
       <div className="row g-0 h-100">
+        
         {/* Columna de la Imagen */}
         <div className="col-4 d-flex justify-content-center align-items-center p-0" style={{ backgroundColor: '#F3EFEA', overflow: 'hidden', height: '100%' }}>
-            <img
+          {!esGestion ? (
+            <Link to={rutaDetalle} className="w-100 h-100 d-block">
+              <img
                 src={img || FALLBACK_IMAGEN}
                 alt={marca || tipo || 'Producto'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={handleImageError}
+              />
+            </Link>
+          ) : (
+            <img
+              src={img || FALLBACK_IMAGEN}
+              alt={marca || tipo || 'Producto'}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              onError={handleImageError}
             />
+          )}
         </div>
 
         {/* Columna de los Datos */}
@@ -51,7 +68,13 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
 
           <div className="card-body px-3 py-2 flex-grow-1">
             <h5 className="card-title fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.50rem' }}>
-              {marca}
+              {!esGestion ? (
+                <Link to={rutaDetalle} className="text-decoration-none" style={{ color: 'inherit' }}>
+                  {marca}
+                </Link>
+              ) : (
+                marca
+              )}
             </h5>
 
             {varietal && (
@@ -67,7 +90,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             )}
 
             <div className="card-text text-secondary small mb-2" style={{ lineHeight: '1.6' }}>
-              <p>{medida}ml</p>
+              <p className="mb-0">{medida} ml</p>
             </div>
 
             <div className="fw-bold mt-1" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.1rem' }}>
@@ -109,6 +132,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             </div>
           )}
         </div>
+
       </div>
     </div>
   );

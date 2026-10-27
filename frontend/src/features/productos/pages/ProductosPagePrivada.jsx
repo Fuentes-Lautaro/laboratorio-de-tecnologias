@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ProductoCard from '../components/ProductoCard';
-import { getProductos } from '../services/productosServices';
+import { getProductos, crearProducto, actualizarProducto, eliminarProducto } from '../services/productosServices';
 
-const FORM_INICIAL = {
-  id: '',
-  marca: '',
-  tipo: '',
-  precio: '$',
-  costo: '',
-  anio: '',
-  medida: '',
-  varietal: '',
-  bodega: '',
-  descripcion: '',
-  img: '',
-  stock: 0,
-};
+const FORM_INICIAL = { id: '', marca: '', tipo: '', precio: '', costo: '', anio: '',
+  medida: '', varietal: '', bodega: '', descripcion: '', img: '', stock: 0 };
 
 export function ProductosPagePrivada() {
   const [productos, setProductos] = useState([]);
@@ -26,21 +14,11 @@ export function ProductosPagePrivada() {
   const [productoAEliminar, setProductoAEliminar] = useState(null);
 
   const [formData, setFormData] = useState(FORM_INICIAL);
-
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
 
   useEffect(() => {
     cargarLista();
   }, []);
-
-  const productosFiltrados = productos.filter((producto) => {
-    const busquedaMinuscula = terminoBusqueda.toLowerCase();
-    const coincideMarca = producto.p_marca.toLowerCase().includes(busquedaMinuscula);
-    const coincideTipo = producto.p_tipo.toLowerCase().includes(busquedaMinuscula);
-    const coincideVarietal = producto.p_varietal.toLowerCase().includes(busquedaMinuscula);
-    const coincideBodega = producto.p_bodega.toLowerCase().includes(busquedaMinuscula);
-    return coincideMarca || coincideTipo || coincideVarietal || coincideBodega;
-  });
 
   const cargarLista = async () => {
     try {
@@ -53,6 +31,15 @@ export function ProductosPagePrivada() {
     }
   };
 
+  const productosFiltrados = productos.filter((producto) => {
+    const busquedaMinuscula = terminoBusqueda.toLowerCase();
+    const coincideMarca = (producto.p_marca || producto.marca || '').toLowerCase().includes(busquedaMinuscula);
+    const coincideTipo = (producto.p_tipo || producto.tipo || '').toLowerCase().includes(busquedaMinuscula);
+    const coincideVarietal = (producto.p_varietal || producto.varietal || '').toLowerCase().includes(busquedaMinuscula);
+    const coincideBodega = (producto.p_bodega || producto.bodega || '').toLowerCase().includes(busquedaMinuscula);
+    return coincideMarca || coincideTipo || coincideVarietal || coincideBodega;
+  });
+
   const handleAbrirCrear = () => {
     setProductoEditando(null);
     setFormData(FORM_INICIAL);
@@ -62,18 +49,18 @@ export function ProductosPagePrivada() {
   const handleAbrirEditar = (producto) => {
     setProductoEditando(producto);
     setFormData({
-        id: producto.p_id || '',
-        marca: producto.p_marca || '',
-        tipo: producto.p_tipo || '',
-        precio: producto.p_precio || '',
-        costo: producto.p_costo || '',
-        anio: producto.p_anio || '',
-        medida: producto.p_medida || 0,
-        bodega: producto.p_bodega || '',
-        varietal: producto.p_varietal || '',
-        stock: producto.p_stock || 0,
-        img: producto.p_img || '',
-        descripcion: producto.p_descripcion || '',
+      id: producto.p_id || producto.id || '',
+      marca: producto.p_marca || producto.marca || '',
+      tipo: producto.p_tipo || producto.tipo || '',
+      precio: producto.p_precio || producto.precio || '',
+      costo: producto.p_costo || producto.costo || '',
+      anio: producto.p_anio || producto.anio || '',
+      medida: producto.p_medida || producto.medida || '',
+      bodega: producto.p_bodega || producto.bodega || '',
+      varietal: producto.p_varietal || producto.varietal || '',
+      stock: producto.p_stock ?? producto.stock ?? 0,
+      img: producto.p_imagen_url || producto.p_img || producto.img || '',
+      descripcion: producto.p_descripcion || producto.descripcion || '',
     });
     setMostrarModalForm(true);
   };
@@ -87,15 +74,21 @@ export function ProductosPagePrivada() {
     e.preventDefault();
     try {
       if (productoEditando) {
-        const guardado = await actualizarProducto(productoEditando.id, formData);
-        setProductos(productos.map((ev) => (ev.id === produtoEditando.id ? { ...ev, ...guardado } : ev)));
+        const id = productoEditando.p_id || productoEditando.id || formData.id;
+        const guardado = await actualizarProducto(id, formData);
+        
+        // Se actualiza el objeto modificado en la lista local buscando por p_id / id
+        setProductos((prev) =>
+          prev.map((ev) => ((ev.p_id || ev.id) === id ? { ...ev, ...guardado } : ev))
+        );
       } else {
         const nuevo = await crearProducto(formData);
-        setProductos([...productos, nuevo]);
+        setProductos((prev) => [...prev, nuevo]);
       }
       setMostrarModalForm(false);
     } catch (error) {
       console.error('Error al guardar el producto:', error);
+      alert('Error al guardar el producto: ' + error.message);
     }
   };
 
@@ -104,18 +97,21 @@ export function ProductosPagePrivada() {
   };
 
   const handleSolicitarEliminar = (id) => {
-    const encontrado = productos.find((pr) => pr.id === id);
+    const encontrado = productos.find((pr) => (pr.p_id || pr.id) === id);
     if (encontrado) setProductoAEliminar(encontrado);
   };
 
   const handleConfirmarEliminar = async () => {
     if (!productoAEliminar) return;
+    const id = productoAEliminar.p_id || productoAEliminar.id;
+
     try {
-      await eliminarProducto(productoAEliminar.id);
-      setProductos(productos.filter((ev) => ev.id !== productoAEliminar.id));
+      await eliminarProducto(id);
+      setProductos((prev) => prev.filter((ev) => (ev.p_id || ev.id) !== id));
       setProductoAEliminar(null);
     } catch (error) {
       console.error('Error al eliminar producto:', error);
+      alert('Error al eliminar el producto: ' + error.message);
     }
   };
 
@@ -156,7 +152,7 @@ export function ProductosPagePrivada() {
       ) : (
         <div className="row g-4">
           {productosFiltrados.map((producto) => (
-            <div key={producto.p_id} className="col-12 col-md-6 col-lg-4">
+            <div key={producto.p_id || producto.id} className="col-12 col-md-6 col-lg-4">
               <ProductoCard
                 producto={producto}
                 esGestion={true}
@@ -173,7 +169,7 @@ export function ProductosPagePrivada() {
         </div>
       )}
 
-      {/* CREACIÓN / EDICIÓN */}
+      {/* MODAL CREACIÓN / EDICIÓN */}
       {mostrarModalForm && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -185,163 +181,163 @@ export function ProductosPagePrivada() {
                 <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalForm(false)}></button>
               </div>
 
-            <form onSubmit={handleSubmitForm}>
+              <form onSubmit={handleSubmitForm}>
                 <div className="modal-body p-4">
-                    <div className="row g-3">
+                  <div className="row g-3">
 
-                        <div className="col-12 col-md-6">
-                            <label className="form-label small fw-bold">Marca</label>
-                            <input
-                                type="text"
-                                name="marca"
-                                required
-                                className="form-control"
-                                value={formData.marca}
-                                onChange={handleChangeForm}
-                                placeholder="Ej: Rutini"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-6">
-                            <label className="form-label small fw-bold">Tipo</label>
-                            <input
-                                type="text"
-                                name="tipo"
-                                required
-                                className="form-control"
-                                value={formData.tipo}
-                                onChange={handleChangeForm}
-                                placeholder="Ej: Tinto"
-                            />
-                        </div>    
-
-                        <div className="col-12 col-md-6">
-                            <label className="form-label small fw-bold">Bodega</label>
-                            <input
-                                type="text"
-                                name="bodega"
-                                className="form-control"
-                                value={formData.bodega}
-                                onChange={handleChangeForm}
-                                placeholder="Ej: Rutini Wines"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-6">
-                            <label className="form-label small fw-bold">Varietal</label>
-                            <input
-                                type="text"
-                                name="varietal"
-                                className="form-control"
-                                value={formData.varietal}
-                                onChange={handleChangeForm}
-                                placeholder="Ej: Malbec"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                            <label className="form-label small fw-bold">Precio</label>
-                            <input
-                                type="text"
-                                name="precio"
-                                required
-                                className="form-control"
-                                value={formData.precio}
-                                onChange={handleChangeForm}
-                                placeholder="15000"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                            <label className="form-label small fw-bold">Costo</label>
-                            <input
-                                type="text"
-                                name="costo"
-                                className="form-control"
-                                value={formData.costo}
-                                onChange={handleChangeForm}
-                                placeholder="10000"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                            <label className="form-label small fw-bold">Stock</label>
-                            <input
-                                type="number"
-                                name="stock"
-                                min="0"
-                                required
-                                className="form-control"
-                                value={formData.stock}
-                                onChange={handleChangeForm}
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                            <label className="form-label small fw-bold">Año</label>
-                            <input
-                                type="text"
-                                name="anio"
-                                className="form-control"
-                                value={formData.anio}
-                                onChange={handleChangeForm}
-                                placeholder="2021"
-                            />
-                        </div>
-
-                        <div className="col-12 col-md-8">
-                            <label className="form-label small fw-bold">Medida</label>
-                            <input
-                                type="text"
-                                name="medida"
-                                className="form-control"
-                                value={formData.medida}
-                                onChange={handleChangeForm}
-                                placeholder="Ej: 750 ml"
-                            />          
-                        </div>
-
-                        <div className="col-12">
-                            <label className="form-label small fw-bold">Ruta de Imagen (`/public`)</label>
-                            <input
-                                type="text"
-                                name="img"
-                                className="form-control"
-                                value={formData.img}
-                                onChange={handleChangeForm}
-                                placeholder="/img/imagenesProductos/producto.png"
-                            />
-                        </div>
-
-                        <div className="col-12">
-                            <label className="form-label small fw-bold">Descripción</label>
-                                <textarea
-                                    name="descripcion"
-                                    rows="3"
-                                    className="form-control"
-                                    value={formData.descripcion}
-                                    onChange={handleChangeForm}
-                                    placeholder="Notas de cata, maridaje o detalles del producto..."
-                                ></textarea>
-                            </div>
-                        </div>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label small fw-bold">Marca</label>
+                      <input
+                        type="text"
+                        name="marca"
+                        required
+                        className="form-control"
+                        value={formData.marca}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: Rutini"
+                      />
                     </div>
 
-                    <div className="modal-footer border-0 bg-light justify-content-end gap-2">
-                        <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setMostrarModalForm(false)}>
-                            Cancelar
-                        </button>
-                        <button type="submit" className="btn btn-sm text-white px-4 fw-semibold" style={{ backgroundColor: '#B5865A' }}>
-                            {productoEditando ? 'Guardar Cambios' : 'Crear Producto'}
-                        </button>
+                    <div className="col-12 col-md-6">
+                      <label className="form-label small fw-bold">Tipo</label>
+                      <input
+                        type="text"
+                        name="tipo"
+                        required
+                        className="form-control"
+                        value={formData.tipo}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: Tinto"
+                      />
+                    </div>    
+
+                    <div className="col-12 col-md-6">
+                      <label className="form-label small fw-bold">Bodega</label>
+                      <input
+                        type="text"
+                        name="bodega"
+                        className="form-control"
+                        value={formData.bodega}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: Rutini Wines"
+                      />
                     </div>
-                </form>
+
+                    <div className="col-12 col-md-6">
+                      <label className="form-label small fw-bold">Varietal</label>
+                      <input
+                        type="text"
+                        name="varietal"
+                        className="form-control"
+                        value={formData.varietal}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: Malbec"
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Precio</label>
+                      <input
+                        type="text"
+                        name="precio"
+                        required
+                        className="form-control"
+                        value={formData.precio}
+                        onChange={handleChangeForm}
+                        placeholder="15000"
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Costo</label>
+                      <input
+                        type="text"
+                        name="costo"
+                        className="form-control"
+                        value={formData.costo}
+                        onChange={handleChangeForm}
+                        placeholder="10000"
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Stock</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        min="0"
+                        required
+                        className="form-control"
+                        value={formData.stock}
+                        onChange={handleChangeForm}
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-4">
+                      <label className="form-label small fw-bold">Año</label>
+                      <input
+                        type="text"
+                        name="anio"
+                        className="form-control"
+                        value={formData.anio}
+                        onChange={handleChangeForm}
+                        placeholder="2021"
+                      />
+                    </div>
+
+                    <div className="col-12 col-md-8">
+                      <label className="form-label small fw-bold">Medida</label>
+                      <input
+                        type="text"
+                        name="medida"
+                        className="form-control"
+                        value={formData.medida}
+                        onChange={handleChangeForm}
+                        placeholder="Ej: 750 ml"
+                      />          
+                    </div>
+
+                    <div className="col-12">
+                      <label className="form-label small fw-bold">Ruta de Imagen (`/public`)</label>
+                      <input
+                        type="text"
+                        name="img"
+                        className="form-control"
+                        value={formData.img}
+                        onChange={handleChangeForm}
+                        placeholder="/img/imagenesProductos/producto.png"
+                      />
+                    </div>
+
+                    <div className="col-12">
+                      <label className="form-label small fw-bold">Descripción</label>
+                      <textarea
+                        name="descripcion"
+                        rows="3"
+                        className="form-control"
+                        value={formData.descripcion}
+                        onChange={handleChangeForm}
+                        placeholder="Notas de cata, maridaje o detalles del producto..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="modal-footer border-0 bg-light justify-content-end gap-2">
+                  <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setMostrarModalForm(false)}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-sm text-white px-4 fw-semibold" style={{ backgroundColor: '#B5865A' }}>
+                    {productoEditando ? 'Guardar Cambios' : 'Crear Producto'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       )}
 
-     
+      {/* MODAL CONFIRMAR ELIMINACIÓN */}
       {productoAEliminar && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">
@@ -354,7 +350,7 @@ export function ProductosPagePrivada() {
               <div className="modal-body p-4 text-center">
                 <p className="mb-2 fs-6">¿Estás seguro de que deseas eliminar el producto?</p>
                 <div className="p-3 rounded-2 fw-bold text-start mb-3" style={{ backgroundColor: '#F8F9FA', color: '#3E100F', borderLeft: '4px solid #B5865A' }}>
-                  {productoAEliminar.nombre}
+                  {productoAEliminar.p_marca || productoAEliminar.marca} {productoAEliminar.p_tipo ? `- ${productoAEliminar.p_tipo}` : ''}
                 </div>
                 <small className="text-muted">Esta acción no se puede deshacer.</small>
               </div>

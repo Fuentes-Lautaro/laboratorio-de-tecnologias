@@ -1,28 +1,51 @@
-import { Link, useOutletContext, useParams } from 'react-router'
-import DetalleProducto from '../components/DetalleProducto'
-import { getProductoPorId } from '../services/productosServices'
-import { useFetch } from '../../../shared/hooks/useFetch'
-import Spinner from '../../../shared/components/Spinner'
-import MensajeVacio from '../../../shared/components/MensajeVacio'
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import DetalleProducto from '../components/DetalleProducto';
+import { getProductoPorId } from '../services/productosServices';
 
-function DetalleProductoPage() {
-  const { id } = useParams()
-  const { agregarProducto } = useOutletContext()
-  const { datos: producto, cargando, error } = useFetch(getProductoPorId, id)
+export function DetalleProductoPage() {
+  const { id } = useParams();
+  const [producto, setProducto] = useState(null);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (cargando) return <Spinner texto="Cargando producto..." />
+  useEffect(() => {
+    if (id) {
+      setCargando(true);
+      getProductoPorId(id)
+        .then((data) => {
+          setProducto(data);
+          setCargando(false);
+        })
+        .catch((err) => {
+          setError(err.message || 'Error al cargar el producto');
+          setCargando(false);
+        });
+    }
+  }, [id]);
+
+  if (cargando) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-warning" role="status"></div>
+        <p className="text-muted small mt-2">Cargando producto...</p>
+      </div>
+    );
+  }
 
   if (error) {
     return (
-      <MensajeVacio titulo="Producto no encontrado" texto={error.message}>
-        <Link to="/catalogo" className="btn boton-error">
-          Volver al catálogo
-        </Link>
-      </MensajeVacio>
-    )
+      <div className="container py-5 text-center">
+        <div className="alert alert-danger d-inline-block">{error}</div>
+      </div>
+    );
   }
 
-  return <DetalleProducto key={producto.id} producto={producto} onAgregar={agregarProducto} />
+  return (
+    <div className="container py-5">
+      <DetalleProducto producto={producto} />
+    </div>
+  );
 }
 
-export default DetalleProductoPage
+export default DetalleProductoPage;
