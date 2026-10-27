@@ -1,5 +1,5 @@
 import { pool } from '../config/db.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // LISTAR TODO EL PERSONAL (Con información completa de personas)
 export const listar = async (req, res, next) => {
@@ -57,7 +57,7 @@ export const detalle = async (req, res, next) => {
     }
 };
 
-// CREAR PERSONAL
+{/*// CREAR PERSONAL
 export const crear = async (req, res, next) => {
     const client = await pool.connect(); // Transacción para asegurar integridad
     try {
@@ -106,7 +106,7 @@ export const crear = async (req, res, next) => {
     } finally {
         client.release();
     }
-};
+};*/}
 
 // MODIFICAR PERSONAL (Actualiza datos de personas, estado y rol)
 export const modificar = async (req, res, next) => {

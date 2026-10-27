@@ -7,7 +7,6 @@ const router = Router();
 //RUTAS PUBLICAS
 router.post('/registro', controller.registro);
 router.post('/login', controller.login);
-router.get('/todos', controller.todos);
 
 //RUTAS PROTEGIDAS
 //router.get('/perfil', verificarToken, controller.perfil);

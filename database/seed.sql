@@ -1,24 +1,18 @@
---EJECUTAR PARA CARGAR ESTOS VALORES:
+-- EJECUTAR PARA CARGAR ESTOS VALORES:
 -- psql -U postgres -d maria-balbina-lab -f database/seed.sql
 
--- INSERCION DE PERSONAS
-INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
-VALUES ('28123456', 'Roberto Fernández', '1982-04-12', '2664112233', 'admin@mariabalbina.com', 'Av. Illia 450, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', true);
+-- INSERCION DE EMPLEADOS
+INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)
+VALUES 
+('28123456', 'Roberto Fernández', '1982-04-12', '2664112233', 'admin@mariabalbina.com', 'Av. Illia 450, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'vendedor', true),
+('31987654', 'Sofia Martínez', '1988-09-25', '2664998877', 'gestor@mariabalbina.com', 'Pedernera 1230, San Luis', '$2b$10$0FGrkEfTeZluMinZ1nMdCuGrX5VCxaFFMp/8aeDk/XVIoCjQtD5aC', 'gerente', true),
+('35456789', 'Camila Torres', '1994-01-18', '2664556677', 'cm@mariabalbina.com', 'Junín 850, San Luis', '$2b$10$QemykBh3qpFNqqRivissB.4BkQChG4RMIzY0CZGNCI7F3v.ejF43.', 'CM', true);
 
-INSERT INTO personal (pers_id, p_rol)
-VALUES (LASTVAL(), 'vendedor');
-
-INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
-VALUES ('31987654', 'Sofia Martínez', '1988-09-25', '2664998877', 'gestor@mariabalbina.com', 'Pedernera 1230, San Luis', '$2b$10$0FGrkEfTeZluMinZ1nMdCuGrX5VCxaFFMp/8aeDk/XVIoCjQtD5aC', true);
-
-INSERT INTO personal (pers_id, p_rol)
-VALUES (LASTVAL(), 'gerente');
-
-INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
-VALUES ('35456789', 'Camila Torres', '1994-01-18', '2664556677', 'cm@mariabalbina.com', 'Junín 850, San Luis', '$2b$10$QemykBh3qpFNqqRivissB.4BkQChG4RMIzY0CZGNCI7F3v.ejF43.', true);
-
-INSERT INTO personal (pers_id, p_rol)
-VALUES (LASTVAL(), 'CM');
+-- INSERCION DE CLIENTES
+INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)
+VALUES 
+('12345678', 'Lucia Gomez', '1990-05-10', '2664332211', 'lucia@gmail.com', 'San Martín 100, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'cliente', true),
+('87654321', 'Martin Pedernera', '1985-11-20', '2664778899', 'martin@gmail.com', 'Rivadavia 500, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'cliente', true);
 
 -- INSERCION DE PRODUCTOS
 INSERT INTO productos 
@@ -39,10 +33,10 @@ VALUES
 ('Catena Zapata', 'tinto', 22000.00, 13500.00, 2019, '750', 'Catena Zapata', 'Malbec', 12, '/img/productos/catena-malbec-750.png', 
 'Elaborado con uvas de viñedos de altura, ofrece una gran complejidad aromática de frutos negros maduros, notas de violetas, moca y especias dulces. De gran concentración en boca, taninos jugosos y una textura untuosa y sofisticada.'),
 
-('Alamos', 'blanco', 5200.00, 3100.00, 2023, '750', 'Alamos', 'Torrontés', 25, '/img/productos/alamos-torrontes-750.png', 
+('Alamos', 'blanco', 5200.00, 3100.00, 2023, '750', 'Alamos', 'Torrontes', 25, '/img/productos/alamos-torrontes-750.png', 
 'Fragante y sumamente aromático. Caracterizado por sus clásicas notas florales de azahar y jazmín, combinadas con toques cítricos y de frutas blancas de carozos. En boca es fresco, expresivo y con un paso armónico.'),
 
-('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Bodegas Salentein', 'Malbec Rosé', 18, '/img/productos/salentein-rose-750.png', 
+('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Bodegas Salentein', 'Malbec Rose', 18, '/img/productos/salentein-rose-750.png', 
 'Un rosé elegante de color piel de cebolla brillante. Nariz delicada con aromas a frutillas, cerezas frescas y notas florales. En boca muestra una excelente acidez natural que le otorga frescura y un perfil vibrante.'),
 
 ('Finca La Linda', 'tinto', 8900.00, 5200.00, 2021, '750', 'Luigi Bosca', 'Syrah', 28, '/img/productos/la-linda-syrah-750.png', 
@@ -78,39 +72,21 @@ VALUES
 ('Rutini', 'tinto', 24000.00, 14500.00, 2018, '750', 'Rutini Wines', 'Malbec', 8, '/img/productos/rutini-apartado-750.png', 
 'Un vino de alta gama complejo y exclusivo. Despliega una paleta aromática rica en frutos negros confitados, notas de tabaco, chocolate y especias finas. En boca es voluptuoso, potente, de taninos terciopelados y gran profundidad.');
 
+-- INSERCION DE PLANES
 INSERT INTO planes (ps_nombre, ps_descripcion, ps_cantidad_vinos, ps_valor, ps_activo)
 VALUES
 ('Malbec', 'Ideal para quienes desean iniciarse en el mundo del vino y descubrir nuevas etiquetas cada mes.', 2, 25000.00, TRUE),
-
 ('Malbec-Rosado', 'La opción perfecta para paladares curiosos que buscan dar un salto de calidad y disfrutar de mayor variedad.', 3, 40000.00, TRUE),
-
 ('Reserva Especial', 'La experiencia definitiva para los verdaderos amantes y conocedores de vinos de alta gama.', 5, 70000.00, TRUE);
 
-
--- =========================================================
--- INSERCIÓN DE CLIENTES DE PRUEBA (Necesarios para asociar a las ventas)
--- =========================================================
-INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
-VALUES ('12345678', 'Lucía Gomez', '1990-05-10', '2664332211', 'lucia@gmail.com', 'San Martín 100, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', true);
-
-INSERT INTO clientes (cli_id)
-VALUES (LASTVAL());
-
-INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_activo)
-VALUES ('87654321', 'Martín Pedernera', '1985-11-20', '2664778899', 'martin@gmail.com', 'Rivadavia 500, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', true);
-
-INSERT INTO clientes (cli_id)
-VALUES (LASTVAL());
-
-
---INSERCION DE VENTAS
-INSERT INTO venta (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
+-- INSERCION DE VENTAS
+INSERT INTO ventas (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
 VALUES 
 (
     'VTA-1712', 
     '2026-10-02 14:30:00', 
-    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), 
-    (SELECT pers_id FROM personal p JOIN personas per ON p.pers_id = per.pe_id WHERE per.pe_dni = '28123456'), 
+    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), 
+    (SELECT pe_id FROM personas WHERE pe_dni = '28123456'), 
     NULL, 
     35000.00, 
     'Efectivo'
@@ -118,16 +94,16 @@ VALUES
 (
     'VTA-1823', 
     '2026-10-03 18:00:00', 
-    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '87654321'), 
-    (SELECT pers_id FROM personal p JOIN personas per ON p.pers_id = per.pe_id WHERE per.pe_dni = '31987654'), 
+    (SELECT pe_id FROM personas WHERE pe_dni = '87654321'), 
+    (SELECT pe_id FROM personas WHERE pe_dni = '31987654'), 
     NULL, 
     24000.00, 
     'MercadoPago'
 );
 
-
+-- INSERCION DE RENGLONES DE VENTA
 INSERT INTO reglones_venta (venta_codigo, producto_codigo, iv_cantidad, iv_precio_unidad)
 VALUES 
 ('VTA-1712', 1, 2, 6500.00),  
 ('VTA-1712', 5, 1, 22000.00),  
-('VTA-1823', 18, 1, 24000.00); 
+('VTA-1823', 18, 1, 24000.00);
