@@ -11,7 +11,7 @@ VALUES
 -- INSERCION DE CLIENTES
 INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)
 VALUES 
-('12345678', 'Lucia Gomez', '1990-05-10', '2664332211', 'lucia@gmail.com', 'San Martín 100, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'cliente', true),
+('12345678', 'Lucia Gomez', '1990-05-10', '2664332211', 'lucia@gmail.com', 'San Martín 100, San Luis', '$2b$10$7iW2iKki2QFHW9OFRlxPYePzXPK4fQ3rlYQGTbD.IXt496cE/vK76', 'cliente', true),
 ('87654321', 'Martin Pedernera', '1985-11-20', '2664778899', 'martin@gmail.com', 'Rivadavia 500, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'cliente', true);
 
 -- INSERCION DE PRODUCTOS

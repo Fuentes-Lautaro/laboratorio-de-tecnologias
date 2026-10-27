@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as controller from '../controllers/ventas.controller.js';
 import { verificarToken } from '../middlewares/verificarToken.js';
+import { verificarRol } from '../middlewares/verificarRol.js';
 
 const router = Router();
 

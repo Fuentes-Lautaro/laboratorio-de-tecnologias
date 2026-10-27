@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as controller from '../controllers/productos.controller.js';
 import { verificarToken } from '../middlewares/verificarToken.js';
+import { verificarRol } from '../middlewares/verificarRol.js';
 
 const router = Router()
 
@@ -9,8 +10,8 @@ router.get('/', controller.listar);
 router.get('/:id', controller.detalle);
 
 //RUTAS PROTEGIDAS
-router.post('/', verificarToken, controller.crear);
-router.put('/:id', verificarToken, controller.modificar);
-router.delete('/:id', verificarToken, controller.eliminar);
+router.post('/', verificarToken, verificarRol(['vendedor','gerente']), controller.crear);
+router.put('/:id', verificarToken, verificarRol(['vendedor', 'gerente']), controller.modificar);
+router.delete('/:id', verificarToken, verificarRol(['gerente']), controller.eliminar);
 
 export default router;
