@@ -10,7 +10,7 @@ export const env = {
   PGDATABASE: process.env.PGDATABASE ?? 'maria-balbina-lab',
 
   JWT_SECRET: process.env.JWT_SECRET,
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '1h',
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '1000h',
 };
 
 // Si falta el secreto, el servidor no arranca (mejor fallar ahora que firmar tokens inseguros)

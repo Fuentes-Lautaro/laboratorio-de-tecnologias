@@ -7,9 +7,7 @@ import productosRoutes from './routes/productos.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import planesRoutes from './routes/planes.routes.js';
 import ventasRoutes from './routes/ventas.routes.js';
-import clientesRoutes from './routes/clientes.routes.js';
-import personalRoutes from './routes/personal.routes.js';
-
+import personasRoutes from './routes/personas.routes.js';
 
 const app = express();
 
@@ -20,8 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/planes', planesRoutes);
 app.use('/api/ventas', ventasRoutes);
-app.use('/api/clientes', clientesRoutes);
-app.use('/api/personal', personalRoutes);
+app.use('/api/personas', personasRoutes);
 
 
 // Primero la ruta 404 (Pagina no encontrada), después el manejo de errores

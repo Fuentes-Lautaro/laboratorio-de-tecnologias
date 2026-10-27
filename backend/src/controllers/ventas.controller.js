@@ -14,11 +14,9 @@ export const listar = async (req, res, next) => {
                 p_cli.pe_nombre AS "clienteNombre",
                 p_emp.pe_dni AS "empleadoDni",
                 p_emp.pe_nombre AS "empleadoNombre"
-            FROM venta v
-            LEFT JOIN clientes c ON v.cliente_id = c.cli_id
-            LEFT JOIN personas p_cli ON c.cli_id = p_cli.pe_id
-            LEFT JOIN personal pers ON v.personal_id = pers.pers_id
-            LEFT JOIN personas p_emp ON pers.pers_id = p_emp.pe_id
+            FROM ventas v
+            LEFT JOIN personas p_cli ON v.cliente_id = p_cli.pe_id
+            LEFT JOIN personas p_emp ON v.personal_id = p_emp.pe_id
             ORDER BY v.v_fecha DESC;
         `;
         const { rows } = await pool.query(query);
@@ -44,11 +42,9 @@ export const detalle = async (req, res, next) => {
                 p_cli.pe_nombre AS "clienteNombre",
                 p_emp.pe_dni AS "empleadoDni",
                 p_emp.pe_nombre AS "empleadoNombre"
-            FROM venta v
-            LEFT JOIN clientes c ON v.cliente_id = c.cli_id
-            LEFT JOIN personas p_cli ON c.cli_id = p_cli.pe_id
-            LEFT JOIN personal pers ON v.personal_id = pers.pers_id
-            LEFT JOIN personas p_emp ON pers.pers_id = p_emp.pe_id
+            FROM ventas v
+            LEFT JOIN personas p_cli ON v.cliente_id = p_cli.pe_id
+            LEFT JOIN personas p_emp ON v.personal_id = p_emp.pe_id
             WHERE v.v_codigo = $1;
         `;
         const resVenta = await pool.query(queryVenta, [id]);
@@ -96,13 +92,12 @@ export const crear = async (req, res, next) => {
         let clienteId = null;
         if (clienteDni) {
             const resCli = await client.query(
-                `SELECT c.cli_id FROM clientes c 
-                 JOIN personas p ON c.cli_id = p.pe_id 
-                 WHERE p.pe_dni = $1`,
+                `SELECT pe_id FROM personas 
+                 WHERE pe_dni = $1`,
                 [clienteDni]
             );
             if (resCli.rows.length > 0) {
-                clienteId = resCli.rows[0].cli_id;
+                clienteId = resCli.rows[0].pe_id;
             }
         }
 
@@ -110,13 +105,12 @@ export const crear = async (req, res, next) => {
         let personalId = null;
         if (empleadoDni) {
             const resPers = await client.query(
-                `SELECT pers.pers_id FROM personal pers 
-                 JOIN personas p ON pers.pers_id = p.pe_id 
-                 WHERE p.pe_dni = $1`,
+                `SELECT pe_id FROM personas  
+                 WHERE pe_dni = $1`,
                 [empleadoDni]
             );
             if (resPers.rows.length > 0) {
-                personalId = resPers.rows[0].pers_id;
+                personalId = resPers.rows[0].pe_id;
             }
         }
 
@@ -126,7 +120,7 @@ export const crear = async (req, res, next) => {
 
         // D. Insertar la cabecera en la tabla 'venta'
         const insertVentaQuery = `
-            INSERT INTO venta (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
+            INSERT INTO ventas (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *;
         `;
@@ -185,7 +179,7 @@ export const modificar = async (req, res, next) => {
         const { monto, metodoPago } = req.body;
 
         const { rows } = await pool.query(
-            `UPDATE venta 
+            `UPDATE ventas 
              SET v_total = COALESCE($1, v_total), 
                  v_metodo_pago = COALESCE($2, v_metodo_pago) 
              WHERE v_codigo = $3 
@@ -209,7 +203,7 @@ export const eliminar = async (req, res, next) => {
         const { id } = req.params; // v_codigo
 
         const { rows } = await pool.query(
-            'DELETE FROM venta WHERE v_codigo = $1 RETURNING *',
+            'DELETE FROM ventas WHERE v_codigo = $1 RETURNING *',
             [id]
         );
 
