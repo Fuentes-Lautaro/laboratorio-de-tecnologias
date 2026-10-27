@@ -19,7 +19,7 @@ export const verificarToken = (req, res, next) => {
     const payload = jwt.verify(token, env.JWT_SECRET);
 
     // 4. Guardar los datos del usuario para que los use el controller
-    req.usuario = { id: payload.id, nombre: payload.nombre, email: payload.email };
+    req.usuario = { id: payload.id, nombre: payload.nombre, email: payload.email , rol: payload.rol };
     next(); // token válido: sigue hacia el controller
   } catch (err) {
     const mensaje = err.name === 'TokenExpiredError' ? 'Token vencido' : 'Token inválido';

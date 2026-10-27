@@ -9,12 +9,11 @@ router.get('/', controller.listar);
 router.get('/:id', controller.detalle);
 
 // RUTAS PROTEGIDAS
-router.post('/', verificarToken, controller.crear);
+router.post('/', verificarToken,verificarRol(['gerente', 'vendedor']), controller.crear);
 
 //solo para probar
-router.put('/:id', verificarToken, controller.modificar);
-router.delete('/:id', verificarToken, controller.eliminar);
-
+router.put('/:id', verificarToken,verificarRol(['gerente', 'vendedor']), controller.modificar);
+router.delete('/:id', verificarToken,verificarRol(['gerente', 'vendedor']), controller.eliminar);
 
 
 export default router;

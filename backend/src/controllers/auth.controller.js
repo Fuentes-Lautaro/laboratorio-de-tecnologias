@@ -58,7 +58,7 @@ export const login = async (req, res, next) => {
 
     // 3. Firmar el token con datos mínimos (nunca la contraseña)
     const token = jwt.sign(
-      { id: persona.pe_id, nombre: persona.pe_nombre, mail: persona.pe_mail }, // payload
+      { id: persona.pe_id, nombre: persona.pe_nombre, mail: persona.pe_mail , rol: persona.pe_rol }, // payload
       env.JWT_SECRET, // clave secreta del servidor
       { expiresIn: env.JWT_EXPIRES_IN } // vencimiento
     );
