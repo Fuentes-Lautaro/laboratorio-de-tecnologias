@@ -19,10 +19,17 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Mapeamos los datos para que coincidan 1:1 con lo que espera el backend
     onRegistro({
-      ...formData,
-      mail: email,
-      rol: 'Cliente'
+      nombre: formData.nombre,
+      dni: formData.dni,
+      telefono: formData.telefono,
+      fechaNac: formData.fechaNac,
+      direccion: formData.direccion,
+      password: formData.clave, // 👈 Enviamos 'password' que es la clave que espera Express
+      mail: email,              // 👈 Email capturado en el Paso 1
+      rol: 'cliente'            // 👈 'cliente' en minúsculas
     });
   };
 

@@ -69,3 +69,32 @@ export const login = async (req, res, next) => {
     next(err);
   }
 };
+
+export const verificar = async (req, res, next) => {
+  try {
+    const { mail } = req.body;
+
+    if (!mail) {
+      return res.status(400).json({ error: 'El email es obligatorio' });
+    }
+
+    const { rows } = await pool.query(
+      'SELECT pe_id FROM personas WHERE pe_mail = $1', 
+      [mail]
+    );
+
+    res.json({ existe: rows.length > 0 });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const listar = async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(`SELECT * FROM personas`);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+};

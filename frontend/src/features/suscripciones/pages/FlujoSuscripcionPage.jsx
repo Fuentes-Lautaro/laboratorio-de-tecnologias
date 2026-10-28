@@ -6,7 +6,9 @@ import {
   CardIngresoContrasenia, 
   CardRegistro, 
   verificarEmailExistente,
-  iniciarSesion 
+  iniciarSesion,
+  registrarCliente,
+  obtenerSesion // 👈 1. Importamos la función para leer la sesión actual
 } from '../../auth';
 
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
@@ -25,6 +27,7 @@ export function FlujoSuscripcionPage() {
   const [cargando, setCargando] = useState(false);
   const [errorBackend, setErrorBackend] = useState('');
 
+  // 2. Cargar datos del plan elegido desde el parámetro URL
   useEffect(() => {
     async function cargarPlan() {
       if (!nombre) return;
@@ -38,13 +41,54 @@ export function FlujoSuscripcionPage() {
     cargarPlan();
   }, [nombre]);
 
+  // 3. NUEVO: Verificar sesión previa al cargar el componente
+  useEffect(() => {
+    async function verificarSesionInicial() {
+      const sesionActiva = obtenerSesion();
+
+      if (sesionActiva) {
+        setClienteLogueado(sesionActiva);
+        setEmail(sesionActiva.email || sesionActiva.mail || '');
+
+        const identificador = sesionActiva.dni || sesionActiva.email;
+        
+        if (identificador) {
+          setCargando(true);
+          try {
+            // Verificamos si la cuenta logueada ya posee suscripción
+            const subActiva = await getSuscripcionActivaPorDni(identificador);
+            if (subActiva) {
+              setSuscripcionExistente(subActiva);
+              setPaso('SUSCRIPTO');
+            } else {
+              // Si no tiene suscripción activa, saltea login/registro e va directo a PAGO
+              setPaso('PAGO');
+            }
+          } catch (error) {
+            console.error('Error al verificar suscripción activa:', error);
+            setPaso('PAGO');
+          } finally {
+            setCargando(false);
+          }
+        } else {
+          setPaso('PAGO');
+        }
+      }
+    }
+
+    verificarSesionInicial();
+  }, []);
+
+  // PASO 1: Verificar email en la base de datos
   const handleVerificarEmail = async (emailIngresado) => {
     setCargando(true);
     setErrorBackend('');
     setEmail(emailIngresado);
 
     try {
-      const existe = await verificarEmailExistente(emailIngresado);
+      const resultado = await verificarEmailExistente(emailIngresado);
+      const existe = typeof resultado === 'object' ? resultado.existe : resultado;
+
       if (existe) {
         setPaso('PASSWORD');
       } else {
@@ -57,6 +101,7 @@ export function FlujoSuscripcionPage() {
     }
   };
 
+  // PASO 2A: Login
   const handleLogin = async (clave) => {
     setCargando(true);
     setErrorBackend('');
@@ -65,7 +110,8 @@ export function FlujoSuscripcionPage() {
       const sesion = await iniciarSesion(email, clave);
       setClienteLogueado(sesion);
 
-      const subActiva = await getSuscripcionActivaPorDni(sesion.dni);
+      const identificador = sesion.dni || sesion.email;
+      const subActiva = await getSuscripcionActivaPorDni(identificador);
 
       if (subActiva) {
         setSuscripcionExistente(subActiva);
@@ -80,12 +126,18 @@ export function FlujoSuscripcionPage() {
     }
   };
 
+  // PASO 2B: Registro
   const handleRegistro = async (datosRegistro) => {
     setCargando(true);
     setErrorBackend('');
 
     try {
-      const nuevoCliente = { ...datosRegistro, email };
+      const payloadRegistro = {
+        ...datosRegistro,
+        mail: email
+      };
+
+      const nuevoCliente = await registrarCliente(payloadRegistro);
       setClienteLogueado(nuevoCliente);
       setPaso('PAGO');
     } catch (error) {
@@ -95,6 +147,7 @@ export function FlujoSuscripcionPage() {
     }
   };
 
+  // PASO 3: Confirmación de Pago
   const handleConfirmarPago = async () => {
     setCargando(true);
     setErrorBackend('');
@@ -151,6 +204,7 @@ export function FlujoSuscripcionPage() {
           <CardRegistro
             email={email}
             onRegistro={handleRegistro}
+            onVolver={() => setPaso('EMAIL')}
             cargando={cargando}
             errorBackend={errorBackend}
           />
@@ -160,7 +214,7 @@ export function FlujoSuscripcionPage() {
           <div className="card shadow-sm border-0 p-4 text-center">
             <h4 className="text-warning fw-bold mb-3">¡Ya tenés una suscripción!</h4>
             <p className="text-muted small mb-3">
-              Hola <strong>{clienteLogueado?.nombre}</strong>, detectamos que tu cuenta ya posee una suscripción activa.
+              Hola <strong>{clienteLogueado?.nombre || 'Usuario'}</strong>, detectamos que tu cuenta ya posee una suscripción activa.
             </p>
             <div className="alert alert-light border text-start small mb-3">
               <div><strong>Plan:</strong> {suscripcionExistente?.planId}</div>
@@ -178,7 +232,7 @@ export function FlujoSuscripcionPage() {
             plan={planSeleccionado}
             cliente={clienteLogueado}
             onConfirmarPago={handleConfirmarPago}
-            onVolver={() => setPaso('PASSWORD')}
+            onVolver={() => navigate('/suscripciones')}
             cargando={cargando}
           />
         )}

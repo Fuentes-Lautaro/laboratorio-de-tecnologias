@@ -11,5 +11,6 @@ export {
   obtenerSesion,
   redirigirSiHaySesion,
   cerrarSesion,
-  protegerRuta
+  protegerRuta,
+  registrarCliente
 } from './services/authService.js';

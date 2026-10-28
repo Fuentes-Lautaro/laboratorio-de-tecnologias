@@ -6,19 +6,25 @@ const CLAVE_SESION = 'vinoteca:sesion';
 
 // Verificación auxiliar de email existente
 export async function verificarEmailExistente(email) {
-  const respuesta = await fetch(`${URL_BASE}/clientes.json`);
-  if (!respuesta.ok) {
-    throw new Error('No se pudo conectar con el servidor. Intentá más tarde.');
-  }
-
-  const usuarios = await respuesta.json();
   const emailLimpio = email.trim().toLowerCase();
 
-  return usuarios.some(
-    (u) =>
-      (u.mail && u.mail.trim().toLowerCase() === emailLimpio) ||
-      (u.email && u.email.trim().toLowerCase() === emailLimpio)
-  );
+  const respuesta = await fetch(`${API_URL}/auth/verificar-mail`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail: emailLimpio })
+  });
+
+  if (!respuesta.ok) {
+    const errorData = await respuesta.json().catch(() => ({}));
+    throw new Error(errorData.error || 'No se pudo conectar con el servidor. Intentá más tarde.');
+  }
+
+  const data = await respuesta.json();
+
+  return {
+    existe: data.existe,
+    email: emailLimpio
+  };
 }
 
 export async function iniciarSesion(email, password) {
@@ -82,4 +88,24 @@ export function protegerRuta() {
   }
 
   return sesion;
+}
+
+// REGISTRO DE NUEVO CLIENTE (POST /api/auth/registro)
+export async function registrarCliente(datosRegistro) {
+  const respuesta = await fetch(`${API_URL}/auth/registro`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datosRegistro)
+  });
+
+  // Si la respuesta no es exitosa (ej. 400 Bad Request o 409 Conflict)
+  if (!respuesta.ok) {
+    const errorData = await respuesta.json().catch(() => ({}));
+    throw new Error(
+      errorData.error || errorData.mensaje || 'No se pudo completar el registro. Verificá los datos.'
+    );
+  }
+
+  // Retorna el objeto del usuario creado (pe_id, pe_dni, pe_nombre, pe_mail, etc.)
+  return await respuesta.json();
 }
