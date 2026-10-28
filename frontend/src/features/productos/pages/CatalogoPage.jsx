@@ -1,3 +1,4 @@
+import React from 'react'
 import { useOutletContext } from 'react-router'
 import GrillaProductos from '../components/GrillaProductos'
 import FiltroDesplegable from '../components/FiltroDesplegable'
@@ -11,11 +12,13 @@ import MensajeVacio from '../../../shared/components/MensajeVacio'
 function CatalogoPage() {
   const { agregarProducto } = useOutletContext()
   const { datos: productos, cargando, error } = useFetch(getProductos)
-  const filtros = useFiltros(productos)
+  
+  // Le pasamos (productos || []) para proteger el hook mientras carga la petición
+  const filtros = useFiltros(productos || [])
 
   if (cargando) return <Spinner texto="Cargando catálogo..." />
   if (error) return <MensajeVacio titulo="No pudimos cargar el catálogo" texto={error.message} />
-  
+
   return (
     <>
       <div className="text-center py-5 max-w-2xl mx-auto">
@@ -26,14 +29,15 @@ function CatalogoPage() {
           Nuestros productos
         </span>
         <h1 className="display-5 fw-bold mb-1" style={{ color: '#3E100F' }}>
-          Catalogo
+          Catálogo
         </h1>
         <p className="text-secondary lead fs-6">
-          Descubrí nuestros productos y senti el placer por el buen vino.
+          Descubrí nuestros productos y sentí el placer por el buen vino.
         </p>
       </div>
 
       <div className="row g-3">
+        {/* BARRA LATERAL DE FILTROS (Manejo 100% local sin peticiones extra) */}
         <aside className="col-lg-3 d-flex flex-column gap-1">
           <label htmlFor="busqueda" className="rotulo-filtro mb-2">
             Buscar
@@ -86,7 +90,7 @@ function CatalogoPage() {
             <Boton
               variante="outline-secondary"
               tamanio="sm"
-              className="boton-error"
+              className="boton-error mt-2"
               onClick={filtros.limpiarFiltros}
             >
               Limpiar filtros
@@ -94,22 +98,23 @@ function CatalogoPage() {
           )}
         </aside>
 
+        {/* ÁREA DE RESULTADOS */}
         <section className="col-lg-9">
           <p className="small text-body-secondary">
-            Mostrando {filtros.productosFiltrados.length} de {productos.length} productos
+            Mostrando {filtros.productosFiltrados.length} de {(productos || []).length} productos
           </p>
 
           {filtros.productosFiltrados.length > 0 ? (
             <GrillaProductos productos={filtros.productosFiltrados} onAgregar={agregarProducto} />
           ) : (
             <MensajeVacio titulo="No hay productos con esos filtros" texto="Pruebe con otros filtros">
-              <Boton onClick={filtros.limpiarFiltros} className='boton-error'>Ver todo</Boton>
+              <Boton onClick={filtros.limpiarFiltros} className="boton-error">Ver todo</Boton>
             </MensajeVacio>
           )}
         </section>
       </div>
     </>
-    )
+  )
 }
 
 export default CatalogoPage

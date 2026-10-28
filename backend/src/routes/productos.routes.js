@@ -14,4 +14,7 @@ router.post('/', verificarToken, verificarRol(['vendedor','gerente']), controlle
 router.put('/:id', verificarToken, verificarRol(['vendedor', 'gerente']), controller.modificar);
 router.patch('/:id', verificarToken, verificarRol(['gerente']), controller.alternar);
 
+//RUTA PROTEGIDA SOLO PARA PRUEBAS
+router.delete('/:id', verificarToken, verificarRol(['gerente']), controller.eliminar)
+
 export default router;

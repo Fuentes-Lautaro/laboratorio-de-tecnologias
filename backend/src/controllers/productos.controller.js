@@ -1,12 +1,21 @@
 import { pool } from '../config/db.js'
 
 export const listar = async (req, res, next) => {
-    try {
-        const {rows} = await pool.query('SELECT * FROM productos ORDER BY p_id');
-        res.json(rows);
-    } catch (err) {
-        next(err);
-    }
+  try {
+    const { rows } = await pool.query(`
+      SELECT * FROM productos 
+      ORDER BY 
+        CASE 
+          WHEN p_activo = true AND p_stock > 0 THEN 1
+          WHEN p_activo = true AND p_stock <= 0 THEN 2
+          ELSE 3
+        END ASC,
+        p_precio ASC
+    `);
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const detalle = async (req, res, next) => {
@@ -75,3 +84,17 @@ export const alternar = async (req, res, next) => {
     next(err);
   }
 };
+
+export const eliminar = async (req, res, next) => {
+    try {
+        const { rowCount } = await pool.query('DELETE FROM productos WHERE p_id = $1', [
+            req.params.id,
+        ]);
+        if (rowCount === 0) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+        res.status(204).end();
+    } catch (err) {
+        next(err);
+    }
+}
