@@ -6,7 +6,7 @@ export const env = {
   PGHOST: process.env.PGHOST ?? 'localhost',
   PGPORT: process.env.PGPORT ?? 5432,
   PGUSER: process.env.PGUSER ?? 'postgres',
-  PGPASSWORD: process.env.PGPASSWORD ?? '',
+  PGPASSWORD: process.env.PGPASSWORD ?? 'tutuca1624',
   PGDATABASE: process.env.PGDATABASE ?? 'maria-balbina-lab',
 
   JWT_SECRET: process.env.JWT_SECRET,

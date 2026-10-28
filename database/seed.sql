@@ -124,7 +124,41 @@ VALUES
     24000.00, 
     'MercadoPago'
 );
+-- =========================================================
+-- INSERCIÓN DE EVENTOS
+-- =========================================================
+INSERT INTO evento (e_nombre, e_fecha, e_descripcion, e_cant_asist, e_url_imagen)
+VALUES 
+('Cata de Vinos de Altura', '2026-11-15', 'Degustación guiada por nuestro sommelier de los mejores Malbecs de Valle de Uco, acompañados de tapeo regional.', 30, '/img/eventos/cata-altura.png'),
 
+('Maridaje y Fin de Año', '2026-12-10', 'Despedimos el año con una cena maridaje exclusiva. 5 pasos con vinos de la línea Reserva Especial.', 50, '/img/eventos/cena-fin-anio.png'),
+
+('Feria de Blancos y Rosados', '2026-10-30', 'Feria al aire libre ideal para la primavera, probando más de 15 etiquetas de vinos blancos y rosados frescos.', 100, '/img/eventos/feria-blancos.png');
+
+
+-- =========================================================
+-- INSERCIÓN DE SUSCRIPCIONES
+-- =========================================================
+INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
+VALUES 
+(
+    '2026-10-05', 
+    25000.00, 
+    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), -- Lucía Gomez
+    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
+),
+(
+    '2026-10-10', 
+    70000.00, 
+    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '87654321'), -- Martín Pedernera
+    (SELECT ps_id FROM planes WHERE ps_nombre = 'Reserva Especial')
+),
+(
+    '2026-11-05', 
+    25000.00, 
+    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), -- Lucía Gomez (mes siguiente)
+    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
+);
 
 INSERT INTO reglones_venta (venta_codigo, producto_codigo, iv_cantidad, iv_precio_unidad)
 VALUES 
