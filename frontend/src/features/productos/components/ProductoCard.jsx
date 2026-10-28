@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
 export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onEliminar }) {
+  const [hoverBotonEstado, setHoverBotonEstado] = useState(false);
+
   if (!producto) return null;
 
   // Soporta tanto las claves de PostgreSQL (p_) como el formato plano
@@ -19,16 +21,23 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
   const img = producto.p_imagen_url ?? producto.p_img ?? producto.img ?? '';
   const stock = producto.p_stock ?? producto.stock ?? 0;
 
+  // Evaluación del estado activo / inactivo (por defecto true)
+  const estaActivo = producto.p_activo ?? producto.activo ?? true;
+
   const handleImageError = (e) => {
     e.target.onerror = null;
     e.target.src = FALLBACK_IMAGEN;
   };
 
-  // Ruta hacia la página de detalle (ajustá si tu router usa /productos/:id)
   const rutaDetalle = `/catalogo/${id}`;
 
   return (
-    <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
+    <div 
+      className={`card h-100 shadow-sm border-0 rounded-3 overflow-hidden ${
+        !estaActivo && esGestion ? 'opacity-50 bg-light' : ''
+      }`}
+      style={!estaActivo && esGestion ? { filter: 'grayscale(70%)' } : {}}
+    >
       <div className="row g-0 h-100">
         
         {/* Columna de la Imagen */}
@@ -60,9 +69,11 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             </span>
             
             {esGestion && (
-              <span className="small text-muted" style={{ fontSize: '0.8rem' }}>
-                Stock: {stock}
-              </span>
+              <div className="d-flex align-items-center gap-1">
+                <span className="small text-muted ms-1" style={{ fontSize: '0.8rem' }}>
+                  Stock: {stock}
+                </span>
+              </div>
             )}
           </div>
 
@@ -124,10 +135,18 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
               </button>
               <button
                 onClick={() => onEliminar(id)}
-                className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-                style={{ fontSize: '0.8rem' }}
+                onMouseEnter={() => setHoverBotonEstado(true)}
+                onMouseLeave={() => setHoverBotonEstado(false)}
+                className="btn btn-sm d-flex align-items-center gap-1"
+                style={{
+                  fontSize: '0.8rem',
+                  border: '1px solid var(--titulos, #3E100F)',
+                  backgroundColor: hoverBotonEstado ? 'var(--titulos, #3E100F)' : 'transparent',
+                  color: hoverBotonEstado ? '#ffffff' : 'var(--titulos, #3E100F)',
+                  transition: 'all 0.2s ease'
+                }}
               >
-                Eliminar
+                {estaActivo ? 'Desactivar' : 'Activar'}
               </button>
             </div>
           )}

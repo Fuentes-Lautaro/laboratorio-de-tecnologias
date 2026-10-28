@@ -12,6 +12,6 @@ router.get('/:id', controller.detalle);
 //RUTAS PROTEGIDAS
 router.post('/', verificarToken, verificarRol(['vendedor','gerente']), controller.crear);
 router.put('/:id', verificarToken, verificarRol(['vendedor', 'gerente']), controller.modificar);
-router.delete('/:id', verificarToken, verificarRol(['gerente']), controller.eliminar);
+router.patch('/:id', verificarToken, verificarRol(['gerente']), controller.alternar);
 
 export default router;

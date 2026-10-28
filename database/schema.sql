@@ -31,7 +31,8 @@ CREATE TABLE productos (
     p_bodega VARCHAR(50),
     p_descripcion VARCHAR(500),
     p_imagen_url VARCHAR(200),
-    p_stock INT NOT NULL DEFAULT 0 CHECK (p_stock >= 0)
+    p_stock INT NOT NULL DEFAULT 0 CHECK (p_stock >= 0),
+    p_activo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE planes (

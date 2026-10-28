@@ -8,9 +8,7 @@ export const verificarRol = (rolesPermitidos) => {
     }
 
     const rolUsuario = req.usuario.rol?.toLowerCase() || '';
-    // 👇 ¡Agregá este console.log para ver qué rol llega desde el token!
-    console.log("Rol que viene en el token:", rolUsuario);
-    console.log("Roles permitidos en esta ruta:", rolesPermitidos);
+    
     // Pasamos los roles permitidos a minúsculas para comparar bien
     const rolesEnMinuscula = rolesPermitidos.map(r => r.toLowerCase());
 

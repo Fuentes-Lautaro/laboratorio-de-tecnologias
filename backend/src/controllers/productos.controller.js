@@ -57,16 +57,21 @@ export const modificar = async (req, res, next) => {
     }
 }
 
-export const eliminar = async (req, res, next) => {
-    try {
-        const { rowCount } = await pool.query('DELETE FROM productos WHERE p_id = $1', [
-            req.params.id,
-        ]);
-        if (rowCount === 0) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
-        }
-        res.status(204).end();
-    } catch (err) {
-        next(err);
+export const alternar = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const { rows } = await pool.query(
+      'UPDATE productos SET p_activo = NOT p_activo WHERE p_id = $1 RETURNING *',
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
     }
-}
+
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
