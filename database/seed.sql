@@ -4,9 +4,9 @@
 -- INSERCION DE EMPLEADOS
 INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)
 VALUES 
-('28123456', 'Roberto Fernández', '1982-04-12', '2664112233', 'admin@mariabalbina.com', 'Av. Illia 450, San Luis', '$2b$10$04hTBqwI7SxBizwSm0cgkOSDWbgONu6S0AH75/O7JCQDCfHu0dHWm', 'vendedor', true),
-('31987654', 'Sofia Martínez', '1988-09-25', '2664998877', 'gestor@mariabalbina.com', 'Pedernera 1230, San Luis', '$2b$10$0FGrkEfTeZluMinZ1nMdCuGrX5VCxaFFMp/8aeDk/XVIoCjQtD5aC', 'gerente', true),
-('35456789', 'Camila Torres', '1994-01-18', '2664556677', 'cm@mariabalbina.com', 'Junín 850, San Luis', '$2b$10$QemykBh3qpFNqqRivissB.4BkQChG4RMIzY0CZGNCI7F3v.ejF43.', 'cm', true);
+('28123456', 'Roberto Fernández', '1982-04-12', '2664112233', 'vendedor@mariabalbina.com', 'Av. Illia 450, San Luis', '$2b$10$7iW2iKki2QFHW9OFRlxPYePzXPK4fQ3rlYQGTbD.IXt496cE/vK76', 'vendedor', true),
+('31987654', 'Sofia Martínez', '1988-09-25', '2664998877', 'gestor@mariabalbina.com', 'Pedernera 1230, San Luis', '$2b$10$7iW2iKki2QFHW9OFRlxPYePzXPK4fQ3rlYQGTbD.IXt496cE/vK76', 'gerente', true),
+('35456789', 'Camila Torres', '1994-01-18', '2664556677', 'cm@mariabalbina.com', 'Junín 850, San Luis', '$2b$10$7iW2iKki2QFHW9OFRlxPYePzXPK4fQ3rlYQGTbD.IXt496cE/vK76', 'cm', true);
 
 -- INSERCION DE CLIENTES
 INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)

@@ -8,10 +8,19 @@ export function LoginPage() {
 
   const handleIngresar = async ({ email, password }) => {
     const sesion = await iniciarSesion(email, password);
-    
-    if (sesion) {
-      revalidator.revalidate(); 
-      navigate('/', { replace: true });
+
+      if (sesion) {
+        revalidator.revalidate();
+
+      const rol = sesion.rol?.toLowerCase() || '';
+
+      if (rol === 'cm') {
+        navigate('/cm/eventos', { replace: true });
+      } else if (['vendedor', 'gerente'].includes(rol)) {
+        navigate('/gestion', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     }
   };
 
@@ -22,8 +31,8 @@ export function LoginPage() {
         {/* Tarjeta de Login */}
         <div className="card border-0 shadow-lg rounded-4 overflow-hidden mb-3" style={{ backgroundColor: '#ffffff' }}>
           <div className="py-3 px-3 text-center text-white" style={{ backgroundColor: 'var(--paneles)' }}>
-            <h1 className="h4 fw-bold mb-0" style={{ color: 'var(--fondos-principales, #Fff)' }}>
-              Iniciar Sesion
+            <h1 className="h4 fw-bold mb-0" style={{ color: 'var(--fondos-principales, #FFF)' }}>
+              Iniciar Sesión
             </h1>
           </div>
 
@@ -32,13 +41,13 @@ export function LoginPage() {
           </div>
         </div>
 
-        {/* Deplegable de Usuarios de Ejemplo */}
+        {/* Desplegable de Usuarios de Ejemplo */}
         <details className="mt-2 text-center">
           <summary 
             className="user-select-none small text-uppercase fw-semibold cursor-pointer" 
             style={{ color: 'var(--referencias, #513B2A)', fontSize: '0.75rem', letterSpacing: '1px', listStyle: 'none' }}
           >
-            🔑 <span className="text-decoration-underline" style={{ textUnderlineOffset: '3px' }}>Ver usuarios de prueba</span>
+            <span className="text-decoration-underline" style={{ textUnderlineOffset: '3px' }}>Ver usuarios de prueba</span>
           </summary>
 
           <div 
@@ -47,10 +56,16 @@ export function LoginPage() {
           >
             <div className="d-flex flex-column gap-2">
               <div>
-                <strong style={{ color: 'var(--titulos, #64141B)' }}>Suscripto:</strong> maria.balbina@balbina.com / 123456
+                <strong style={{ color: 'var(--titulos, #64141B)' }}>Gerente:</strong> gestor@mariabalbina.com / 123456
               </div>
               <div>
-                <strong style={{ color: 'var(--detalles, #B5865A)' }}>No suscripto:</strong> juan.perez@ejemplo.com / 123456
+                <strong style={{ color: 'var(--titulos, #64141B)' }}>Cliente:</strong> vendedor@mariabalbina.com / 123456
+              </div>
+              <div>
+                <strong style={{ color: 'var(--titulos, #64141B)' }}>CM:</strong> cm@mariabalbina.com / 123456
+              </div>
+              <div>
+                <strong style={{ color: 'var(--titulos, #64141B)' }}>Cliente:</strong> lucia@gmail.com / 123456
               </div>
             </div>
           </div>

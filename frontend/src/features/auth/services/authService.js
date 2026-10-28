@@ -1,124 +1,85 @@
-import { redirect } from 'react-router'
+import { redirect } from 'react-router';
 
-const URL_BASE = '/backend/data'
-const CLAVE_SESION = 'vinoteca:sesion'
+const API_URL = 'http://localhost:3000/api';
+const URL_BASE = '/backend/data';
+const CLAVE_SESION = 'vinoteca:sesion';
 
+// Verificación auxiliar de email existente
 export async function verificarEmailExistente(email) {
-  const respuesta = await fetch(`${URL_BASE}/clientes.json`)
+  const respuesta = await fetch(`${URL_BASE}/clientes.json`);
   if (!respuesta.ok) {
-    throw new Error('No se pudo conectar con el servidor. Intentá más tarde.')
+    throw new Error('No se pudo conectar con el servidor. Intentá más tarde.');
   }
 
-  const usuarios = await respuesta.json()
-  const emailLimpio = email.trim().toLowerCase()
+  const usuarios = await respuesta.json();
+  const emailLimpio = email.trim().toLowerCase();
 
   return usuarios.some(
-    (u) => (u.mail && u.mail.trim().toLowerCase() === emailLimpio)
-  )
+    (u) =>
+      (u.mail && u.mail.trim().toLowerCase() === emailLimpio) ||
+      (u.email && u.email.trim().toLowerCase() === emailLimpio)
+  );
 }
 
-//FUNCIONES PARA INICIO DE SESION DE CLIENTES
 export async function iniciarSesion(email, password) {
-  const respuesta = await fetch(`${URL_BASE}/clientes.json`)
+  const respuesta = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mail: email, password })
+  });
+
+  const data = await respuesta.json().catch(() => ({}));
+
   if (!respuesta.ok) {
-    throw new Error('No se pudo verificar el usuario. Intentá más tarde.')
+    throw new Error(data.error || 'Email o contraseña incorrectos.');
   }
 
-  const clientes = await respuesta.json()
-  const emailLimpio = email.trim().toLowerCase()
+  const sesion = {
+    token: data.token,
+    rol: data.rol,
+    email: email
+  };
 
-  const cliente = clientes.find((c) => {
-    const mailCliente = (c.mail || c.email || '').trim().toLowerCase()
-    return mailCliente === emailLimpio && String(c.clave || c.password) === String(password)
-  })
-
-  if (!cliente) {
-    throw new Error('Email o contraseña incorrectos.')
-  }
-
-  const sesion = { 
-    dni: cliente.dni, 
-    nombre: cliente.nombre, 
-    email: cliente.mail, 
-    telefono: cliente.telefono,
-    direccion: cliente.direccion,
-    fechaNac: cliente.fechaNac,
-    rol: cliente.rol 
-  }
-  
-  sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion))
-  return sesion
+  sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
+  return sesion;
 }
 
+// Redirección para rutas públicas si ya hay sesión iniciada
 export function redirigirSiHaySesion() {
   if (obtenerSesion()) {
-    throw redirect('/')
+    throw redirect('/');
   }
-  return null
+  return null;
 }
 
-//FUNCIONES DE INICIO DE SESION PARA EMPLEADOS
-export async function iniciarSesionEmpleado(email, password) {
-  const respuesta = await fetch(`${URL_BASE}/empleados.json`)
-  if (!respuesta.ok) {
-    throw new Error('No se pudo verificar el usuario de gestión.')
-  }
-
-  const empleados = await respuesta.json()
-  const emailLimpio = email.trim().toLowerCase()
-
-  const empleado = empleados.find((e) => {
-    const mailEmp = (e.mail || '').trim().toLowerCase()
-    return mailEmp === emailLimpio && String(e.clave || e.password) === String(password)
-  })
-
-  if (!empleado) {
-    throw new Error('Email o contraseña de empleado incorrectos.')
-  }
-
-  const sesion = { 
-    id: empleado.id,
-    dni: empleado.dni, 
-    nombre: empleado.nombre, 
-    email: empleado.mail || empleado.email, 
-    rol: empleado.rol,
-    tipo: 'empleado'
-  }
-  
-  sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion))
-  return sesion
-}
-
-export function redirigirSiHaySesionPrivado() {
-  if (obtenerSesion()) {
-    throw redirect('/gestion')
-  }
-  return null
-}
-
-//FUNCIONES DE USO DE AMBOS PERFILES
+// FUNCIONES DE MANEJO DE SESIÓN
 export function obtenerSesion() {
   try {
-    return JSON.parse(sessionStorage.getItem(CLAVE_SESION))
+    const sesion = sessionStorage.getItem(CLAVE_SESION);
+    return sesion ? JSON.parse(sesion) : null;
   } catch {
-    return null
+    return null;
   }
 }
 
 export function cerrarSesion() {
-  sessionStorage.removeItem(CLAVE_SESION)
+  sessionStorage.removeItem(CLAVE_SESION);
 }
 
+// Protección de rutas privadas (/gestion y /cm)
 export function protegerRuta() {
   const sesion = obtenerSesion();
-  if (!sesion) {
-    throw redirect('/login-gestion');
+
+  if (!sesion || !sesion.token) {
+    throw redirect('/login');
   }
+
   const rol = sesion.rol?.toLowerCase() || '';
   const rolesPermitidos = ['gerente', 'vendedor', 'cm'];
 
   if (!rolesPermitidos.includes(rol)) {
     throw redirect('/');
   }
+
   return sesion;
 }

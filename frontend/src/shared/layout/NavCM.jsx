@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { cerrarSesion } from '../../features/auth/services/authService.js';
 
 export function NavCM({ sesion }) {
@@ -6,7 +6,7 @@ export function NavCM({ sesion }) {
 
   const handleCerrarSesion = () => {
     cerrarSesion();
-    navigate('/login-gestion', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   const getNavLinkStyle = ({ isActive }) => ({
@@ -48,8 +48,34 @@ export function NavCM({ sesion }) {
         </NavLink>
       </nav>
 
-      {/* Botón de Cerrar Sesión */}
-      <div className="pt-3 mt-auto border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+      {/* Pie con Accesos Directos y Cerrar Sesión */}
+      <div className="pt-3 mt-auto border-top d-flex flex-column gap-2" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+        
+        {/* Botón Ir a la Tienda */}
+        <Link
+          to="/"
+          className="btn w-100 py-2 d-flex align-items-center justify-content-center gap-2 rounded-2 text-decoration-none"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            color: '#FFFFFF',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--detalles, #B5865A)';
+            e.currentTarget.style.borderColor = 'var(--detalles, #B5865A)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          }}
+        >
+          <span>Ir a la Tienda</span>
+        </Link>
+
+        {/* Botón Cerrar Sesión */}
         <button
           onClick={handleCerrarSesion}
           className="btn w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 rounded-2"
@@ -70,7 +96,6 @@ export function NavCM({ sesion }) {
             e.currentTarget.style.color = 'rgba(255, 255, 255, 0.65)';
           }}
         >
-          <span>🚪</span>
           <span>Cerrar Sesión</span>
         </button>
       </div>
@@ -84,7 +109,8 @@ export function NavCM({ sesion }) {
             width: 260px !important;
             min-width: 260px;
             min-height: 100vh;
-            position: sticky; /* Mantiene el contenedor fijo */
+            position: sticky;
+            top: 0;
           }
         }
       `}</style>

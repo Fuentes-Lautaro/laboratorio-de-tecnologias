@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { cerrarSesion } from '../../features/auth/services/authService';
 
 export function NavGestor({ sesion }) {
@@ -6,20 +6,19 @@ export function NavGestor({ sesion }) {
 
   const handleCerrarSesion = () => {
     cerrarSesion();
-    navigate('/login-gestion', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   const getNavLinkStyle = ({ isActive }) => ({
     backgroundColor: isActive ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
     color: isActive ? 'var(--detalles)' : 'rgba(255, 255, 255, 0.65)',
-    borderLeft: isActive ? '3px solid var(--, #B5865A)' : '3px solid transparent',
+    borderLeft: isActive ? '3px solid var(--detalles, #B5865A)' : '3px solid transparent',
     fontSize: '0.95rem',
     fontWeight: isActive ? '600' : '400',
     transition: 'all 0.15s ease'
   });
 
   const rolUsuario = sesion?.rol?.toLowerCase() || '';
-
   const esGerente = rolUsuario === 'gerente';
 
   return (
@@ -88,8 +87,34 @@ export function NavGestor({ sesion }) {
         )}
       </nav>
 
-      {/* Botón de Cerrar Sesión */}
-      <div className="pt-3 mt-auto border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+      {/* Pie con Accesos Directos y Cerrar Sesión */}
+      <div className="pt-3 mt-auto border-top d-flex flex-column gap-2" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+        
+        {/* Botón Ir a la Tienda */}
+        <Link
+          to="/"
+          className="btn w-100 py-2 d-flex align-items-center justify-content-center gap-2 rounded-2 text-decoration-none"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            color: '#FFFFFF',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            fontSize: '0.9rem',
+            fontWeight: '500',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--detalles, #B5865A)';
+            e.currentTarget.style.borderColor = 'var(--detalles, #B5865A)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+          }}
+        >
+          <span>Ir a la Tienda</span>
+        </Link>
+
+        {/* Botón Cerrar Sesión */}
         <button
           onClick={handleCerrarSesion}
           className="btn w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 rounded-2"

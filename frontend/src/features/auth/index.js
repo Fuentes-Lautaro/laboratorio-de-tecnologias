@@ -3,7 +3,6 @@ export { CardIngresoEmail } from './components/CardIngresoEmail';
 export { CardIngresoContrasenia } from './components/CardIngresoContrasenia';
 export { CardRegistro } from './components/CardRegistro';
 export { default as FormularioLogin } from './components/FormularioLogin';
-export { default as LoginGestionPage } from './pages/LoginGestionPage';
 export { default as LoginPage } from './pages/LoginPage.jsx'
 
 export {
@@ -12,6 +11,5 @@ export {
   obtenerSesion,
   redirigirSiHaySesion,
   cerrarSesion,
-  protegerRuta,
-  redirigirSiHaySesionPrivado
+  protegerRuta
 } from './services/authService.js';

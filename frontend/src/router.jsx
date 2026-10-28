@@ -12,7 +12,7 @@ import { SuscripcionesPage } from './features/suscripciones'
 import { FlujoSuscripcionPage } from './features/suscripciones'
 import { ContactoPage } from './features/contacto';
 import { EventosPage } from './features/eventos';
-import { LoginPage, LoginGestionPage, protegerRuta, redirigirSiHaySesion, redirigirSiHaySesionPrivado, obtenerSesion } from './features/auth';
+import { LoginPage, protegerRuta, redirigirSiHaySesion, obtenerSesion } from './features/auth';
 import { ClientesPagePrivada } from './features/clientes';
 import { ProductosPagePrivada } from './features/productos'
 import { EventosPagePrivada } from './features/eventos';
@@ -47,11 +47,6 @@ export const router = createBrowserRouter([
       { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
       { path: 'perfil', element: <PerfilPage /> },
     ],
-  },
-  {
-    path: 'login-gestion',
-    element: <LoginGestionPage />,
-    loader: redirigirSiHaySesionPrivado, // Si ya hay sesión iniciada, evita volver a mostrar el formulario
   },
 
   // Panel Interno de Administración (Vendedor / Gerente)

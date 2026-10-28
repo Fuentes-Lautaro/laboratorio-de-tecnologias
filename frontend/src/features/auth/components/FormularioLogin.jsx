@@ -37,16 +37,28 @@ export function FormularioLogin({ onIngresar }) {
     }
 
     setEnviando(true)
+    setErrorServidor('')
+
     try {
       await onIngresar(valores)
     } catch (error) {
-      setErrorServidor(error.message)
-      setEnviando(false)
+      // 1. Captura el mensaje "Credenciales inválidas" que devuelve Express
+      setErrorServidor(error.message || 'Credenciales inválidas.')
+    } finally {
+      setEnviando(false) // 2. Devuelve el botón a estado "Ingresar"
     }
   }
 
   return (
     <form ref={formularioRef} onSubmit={handleSubmit} noValidate className="p-1">
+      
+      {/* 👈 ESTA ES LA ALERTA QUE FALTABA EN EL JSX */}
+      {errorServidor && (
+        <div className="alert alert-danger text-center small rounded-3 py-2 mb-3" role="alert">
+          {errorServidor}
+        </div>
+      )}
+
       {/* Campo Email */}
       <div className="mb-3">
         <label 
@@ -79,7 +91,7 @@ export function FormularioLogin({ onIngresar }) {
         )}
       </div>
 
-      {/* Campo Contrasenia */}
+      {/* Campo Contraseña */}
       <div className="mb-4">
         <label 
           htmlFor="password" 
@@ -139,20 +151,7 @@ export function FormularioLogin({ onIngresar }) {
           color: 'var(--fondos-principales, #F9EBE0)',
           border: '1px solid var(--titulos, #64141B)',
           letterSpacing: '1px',
-          fontSize: '0.9rem',
-          transition: 'all 0.2s ease-in-out'
-        }}
-        onMouseEnter={(e) => {
-          if (!enviando) {
-            e.currentTarget.style.backgroundColor = 'var(--titulos, #64141B)'
-            e.currentTarget.style.borderColor = 'var(--detalles, #B5865A)'
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!enviando) {
-            e.currentTarget.style.backgroundColor = 'var(--paneles, #3E100F)'
-            e.currentTarget.style.borderColor = 'var(--titulos, #64141B)'
-          }
+          fontSize: '0.9rem'
         }}
       >
         {enviando ? (

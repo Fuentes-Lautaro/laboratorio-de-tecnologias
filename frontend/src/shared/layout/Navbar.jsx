@@ -8,6 +8,12 @@ function Navbar({ enlaces, sesion }) {
     const [tieneSuscripcion, setTieneSuscripcion] = useState(false);
     const revalidator = useRevalidator();
 
+    // Verificación de roles con permiso de gestión
+    const ROLES_GESTION = ['cm', 'vendedor', 'gerente'];
+    const rolNormalizado = sesion?.rol?.toLowerCase() || '';
+    const esPersonalGestion = Boolean(sesion && ROLES_GESTION.includes(rolNormalizado));
+    const destinoGestion = rolNormalizado === 'cm' ? '/cm/eventos' : '/gestion';
+
     useEffect(() => {
         async function verificarSuscripcion() {
             if (sesion?.dni) {
@@ -42,6 +48,13 @@ function Navbar({ enlaces, sesion }) {
                     </Link>
 
                     <div className="d-flex align-items-center gap-2">
+                        {/* Botón "Ir a gestión" a la izquierda del perfil si el usuario pertenece al personal de gestión */}
+                        {esPersonalGestion && (
+                            <Link to={destinoGestion} className="btn btn-outline-light btn-sm fw-semibold me-1">
+                                Ir a gestión
+                            </Link>
+                        )}
+
                         {sesion ? (
                             <div className="dropdown position-relative">
                                 <button 
