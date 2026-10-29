@@ -8,7 +8,7 @@ export const verificarRol = (rolesPermitidos) => {
     }
 
     const rolUsuario = req.usuario.rol?.toLowerCase() || '';
-    
+  
     // Pasamos los roles permitidos a minúsculas para comparar bien
     const rolesEnMinuscula = rolesPermitidos.map(r => r.toLowerCase());
 

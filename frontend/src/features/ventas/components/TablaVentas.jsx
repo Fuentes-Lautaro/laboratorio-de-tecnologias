@@ -14,7 +14,12 @@ export function TablaVentas({ ventas, onVerDetalle }) {
       {ventas.map((v) => (
         <tr key={v.codigo || v.id}>
           <td className="fw-semibold">{v.codigo}</td>
-          <td>{v.fecha?.split('T')[0]}</td>
+          <td>
+            {v.fecha ? new Date(v.fecha).toLocaleString('es-AR', { 
+              day: '2-digit', month: '2-digit', year: 'numeric', 
+              hour: '2-digit', minute: '2-digit' 
+            }) : ''}
+          </td>
           <td>{v.clienteDni || 'Consumidor Final'}</td>
           <td>{v.empleadoDni || 'Sin asignar'}</td>
           <td>
