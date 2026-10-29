@@ -48,12 +48,12 @@ export function EventoCard({ evento, esGestion = false, onEditar, onEliminar }) 
       <div className="card-header bg-transparent border-0 pt-3 px-3 pb-0 d-flex justify-content-between align-items-center">
         <span 
           className="badge rounded-pill px-2.5 py-1" 
-          style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', fontSize: '0.75rem' }}
+          style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#000', fontSize: '0.75rem' }}
         >
           📅 {formatearFecha(fecha)}
         </span>
         <span className="small text-muted" style={{ fontSize: '0.8rem' }}>
-          👥 {cantAsist} cupos
+           {cantAsist} cupos
         </span>
       </div>
 
@@ -71,15 +71,27 @@ export function EventoCard({ evento, esGestion = false, onEditar, onEliminar }) 
         <div className="card-footer bg-light border-0 p-2.5 d-flex gap-2 justify-content-end">
           <button
             onClick={() => onEditar && onEditar(evento)}
-            className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-            style={{ fontSize: '0.8rem' }}
+            className="btn btn-sm d-flex align-items-center gap-1 px-3 shadow-sm rounded-2"
+            style={{ 
+              backgroundColor: '#f9f9f9', 
+              color: 'var(--detalles, #64141B)', 
+              border: '1px solid var(--bordes, #987C65)',
+              fontSize: '0.85rem',
+              fontWeight: '500'
+            }}
           >
             Editar
           </button>
           <button
             onClick={() => onEliminar && onEliminar(id)}
-            className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
-            style={{ fontSize: '0.8rem' }}
+            className="btn btn-sm d-flex align-items-center gap-1 px-3 shadow-sm rounded-2"
+            style={{ 
+              backgroundColor: '#f9f9f9', 
+              color: 'var(--titulos, #64141B)', 
+              border: '1px solid var(--bordes, #987C65)',
+              fontSize: '0.85rem',
+              fontWeight: '700'
+            }}
           >
             Eliminar
           </button>

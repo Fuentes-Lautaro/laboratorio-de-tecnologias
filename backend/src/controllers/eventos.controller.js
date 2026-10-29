@@ -50,13 +50,13 @@ export const modificar = async (req, res, next) => {
         const { nombre, fecha, descripcion, cant_asist, url_imagen } = req.body;
 
 
-        if (!nombre || !fecha) {
+        if (!nombre || !fecha ) {
             return res.status(400).json({ error: "El nombre y la fecha son obligatorios" });
         }
 
         const { rows } = await pool.query(
             `UPDATE eventos
-            SET e_nombre=1,efecha=2, e_descripcion=3,ecantasist=4, e_url_imagen=$5
+            SET e_nombre=$1,e_fecha=$2, e_descripcion=$3,e_cant_asist=$4, e_url_imagen=$5
             WHERE e_id = $6
             RETURNING *`,
             [ nombre, fecha, descripcion, cant_asist, url_imagen, req.params.id ]

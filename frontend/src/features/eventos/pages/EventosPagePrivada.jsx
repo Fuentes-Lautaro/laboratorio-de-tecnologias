@@ -8,11 +8,11 @@ import {
 } from '../services/eventoService';
 
 const FORM_INICIAL = {
-  nombre: '',
-  fecha: '',
-  descripcion: '',
-  cantAsistentes: 10,
-  imagenUrl: '/img/imagenesEventos/eventos.png'
+  e_nombre: '',
+  e_fecha: '',
+  e_descripcion: '',
+  e_cant_asist: 10,
+  e_url_imagen: '/img/imagenesEventos/eventos.png'
 };
 
 // Convierte la fecha devuelta por PostgreSQL ("2026-11-15T00:00:00.000Z") al formato YYYY-MM-DD para <input type="date">
@@ -64,11 +64,11 @@ export function EventosPagePrivada() {
   const handleAbrirEditar = (evento) => {
     setEventoEditando(evento);
     setFormData({
-      nombre: evento.e_nombre ?? evento.nombre ?? '',
-      fecha: formatearFechaParaInput(evento.e_fecha ?? evento.fecha),
-      descripcion: evento.e_descripcion ?? evento.descripcion ?? '',
-      cantAsistentes: evento.e_cant_asist ?? evento.e_cant_asists ?? evento.cantAsistentes ?? 10,
-      imagenUrl: evento.e_url_imagen ?? evento.imagenUrl ?? '/img/imagenesEventos/eventos.png'
+      e_nombre: evento.e_nombre || '',
+      e_fecha: formatearFechaParaInput(evento.e_fecha),
+      e_descripcion: evento.e_descripcion || '',
+      e_cant_asist: evento.e_cant_asist ?? 10,
+      e_url_imagen: evento.e_url_imagen || '/img/imagenesEventos/eventos.png'
     });
     setMostrarModalForm(true);
   };
@@ -81,24 +81,15 @@ export function EventosPagePrivada() {
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     try {
-      // Obtenemos el ID primario de PostgreSQL (e_id)
-      const id = eventoEditando?.e_id ?? eventoEditando?.id;
+      const id = eventoEditando?.e_id;
 
-      // Se envían los atributos tanto con prefijo (e_*) como planos para garantizar compatibilidad con el backend
+      // El payload mapea exactamente lo que espera tu controlador backend
       const payload = {
-        nombre: formData.nombre,
-        fecha: formData.fecha,
-        descripcion: formData.descripcion,
-        cantAsistentes: Number(formData.cantAsistentes),
-        cantAsist: Number(formData.cantAsistentes),
-        imagenUrl: formData.imagenUrl,
-
-        // Columnas exactas de PostgreSQL
-        e_nombre: formData.nombre,
-        e_fecha: formData.fecha,
-        e_descripcion: formData.descripcion,
-        e_cant_asist: Number(formData.cantAsistentes),
-        e_url_imagen: formData.imagenUrl
+        nombre: formData.e_nombre,
+        fecha: formData.e_fecha,
+        descripcion: formData.e_descripcion,
+        cant_asist: Number(formData.e_cant_asist),
+        url_imagen: formData.e_url_imagen
       };
 
       if (eventoEditando) {
@@ -106,9 +97,9 @@ export function EventosPagePrivada() {
 
         const guardado = await actualizarEvento(id, payload);
 
-        // Actualizamos el estado local comparando por e_id
+        // Actualizamos el estado local usando e_id
         setEventos((prev) =>
-          prev.map((item) => ((item.e_id ?? item.id) === id ? { ...item, ...guardado } : item))
+          prev.map((item) => (item.e_id === id ? guardado : item))
         );
         mostrarNotificacion('¡Evento actualizado con éxito!', 'success');
       } else {
@@ -125,13 +116,13 @@ export function EventosPagePrivada() {
   };
 
   const handleSolicitarEliminar = (id) => {
-    const encontrado = eventos.find((ev) => (ev.e_id ?? ev.id) === id);
+    const encontrado = eventos.find((ev) => ev.e_id === id);
     if (encontrado) setEventoAEliminar(encontrado);
   };
 
   const handleConfirmarEliminar = async () => {
     if (!eventoAEliminar) return;
-    const id = eventoAEliminar.e_id ?? eventoAEliminar.id;
+    const id = eventoAEliminar.e_id;
 
     if (!id) {
       mostrarNotificacion('Error: No se encontró el ID del evento.', 'danger');
@@ -140,7 +131,7 @@ export function EventosPagePrivada() {
 
     try {
       await eliminarEvento(id);
-      setEventos((prev) => prev.filter((item) => (item.e_id ?? item.id) !== id));
+      setEventos((prev) => prev.filter((item) => item.e_id !== id));
       setEventoAEliminar(null);
       mostrarNotificacion('¡Evento eliminado con éxito!', 'success');
     } catch (error) {
@@ -181,7 +172,7 @@ export function EventosPagePrivada() {
           className="btn text-white fw-semibold px-3 py-2 d-flex align-items-center justify-content-center gap-2 rounded-2"
           style={{ backgroundColor: 'var(--detalles, #B5865A)' }}
         >
-          <span>➕</span> Nuevo Evento
+          <span>+</span> Nuevo Evento
         </button>
       </div>
 
@@ -193,19 +184,16 @@ export function EventosPagePrivada() {
         </div>
       ) : (
         <div className="row g-4">
-          {eventos.map((evento) => {
-            const id = evento.e_id ?? evento.id;
-            return (
-              <div key={id} className="col-12 col-md-6 col-lg-4">
-                <EventoCard
-                  evento={evento}
-                  esGestion={true}
-                  onEditar={handleAbrirEditar}
-                  onEliminar={handleSolicitarEliminar}
-                />
-              </div>
-            );
-          })}
+          {eventos.map((evento) => (
+            <div key={evento.e_id} className="col-12 col-md-6 col-lg-4">
+              <EventoCard
+                evento={evento}
+                esGestion={true}
+                onEditar={handleAbrirEditar}
+                onEliminar={handleSolicitarEliminar}
+              />
+            </div>
+          ))}
           {eventos.length === 0 && (
             <div className="col-12 text-center py-5 text-muted">
               No hay eventos registrados. Hacé clic en "Nuevo Evento" para agregar uno.
@@ -219,73 +207,74 @@ export function EventosPagePrivada() {
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#1C1614' }}>
+              {}
+              <div className="modal-header border-0 text-white" style={{ backgroundColor: 'var(--titulos, #B5865A)' }}>
                 <h5 className="modal-title fw-bold fs-6">
-                  {eventoEditando ? '✏️ Editar Evento' : '✨ Crear Nuevo Evento'}
+                  {eventoEditando ? '✏️ Editar Evento' : ' Crear Nuevo Evento'}
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalForm(false)}></button>
               </div>
 
               <form onSubmit={handleSubmitForm}>
-                <div className="modal-body p-4">
+                <div className="modal-body p-4" style={{ backgroundColor: '#FAF6F0' }}>
                   <div className="row g-3">
                     <div className="col-12 col-md-8">
-                      <label className="form-label small fw-bold">Nombre del Evento</label>
+                      <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Nombre del Evento</label>
                       <input
                         type="text"
-                        name="nombre"
+                        name="e_nombre"
                         required
                         className="form-control"
-                        value={formData.nombre}
+                        value={formData.e_nombre}
                         onChange={handleChangeForm}
                         placeholder="Ej: Cata Guiada Reserva & Quesos"
                       />
                     </div>
 
                     <div className="col-12 col-md-4">
-                      <label className="form-label small fw-bold">Fecha</label>
+                      <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Fecha</label>
                       <input
                         type="date"
-                        name="fecha"
+                        name="e_fecha"
                         required
                         className="form-control"
-                        value={formData.fecha}
+                        value={formData.e_fecha}
                         onChange={handleChangeForm}
                       />
                     </div>
 
                     <div className="col-12 col-md-4">
-                      <label className="form-label small fw-bold">Cupos / Asistentes</label>
+                      <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Cupos / Asistentes</label>
                       <input
                         type="number"
-                        name="cantAsistentes"
+                        name="e_cant_asist"
                         min="1"
                         required
                         className="form-control"
-                        value={formData.cantAsistentes}
+                        value={formData.e_cant_asist}
                         onChange={handleChangeForm}
                       />
                     </div>
 
                     <div className="col-12 col-md-8">
-                      <label className="form-label small fw-bold">Ruta de Imagen (`/public` o URL)</label>
+                      <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Ruta de Imagen (`/public` o URL)</label>
                       <input
                         type="text"
-                        name="imagenUrl"
+                        name="e_url_imagen"
                         className="form-control"
-                        value={formData.imagenUrl}
+                        value={formData.e_url_imagen}
                         onChange={handleChangeForm}
                         placeholder="/img/imagenesEventos/eventos.png"
                       />
                     </div>
 
                     <div className="col-12">
-                      <label className="form-label small fw-bold">Descripción</label>
+                      <label className="form-label small fw-bold" style={{ color: '#3E100F' }}>Descripción</label>
                       <textarea
-                        name="descripcion"
+                        name="e_descripcion"
                         rows="3"
                         className="form-control"
-                        value={formData.descripcion}
+                        value={formData.e_descripcion}
                         onChange={handleChangeForm}
                         placeholder="Detalles sobre el menú, maridaje o la experiencia..."
                       ></textarea>
@@ -293,11 +282,20 @@ export function EventosPagePrivada() {
                   </div>
                 </div>
 
-                <div className="modal-footer border-0 bg-light justify-content-end gap-2">
-                  <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setMostrarModalForm(false)}>
+                <div className="modal-footer border-0 justify-content-end gap-2" style={{ backgroundColor: '#FAF6F0' }}>
+                  <button 
+                    type="button" 
+                    className="btn btn-sm px-3 fw-semibold" 
+                    style={{ backgroundColor: 'transparent', color: '#3E100F', border: '1px solid #3E100F' }} 
+                    onClick={() => setMostrarModalForm(false)}
+                  >
                     Cancelar
                   </button>
-                  <button type="submit" className="btn btn-sm text-white px-4 fw-semibold" style={{ backgroundColor: '#B5865A' }}>
+                  <button 
+                    type="submit" 
+                    className="btn btn-sm text-white px-4 fw-semibold" 
+                    style={{ backgroundColor: '#B5865A' }}
+                  >
                     {eventoEditando ? 'Guardar Cambios' : 'Crear Evento'}
                   </button>
                 </div>
@@ -312,21 +310,26 @@ export function EventosPagePrivada() {
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#1C1614' }}>
+              <div className="modal-header border-0 text-white" style={{ backgroundColor: '#3E100F' }}>
                 <h5 className="modal-title fw-bold fs-6">🗑️ Confirmar Eliminación</h5>
                 <button type="button" className="btn-close btn-close-white" onClick={() => setEventoAEliminar(null)}></button>
               </div>
 
-              <div className="modal-body p-4 text-center">
-                <p className="mb-2 fs-6">¿Estás seguro de que deseas eliminar el evento?</p>
-                <div className="p-3 rounded-2 fw-bold text-start mb-3" style={{ backgroundColor: '#F8F9FA', color: '#3E100F', borderLeft: '4px solid #B5865A' }}>
-                  {eventoAEliminar.e_nombre ?? eventoAEliminar.nombre}
+              <div className="modal-body p-4 text-center" style={{ backgroundColor: '#FAF6F0' }}>
+                <p className="mb-2 fs-6" style={{ color: '#1C1614' }}>¿Estás seguro de que deseas eliminar el evento?</p>
+                <div className="p-3 rounded-2 fw-bold text-start mb-3 shadow-sm" style={{ backgroundColor: '#FFFFFF', color: '#3E100F', borderLeft: '4px solid #B5865A' }}>
+                  {eventoAEliminar.e_nombre}
                 </div>
                 <small className="text-muted">Esta acción no se puede deshacer.</small>
               </div>
 
-              <div className="modal-footer border-0 bg-light justify-content-end gap-2">
-                <button type="button" className="btn btn-sm btn-outline-secondary px-3" onClick={() => setEventoAEliminar(null)}>
+              <div className="modal-footer border-0 justify-content-end gap-2" style={{ backgroundColor: '#FAF6F0' }}>
+                <button 
+                  type="button" 
+                  className="btn btn-sm px-3 fw-semibold" 
+                  style={{ backgroundColor: 'transparent', color: '#3E100F', border: '1px solid #3E100F' }} 
+                  onClick={() => setEventoAEliminar(null)}
+                >
                   Cancelar
                 </button>
                 <button 
