@@ -71,13 +71,12 @@ CREATE TABLE reglones_venta (
     iv_precio_unidad NUMERIC(10, 2) NOT NULL
 );
 
-/*CREATE TABLE suscripcion (
+CREATE TABLE suscripcion (
     s_id SERIAL PRIMARY KEY,
     s_fecha_pago DATE NOT NULL,
     s_monto_pago NUMERIC(10, 2) NOT NULL,
     cliente_id INT NOT NULL,
     ps_id INT NOT NULL,
-    CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(cli_id),
+    CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES personas(pe_id),
     CONSTRAINT fk_plan_suscripcion FOREIGN KEY (ps_id) REFERENCES planes(ps_id)
 );
-*/

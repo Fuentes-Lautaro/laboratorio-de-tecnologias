@@ -124,25 +124,24 @@ VALUES
 -- =========================================================
 -- INSERCIÓN DE SUSCRIPCIONES
 -- =========================================================
-/*INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
+INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
 VALUES
 (
     '2026-10-05',
     25000.00,
-    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), -- Lucía Gomez
+    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucía Gomez
     (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
 ),
 (
     '2026-10-10',
     70000.00,
-    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '87654321'), -- Martín Pedernera
+    (SELECT pe_id FROM personas WHERE pe_dni = '87654321'), -- Martín Pedernera
     (SELECT ps_id FROM planes WHERE ps_nombre = 'Reserva Especial')
 ),
 (
     '2026-11-05',
     25000.00,
-    (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), -- Lucía Gomez (mes siguiente)
+    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucía Gomez (mes siguiente)
     (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
 );
-*/
 
