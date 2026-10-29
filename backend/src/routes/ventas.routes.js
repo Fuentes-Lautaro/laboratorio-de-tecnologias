@@ -6,8 +6,8 @@ import { verificarRol } from '../middlewares/verificarRol.js';
 const router = Router();
 
 // RUTAS PUBLICAS
-router.get('/', controller.listar);
-router.get('/:id', controller.detalle);
+router.get('/', verificarToken,verificarRol(['gerente', 'vendedor']),controller.listar);
+router.get('/:id', verificarToken,verificarRol(['gerente', 'vendedor']), controller.detalle);
 
 // RUTAS PROTEGIDAS
 router.post('/', verificarToken,verificarRol(['gerente', 'vendedor']), controller.crear);

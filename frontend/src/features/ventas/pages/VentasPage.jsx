@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getVentas, crearVenta } from '../services/ventaService';
+import { getVentas, crearVenta, getVentaPorId } from '../services/ventaService';
 import { getProductos } from '../../productos/services/productosServices';
-import TablaVentas from '../components/TablaVentas';
-import Modal from '../../../shared/components/Modal';
+import { TablaVentas } from '../components/TablaVentas';
+import { Modal } from '../../../shared/components/Modal';
 
 export function VentasPage() {
   const [ventas, setVentas] = useState([]);
@@ -20,7 +20,6 @@ export function VentasPage() {
   const [empleadoDni, setEmpleadoDni] = useState('');
   const [metodoPago, setMetodoPago] = useState('Efectivo');
   
-  //USAMOS VARIABLE CARRITO O LE PONEMOS OTRO NOMBRE? 
   const [carrito, setCarrito] = useState([]);
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState('');
   const [cantidad, setCantidad] = useState(1);
@@ -38,30 +37,6 @@ export function VentasPage() {
       });
   }, []);
 
-  // --- FUNCIÓN PARA MOSTRAR TODOS LOS DATOS DEL PRODUCTO ---
-const getDetalleProducto = (productoIdOrItem) => {
-    const productoId = productoIdOrItem?.productoCodigo || productoIdOrItem?.id || productoIdOrItem;
-    
-    if (!productoId) return 'Producto desconocido';
-
-    const prod = productosDisponibles.find(p => 
-      String(p.id) === String(productoId) || String(p.codigo) === String(productoId)
-    );
-
-    if (prod) {
-      const marca = prod.marca || '';
-      const tipo = prod.tipo || '';
-      const varietal = prod.varietal || '';
-      const bodega = prod.bodega || '';
-      const medida = prod.medida || '';
-
-      return [marca, tipo, varietal, bodega, medida].filter(Boolean).join(' - ');
-    }
-
-    return productoIdOrItem.nombre || productoIdOrItem.productoCodigo || productoId;
-  };
-
-  // --- LÓGICA DE FILTRADO ---
   const ventasFiltradas = ventas.filter((v) => {
     const busqueda = terminoBusqueda.toLowerCase();
     const codigoCoincide = v.codigo?.toLowerCase().includes(busqueda);
@@ -69,24 +44,44 @@ const getDetalleProducto = (productoIdOrItem) => {
     return codigoCoincide || clienteCoincide;
   });
 
-  const handleVerDetalle = (venta) => {
-    setVentaSeleccionada(venta);
-    setMostrarModalVer(true);
+  const handleVerDetalle = async (venta) => {
+    try {
+      const codigoVenta = venta.codigo || venta.id;
+      const ventaCompleta = await getVentaPorId(codigoVenta);
+      setVentaSeleccionada(ventaCompleta);
+      setMostrarModalVer(true);
+    } catch (err) {
+      console.error('Error al obtener detalle:', err);
+      alert('No se pudo cargar el detalle de la venta.');
+    }
   };
 
   const handleAgregarItem = (e) => {
     e.preventDefault();
     if (!productoSeleccionadoId) return;
 
-    const productoEncontrado = productosDisponibles.find(p => p.id === productoSeleccionadoId);
+    // Buscamos contemplando tanto si viene con prefijo p_ como si viene mapeado
+    const productoEncontrado = productosDisponibles.find(
+      p => String(p.p_id || p.id) === String(productoSeleccionadoId)
+    );
     if (!productoEncontrado) return;
 
+    const precioNum = Number(productoEncontrado.p_precio ?? productoEncontrado.precio ?? 0);
+    const cantNum = Number(cantidad) || 1;
+
+    // Armamos el nombre amigable del vino usando tus columnas de base de datos
+    const marca = productoEncontrado.p_marca || productoEncontrado.marca || '';
+    const varietal = productoEncontrado.p_varietal || productoEncontrado.varietal || '';
+    const medida = productoEncontrado.p_medida || productoEncontrado.medida || '';
+    
+    const nombreProd = `${marca} ${varietal} (${medida})`.trim() || 'Vino';
+
     const nuevoItem = {
-      productoCodigo: productoEncontrado.id,
-      nombre: getDetalleProducto(productoEncontrado),
-      precioU: Number(productoEncontrado.precio),
-      cantidad: Number(cantidad),
-      subtotal: Number(productoEncontrado.precio) * Number(cantidad)
+      productoCodigo: productoEncontrado.p_id || productoEncontrado.id,
+      nombre: nombreProd,
+      precioUnitario: precioNum,
+      cantidad: cantNum,
+      subtotal: precioNum * cantNum
     };
 
     setCarrito([...carrito, nuevoItem]);
@@ -122,6 +117,7 @@ const getDetalleProducto = (productoIdOrItem) => {
       setEmpleadoDni('');
     } catch (err) {
       console.error('Error al guardar la venta:', err);
+      alert('Error al registrar la venta en el servidor.');
     }
   };
 
@@ -129,9 +125,9 @@ const getDetalleProducto = (productoIdOrItem) => {
   if (error) return <p className="text-center py-5 text-danger">Error: {error}</p>;
 
   return (
-    <div className="p-4">
+    <div className="p-3 p-md-4 container-fluid">
       {/* Encabezado */}
-      <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom gap-3">
         <div>
           <h3 className="fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)' }}>Gestión de Ventas</h3>
           <p className="text-muted small mb-0">Listado de transacciones y registro de nuevas ventas.</p>
@@ -156,34 +152,37 @@ const getDetalleProducto = (productoIdOrItem) => {
         />
       </div>
 
-      {/* Tabla de Ventas */}
-      <div className="p-4 rounded-3 bg-white shadow-sm" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
-        <table className="table table-hover align-middle mb-0">
-          <thead className="text-muted small text-uppercase">
-            <tr>
-              <th>Código</th>
-              <th>Fecha</th>
-              <th>Cliente (DNI)</th>
-              <th>Empleado (DNI)</th>
-              <th>Método de Pago</th>
-              <th>Total</th>
-              <th className="text-end">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <TablaVentas ventas={ventasFiltradas} onVerDetalle={handleVerDetalle} />
-          </tbody>
-        </table>
+      {/* Tabla Responsiva */}
+      <div className="p-3 p-md-4 rounded-3 bg-white shadow-sm" style={{ border: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0 text-nowrap">
+            <thead className="text-muted small text-uppercase">
+              <tr>
+                <th>Código</th>
+                <th>Fecha</th>
+                <th>Cliente (DNI)</th>
+                <th>Empleado (DNI)</th>
+                <th>Método de Pago</th>
+                <th>Total</th>
+                <th className="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <TablaVentas ventas={ventasFiltradas} onVerDetalle={handleVerDetalle} />
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* DETALLE */}
+      {/* MODAL VER DETALLE */}
       {mostrarModalVer && ventaSeleccionada && (
         <Modal titulo={`Detalle de Venta: ${ventaSeleccionada.codigo}`} onClose={() => setMostrarModalVer(false)}>
-          <div className="row mb-3">
-            <div className="col-md-4"><strong>Fecha:</strong> {ventaSeleccionada.fecha}</div>
-            <div className="col-md-4"><strong>Cliente DNI:</strong> {ventaSeleccionada.clienteDni || 'Consumidor Final'}</div>
-            <div className="col-md-4"><strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}</div>
+          <div className="row mb-3 g-2 small">
+            <div className="col-12 col-md-4"><strong>Fecha:</strong> {ventaSeleccionada.fecha?.split('T')[0]}</div>
+            <div className="col-12 col-md-4"><strong>Cliente DNI:</strong> {ventaSeleccionada.clienteDni || 'Consumidor Final'}</div>
+            <div className="col-12 col-md-4"><strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}</div>
           </div>
+          
           <h6 className="fw-bold mt-4 mb-2">Productos Comprados:</h6>
           <div className="table-responsive border rounded">
             <table className="table table-sm mb-0 align-middle">
@@ -196,27 +195,35 @@ const getDetalleProducto = (productoIdOrItem) => {
                 </tr>
               </thead>
               <tbody>
-                {ventaSeleccionada.items && ventaSeleccionada.items.map((item, index) => (
-                  <tr key={index}>
-                    <td className="ps-2">{getDetalleProducto(item)}</td>
-                    <td>{item.cantidad}</td>
-                    <td>${Number(item.precioU || item.precioUnitario || 0).toLocaleString()}</td>
-                    <td className="text-end pe-2">${Number(item.subtotal || (item.precioUnitario * item.cantidad) || 0).toLocaleString()}</td>
+                {(!ventaSeleccionada.items || ventaSeleccionada.items.length === 0) ? (
+                  <tr>
+                    <td colSpan="4" className="text-center text-muted py-3">No hay productos en esta venta.</td>
                   </tr>
-                ))}
+                ) : (
+                  ventaSeleccionada.items.map((item, index) => (
+                    <tr key={index}>
+                      <td className="ps-2 text-wrap">{item.nombre || 'Vino'}</td>
+                      <td>{item.cantidad}</td>
+                      <td>${Number(item.precioUnitario || item.precioU || 0).toLocaleString()}</td>
+                      <td className="text-end pe-2">${Number(item.subtotal || 0).toLocaleString()}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
+
           <div className="d-flex justify-content-end align-items-center mt-3">
             <h5 className="fw-bold m-0">Total Final: <span style={{ color: 'var(--titulos, #64141B)' }}>${Number(ventaSeleccionada.monto || ventaSeleccionada.total || 0).toLocaleString()}</span></h5>
           </div>
+
           <div className="modal-footer px-0 pb-0 mt-3 border-0">
             <button type="button" className="btn btn-secondary" onClick={() => setMostrarModalVer(false)}>Cerrar</button>
           </div>
         </Modal>
       )}
 
-      {/* NUEVA VENTA */}
+      {/* MODAL NUEVA VENTA */}
       {mostrarModalForm && (
         <Modal titulo="Registrar Nueva Venta" onClose={() => setMostrarModalForm(false)}>
           <form onSubmit={handleSubmitVenta}>
@@ -259,23 +266,33 @@ const getDetalleProducto = (productoIdOrItem) => {
             <hr />
             <h6 className="fw-bold mb-3">Seleccionar Productos del Catálogo</h6>
             
+            {/* Selector de productos y botón + Item ordenados */}
             <div className="row g-2 align-items-end mb-3">
-              <div className="col-md-7">
-                <label className="form-label small text-muted">Producto</label>
+              <div className="col-12 col-md-6">
+                <label className="form-label small text-muted">Producto (Vino)</label>
                 <select 
                   className="form-select"
                   value={productoSeleccionadoId}
                   onChange={(e) => setProductoSeleccionadoId(e.target.value)}
                 >
-                  <option value="">Seleccione un producto...</option>
-                  {productosDisponibles.map((prod) => (
-                    <option key={prod.id} value={prod.id}>
-                      {prod.marca} - {prod.tipo} - {prod.varietal} - {prod.bodega} - {prod.medida} (${Number(prod.precio).toLocaleString()}) [Stock: {prod.stock}]
-                    </option>
-                  ))}
+                  <option value="">Seleccione un vino...</option>
+                  {productosDisponibles.map((prod) => {
+                    const idProd = prod.p_id || prod.id;
+                    const precio = Number(prod.p_precio ?? prod.precio ?? 0);
+                    const stock = prod.p_stock ?? prod.stock ?? 0;
+                    const marca = prod.p_marca || prod.marca || '';
+                    const varietal = prod.p_varietal || prod.varietal || '';
+                    const medida = prod.p_medida || prod.medida || '';
+
+                    return (
+                      <option key={idProd} value={idProd}>
+                        {marca} {varietal} - ${precio.toLocaleString()} [Stock: {stock}]
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
-              <div className="col-md-3">
+              <div className="col-6 col-md-3">
                 <label className="form-label small text-muted">Cantidad</label>
                 <input 
                   type="number" 
@@ -285,9 +302,9 @@ const getDetalleProducto = (productoIdOrItem) => {
                   onChange={(e) => setCantidad(e.target.value)} 
                 />
               </div>
-              <div className="col-md-2">
+              <div className="col-6 col-md-3">
                 <button type="button" className="btn btn-outline-dark w-100" onClick={handleAgregarItem}>
-                  + Item
+                  + Agregar
                 </button>
               </div>
             </div>
@@ -306,14 +323,14 @@ const getDetalleProducto = (productoIdOrItem) => {
                 <tbody>
                   {carrito.length === 0 ? (
                     <tr>
-                      <td colSpan="4" className="text-center text-muted py-3">No hay productos agregados.</td>
+                      <td colSpan="4" className="text-center text-muted py-3">No hay productos agregados al ticket.</td>
                     </tr>
                   ) : (
                     carrito.map((item, index) => (
                       <tr key={index}>
-                        <td className="ps-2">{item.nombre}</td>
+                        <td className="ps-2 text-wrap">{item.nombre}</td>
                         <td>{item.cantidad}</td>
-                        <td>${Number(item.precioU).toLocaleString()}</td>
+                        <td>${Number(item.precioUnitario).toLocaleString()}</td>
                         <td className="text-end pe-2">${item.subtotal.toLocaleString()}</td>
                       </tr>
                     ))

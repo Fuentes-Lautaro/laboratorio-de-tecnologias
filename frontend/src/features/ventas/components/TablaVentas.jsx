@@ -14,7 +14,7 @@ export function TablaVentas({ ventas, onVerDetalle }) {
       {ventas.map((v) => (
         <tr key={v.codigo || v.id}>
           <td className="fw-semibold">{v.codigo}</td>
-          <td>{v.fecha}</td>
+          <td>{v.fecha?.split('T')[0]}</td>
           <td>{v.clienteDni || 'Consumidor Final'}</td>
           <td>{v.empleadoDni || 'Sin asignar'}</td>
           <td>
@@ -36,5 +36,3 @@ export function TablaVentas({ ventas, onVerDetalle }) {
     </>
   );
 }
-
-export default TablaVentas;
