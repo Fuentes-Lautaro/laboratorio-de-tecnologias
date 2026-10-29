@@ -1,35 +1,49 @@
 import React, { useState } from 'react';
 
-export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
+export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBackend }) {
   const [formData, setFormData] = useState({
     nombre: '',
     dni: '',
     telefono: '',
     fechaNac: '',
     direccion: '',
-    clave: ''
+    clave: '',
+    confirmarClave: ''
   });
+
+  const [errorLocal, setErrorLocal] = useState('');
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    if (errorLocal) setErrorLocal('');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Mapeamos los datos para que coincidan 1:1 con lo que espera el backend
+    setErrorLocal('');
+
+    if (formData.clave !== formData.confirmarClave) {
+      setErrorLocal('Las contraseñas no coinciden.');
+      return;
+    }
+
+    if (formData.clave.length < 6) {
+      setErrorLocal('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
     onRegistro({
       nombre: formData.nombre,
       dni: formData.dni,
       telefono: formData.telefono,
       fechaNac: formData.fechaNac,
       direccion: formData.direccion,
-      password: formData.clave, // 👈 Enviamos 'password' que es la clave que espera Express
-      mail: email,              // 👈 Email capturado en el Paso 1
-      rol: 'cliente'            // 👈 'cliente' en minúsculas
+      password: formData.clave,
+      mail: email,
+      rol: 'cliente'
     });
   };
 
@@ -45,13 +59,20 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
         </span>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-2">
+      {(errorLocal || errorBackend) && (
+        <div className="alert alert-danger py-2 mb-3 text-center small" role="alert">
+          {errorLocal || errorBackend}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-2" autoComplete="off">
         <div className="row g-2">
           <div className="col-12">
             <label className="form-label fw-semibold small text-secondary mb-1">Nombre Completo</label>
             <input
               type="text"
               name="nombre"
+              autoComplete="off"
               className="form-control form-control-sm"
               placeholder="María Balbina"
               value={formData.nombre}
@@ -66,6 +87,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
             <input
               type="text"
               name="dni"
+              autoComplete="off"
               className="form-control form-control-sm"
               placeholder="12345678"
               value={formData.dni}
@@ -80,6 +102,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
             <input
               type="tel"
               name="telefono"
+              autoComplete="off"
               className="form-control form-control-sm"
               placeholder="2664123456"
               value={formData.telefono}
@@ -94,6 +117,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
             <input
               type="date"
               name="fechaNac"
+              autoComplete="off"
               className="form-control form-control-sm"
               value={formData.fechaNac}
               onChange={handleChange}
@@ -107,6 +131,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
             <input
               type="text"
               name="direccion"
+              autoComplete="off"
               className="form-control form-control-sm"
               placeholder="Av. Illia 123, San Luis"
               value={formData.direccion}
@@ -116,14 +141,30 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando }) {
             />
           </div>
 
-          <div className="col-12 mb-3">
-            <label className="form-label fw-semibold small text-secondary mb-1">Crear Contraseña</label>
+          <div className="col-6 mb-3">
+            <label className="form-label fw-semibold small text-secondary mb-1">Contraseña</label>
             <input
               type="password"
               name="clave"
-              className="form-control form-control-sm"
+              autoComplete="new-password"
+              className={`form-control form-control-sm ${errorLocal ? 'is-invalid' : ''}`}
               placeholder="••••••••"
               value={formData.clave}
+              onChange={handleChange}
+              required
+              disabled={cargando}
+            />
+          </div>
+
+          <div className="col-6 mb-3">
+            <label className="form-label fw-semibold small text-secondary mb-1">Confirmar Contraseña</label>
+            <input
+              type="password"
+              name="confirmarClave"
+              autoComplete="new-password"
+              className={`form-control form-control-sm ${errorLocal ? 'is-invalid' : ''}`}
+              placeholder="••••••••"
+              value={formData.confirmarClave}
               onChange={handleChange}
               required
               disabled={cargando}

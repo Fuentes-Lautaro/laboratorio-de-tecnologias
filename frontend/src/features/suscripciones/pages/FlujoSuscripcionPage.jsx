@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useRevalidator } from 'react-router-dom';
 
 import { 
   CardIngresoEmail, 
@@ -8,7 +8,7 @@ import {
   verificarEmailExistente,
   iniciarSesion,
   registrarCliente,
-  obtenerSesion // 👈 1. Importamos la función para leer la sesión actual
+  obtenerSesion
 } from '../../auth';
 
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
@@ -17,6 +17,7 @@ import { getSuscripcionActivaPorDni, getPlanPorNombre } from '../services/suscri
 export function FlujoSuscripcionPage() {
   const { nombre } = useParams();
   const navigate = useNavigate();
+  const revalidator = useRevalidator();
 
   const [paso, setPaso] = useState('EMAIL');
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ export function FlujoSuscripcionPage() {
   const [cargando, setCargando] = useState(false);
   const [errorBackend, setErrorBackend] = useState('');
 
-  // 2. Cargar datos del plan elegido desde el parámetro URL
+  // Cargar datos del plan elegido desde el parámetro URL
   useEffect(() => {
     async function cargarPlan() {
       if (!nombre) return;
@@ -41,7 +42,7 @@ export function FlujoSuscripcionPage() {
     cargarPlan();
   }, [nombre]);
 
-  // 3. NUEVO: Verificar sesión previa al cargar el componente
+  // Verificar sesión previa al cargar el componente
   useEffect(() => {
     async function verificarSesionInicial() {
       const sesionActiva = obtenerSesion();
@@ -55,13 +56,11 @@ export function FlujoSuscripcionPage() {
         if (identificador) {
           setCargando(true);
           try {
-            // Verificamos si la cuenta logueada ya posee suscripción
             const subActiva = await getSuscripcionActivaPorDni(identificador);
             if (subActiva) {
               setSuscripcionExistente(subActiva);
               setPaso('SUSCRIPTO');
             } else {
-              // Si no tiene suscripción activa, saltea login/registro e va directo a PAGO
               setPaso('PAGO');
             }
           } catch (error) {
@@ -79,7 +78,6 @@ export function FlujoSuscripcionPage() {
     verificarSesionInicial();
   }, []);
 
-  // PASO 1: Verificar email en la base de datos
   const handleVerificarEmail = async (emailIngresado) => {
     setCargando(true);
     setErrorBackend('');
@@ -101,7 +99,6 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 2A: Login
   const handleLogin = async (clave) => {
     setCargando(true);
     setErrorBackend('');
@@ -109,6 +106,8 @@ export function FlujoSuscripcionPage() {
     try {
       const sesion = await iniciarSesion(email, clave);
       setClienteLogueado(sesion);
+
+      revalidator.revalidate();
 
       const identificador = sesion.dni || sesion.email;
       const subActiva = await getSuscripcionActivaPorDni(identificador);
@@ -126,7 +125,7 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 2B: Registro
+  // PASO 2B: Registro de nuevo usuario
   const handleRegistro = async (datosRegistro) => {
     setCargando(true);
     setErrorBackend('');
@@ -138,7 +137,12 @@ export function FlujoSuscripcionPage() {
       };
 
       const nuevoCliente = await registrarCliente(payloadRegistro);
-      setClienteLogueado(nuevoCliente);
+      
+      const sesion = await iniciarSesion(email, datosRegistro.password);
+      setClienteLogueado(sesion);
+
+      revalidator.revalidate();
+
       setPaso('PAGO');
     } catch (error) {
       setErrorBackend(error.message || 'Error al completar el registro.');
@@ -147,7 +151,6 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 3: Confirmación de Pago
   const handleConfirmarPago = async () => {
     setCargando(true);
     setErrorBackend('');
