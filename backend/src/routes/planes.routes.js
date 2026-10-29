@@ -12,6 +12,7 @@ router.get('/', controller.listar);
 router.post('/', verificarToken,verificarRol(['gerente']), controller.crear);
 router.put('/:id', verificarToken,verificarRol(['gerente']), controller.modificar);
 router.patch('/:id', verificarToken, verificarRol(['gerente']), controller.alternar);
+//SOLO PARA PRUEBAS, NO SE DEBE USAR EN PRODUCCION
 router.delete('/:id', verificarToken, verificarRol(['gerente']), controller.eliminar);
 
 export default router;
