@@ -116,7 +116,7 @@ VALUES
 ('Cata de Vinos de Altura', '2026-11-15', 'Degustación guiada por nuestro sommelier de los mejores Malbecs de Valle de Uco, acompañados de tapeo regional.', 30, '/img/eventos/cata-altura.png'),
 
 
-('Maridaje y Fin de Año', '2026-12-10', 'Despedimos el año con una cena maridaje exclusiva. 5 pasos con vinos de la línea Reserva Especial.', 50, '/img/eventos/cena-fin-anio.png'),
+('Maridaje y Fin de Anio', '2026-12-10', 'Despedimos el año con una cena maridaje exclusiva. 5 pasos con vinos de la línea Reserva Especial.', 50, '/img/eventos/cena-fin-anio.png'),
 
 
 ('Feria de Blancos y Rosados', '2026-10-30', 'Feria al aire libre ideal para la primavera, probando más de 15 etiquetas de vinos blancos y rosados frescos.', 100, '/img/eventos/feria-blancos.png');
