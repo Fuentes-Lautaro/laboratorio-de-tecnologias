@@ -10,7 +10,7 @@ import ventasRoutes from './routes/ventas.routes.js';
 import personasRoutes from './routes/personas.routes.js';
 import eventosRoutes from './routes/eventos.routes.js';
 import suscripcionesRoutes from './routes/suscripciones.routes.js';
-
+import estadisticasRoutes from './routes/estadisticas.routes.js';
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use('/api/ventas', ventasRoutes);
 app.use('/api/personas', personasRoutes);
 app.use('/api/eventos', eventosRoutes);
 app.use('/api/suscripciones', suscripcionesRoutes);
+app.use('/api/estadisticas', estadisticasRoutes)
 
 
 

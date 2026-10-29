@@ -167,11 +167,10 @@ export const actualizarPersona = async (req, res, next) => {
 export const cambiarEstado = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { activo } = req.body;
 
     const { rows } = await pool.query(
-      'UPDATE personas SET pe_activo = $1 WHERE pe_id = $2 RETURNING pe_id, pe_activo, pe_rol',
-      [activo, id]
+      'UPDATE personas SET pe_activo = NOT pe_activo WHERE pe_id = $1 RETURNING pe_id, pe_activo, pe_rol',
+      [id]
     );
 
     if (rows.length === 0) {

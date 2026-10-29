@@ -80,3 +80,4 @@ CREATE TABLE suscripcion (
     CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES personas(pe_id),
     CONSTRAINT fk_plan_suscripcion FOREIGN KEY (ps_id) REFERENCES planes(ps_id)
 );
+
