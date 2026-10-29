@@ -111,7 +111,7 @@ VALUES
 -- =========================================================
 -- INSERCIÓN DE EVENTOS
 -- =========================================================
-INSERT INTO evento (e_nombre, e_fecha, e_descripcion, e_cant_asist, e_url_imagen)
+INSERT INTO eventos (e_nombre, e_fecha, e_descripcion, e_cant_asist, e_url_imagen)
 VALUES
 ('Cata de Vinos de Altura', '2026-11-15', 'Degustación guiada por nuestro sommelier de los mejores Malbecs de Valle de Uco, acompañados de tapeo regional.', 30, '/img/eventos/cata-altura.png'),
 
@@ -124,7 +124,7 @@ VALUES
 -- =========================================================
 -- INSERCIÓN DE SUSCRIPCIONES
 -- =========================================================
-INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
+/*INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
 VALUES
 (
     '2026-10-05',
@@ -144,5 +144,5 @@ VALUES
     (SELECT cli_id FROM clientes c JOIN personas p ON c.cli_id = p.pe_id WHERE p.pe_dni = '12345678'), -- Lucía Gomez (mes siguiente)
     (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
 );
-
+*/
 
