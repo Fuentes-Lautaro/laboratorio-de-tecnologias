@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import EventoCard from '../components/EventoCard';
+import {EventoCard} from '../components/EventoCard';
 import { getEventos } from '../services/eventoService'; 
 
 export function EventosPage() {
@@ -55,7 +55,7 @@ export function EventosPage() {
             {eventos.length > 0 ? (
               <div className="row g-4">
                 {eventos.map((evento) => (
-                  <div key={evento.id} className="col-12 col-md-6 col-lg-4">
+                  <div key={evento.e_id} className="col-12 col-md-6 col-lg-4">
                     <EventoCard evento={evento} esGestion={false} />
                   </div>
                 ))}

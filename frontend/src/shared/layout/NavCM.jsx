@@ -22,7 +22,7 @@ export function NavCM({ sesion }) {
     <aside 
       className="d-flex flex-column p-3 p-md-4 sidebar-cm"
       style={{ 
-        backgroundColor: '#1C1614', 
+        backgroundColor: '#3E100F',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)' 
       }}
     >
@@ -32,7 +32,7 @@ export function NavCM({ sesion }) {
           Panel CM
         </h5>
         <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
-          {sesion?.nombre || 'Usuario CM'} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'CM'})</span>
+          {sesion?.nombre || 'Usuario CM'} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'cm'})</span>
         </div>
       </div>
 
@@ -43,8 +43,7 @@ export function NavCM({ sesion }) {
           style={getNavLinkStyle} 
           className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1"
         >
-          <span style={{ fontSize: '1.1rem' }}>📅</span>
-          <span>Gestión Eventos</span>
+          <span>Eventos</span>
         </NavLink>
       </nav>
 
@@ -101,14 +100,11 @@ export function NavCM({ sesion }) {
       </div>
 
       <style>{`
-        .sidebar-cm {
-          width: 100%;
-        }
         @media (min-width: 768px) {
           .sidebar-cm {
             width: 260px !important;
             min-width: 260px;
-            min-height: 100vh;
+            height: 100vh;
             position: sticky;
             top: 0;
           }
