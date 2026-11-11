@@ -1,7 +1,6 @@
 import { redirect } from 'react-router';
 
-const API_URL = 'http://localhost:3000/api';
-const URL_BASE = '/backend/data';
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 const CLAVE_SESION = 'vinoteca:sesion';
 
 // Verificación auxiliar de email existente

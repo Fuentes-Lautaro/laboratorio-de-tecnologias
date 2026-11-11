@@ -1,6 +1,6 @@
 import { obtenerSesion, cerrarSesion } from '../../auth';
 
-const URL_BASE = 'http://localhost:3000/api';
+const URL_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 async function procesarRespuesta(respuesta, mensajeError) {
   // Si el token venció o no está autorizado, expulsa la sesión y manda a /login
