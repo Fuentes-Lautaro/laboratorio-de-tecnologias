@@ -1,30 +1,33 @@
-import { createBrowserRouter } from 'react-router'
-import Spinner from './shared/components/Spinner'
-import NoEncontradaPage from './shared/pages/NoEncontradaPage'
-import LayoutPublico from './shared/layout/LayoutPublico'
+import { createBrowserRouter, redirect } from 'react-router';
+import Spinner from './shared/components/Spinner';
+import NoEncontradaPage from './shared/pages/NoEncontradaPage';
+import LayoutPublico from './shared/layout/LayoutPublico';
 import LayoutAdministrador from './shared/layout/LayoutAdministrador';
 import LayoutCM from './shared/layout/LayoutCM';
-import { HomePage } from './features/home'
-import { CatalogoPage } from './features/productos'
-import { DetalleProductoPage } from './features/productos'
-import { NosotrosPage } from './features/nosotros'
-import { SuscripcionesPage } from './features/suscripciones'
-import { FlujoSuscripcionPage } from './features/suscripciones'
-import { ContactoPage } from './features/contacto';
-import { EventosPage } from './features/eventos';
-import { LoginPage, protegerRuta, redirigirSiHaySesion, obtenerSesion } from './features/auth';
-import { ClientesPagePrivada } from './features/clientes';
-import { ProductosPagePrivada } from './features/productos'
-import { EventosPagePrivada } from './features/eventos';
-import { PlanesPagePrivada } from './features/suscripciones';
-import { EmpleadosPagePrivada } from './features/empleados'
-import { SuscripcionesPagePrivada } from './features/suscripciones'
-import { VentasPage } from './features/ventas'
-import { EstadisticasPage } from './features/estadisticas'
+import { HomePage } from './features/home';
+import { CatalogoPage, DetalleProductoPage, ProductosPagePrivada } from './features/productos';
+import { NosotrosPage } from './features/nosotros';
+import {
+  SuscripcionesPage,
+  FlujoSuscripcionPage,
+  PlanesPagePrivada,
+  SuscripcionesPagePrivada,
+} from './features/suscripciones';
 import { VerSuscripcionPage } from './features/suscripciones/pages/VerSuscripcionPage';
-import { PerfilPage } from './features/clientes'
+import { ContactoPage } from './features/contacto';
+import { EventosPage, EventosPagePrivada } from './features/eventos';
+import { LoginPage, protegerRuta, redirigirSiHaySesion, obtenerSesion } from './features/auth';
+import { ClientesPagePrivada, EmpleadosPagePrivada, PerfilPage } from './features/personas';
+import { VentasPage } from './features/ventas';
+import { EstadisticasPage } from './features/estadisticas';
 
-
+function protegerSoloGerente() {
+  const sesion = obtenerSesion();
+  if (sesion?.rol?.toLowerCase() !== 'gerente') {
+    throw redirect('/gestion');
+  }
+  return null;
+}
 
 export const router = createBrowserRouter([
   // ---------- Vista pública: Navbar + <Outlet /> + Footer ----------
@@ -35,7 +38,7 @@ export const router = createBrowserRouter([
     errorElement: <NoEncontradaPage />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: 'login', element: <LoginPage />, loader: redirigirSiHaySesion},
+      { path: 'login', element: <LoginPage />, loader: redirigirSiHaySesion },
       { path: 'catalogo', element: <CatalogoPage /> },
       { path: 'catalogo/:id', element: <DetalleProductoPage /> },
       { path: 'nosotros', element: <NosotrosPage /> },
@@ -43,13 +46,13 @@ export const router = createBrowserRouter([
       { path: 'suscripciones', element: <SuscripcionesPage /> },
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> },
       { path: 'eventos', element: <EventosPage /> },
-      { path: '*', element: <NoEncontradaPage /> },
       { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
       { path: 'perfil', element: <PerfilPage /> },
+      { path: '*', element: <NoEncontradaPage /> },
     ],
   },
 
-  // Panel Interno de Administración (Vendedor / Gerente)
+  // Panel Interno de Administración
   {
     path: '/gestion',
     element: <LayoutAdministrador />,

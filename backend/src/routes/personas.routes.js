@@ -3,18 +3,14 @@ import * as controller from '../controllers/personas.controller.js';
 import { verificarToken } from '../middlewares/verificarToken.js';
 import { verificarRol } from '../middlewares/verificarRol.js';
 
-const router = Router ();
+const router = Router();
 
-//RUTAS PROTEGIDAS
-router.get('/clientes', verificarToken,verificarRol(['gerente', 'vendedor']), controller.listarClientes);
-router.post('/clientes', verificarToken,verificarRol(['gerente', 'vendedor']), controller.crearCliente);
+// RUTAS PROTEGIDAS UNIFICADAS (/api/personas)
+router.get('/', verificarToken, verificarRol(['gerente', 'vendedor']), controller.listarPersonas);
+router.get('/:id', verificarToken, verificarRol(['gerente', 'vendedor']), controller.detallePersona);
 
-router.get('/empleados', verificarToken,verificarRol(['gerente']), controller.listarEmpleados);
-router.post('/empleados', verificarToken,verificarRol(['gerente']), controller.crearEmpleado);
-
-
-router.get('/:id', verificarToken,verificarRol(['gerente', 'vendedor']), controller.detallePersona);
-router.put('/:id', verificarToken,verificarRol(['gerente']), controller.actualizarPersona);
-router.patch('/:id', verificarToken,verificarRol(['gerente']), controller.cambiarEstado);
+router.post('/', verificarToken, verificarRol(['gerente', 'vendedor']), controller.crearPersona);
+router.put('/:id', verificarToken, verificarRol(['gerente', 'vendedor']), controller.actualizarPersona);
+router.patch('/:id', verificarToken, verificarRol(['gerente', 'vendedor']), controller.cambiarEstado);
 
 export default router;
