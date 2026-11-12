@@ -1,5 +1,5 @@
-const CORREO_DESTINO = 'maria.balbina.local@gmail.com';
-const URL_API_EMAIL = `https://formsubmit.co/ajax/${CORREO_DESTINO}`;
+const URL_API_WEB3FORMS = 'https://api.web3forms.com/submit';
+const TU_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
 
 const ETIQUETAS_ASUNTO = {
   consulta: 'Consulta general',
@@ -8,34 +8,38 @@ const ETIQUETAS_ASUNTO = {
 };
 
 export async function enviarConsulta(valores) {
+
+  if (!TU_ACCESS_KEY) {
+    throw new Error('Falta configurar la clave de Web3Forms en el archivo .env');
+  }
+
   const asuntoLegible = ETIQUETAS_ASUNTO[valores.asunto] || valores.asunto;
 
-  const cuerpoCorreo = {
-    _subject: `Nueva consulta web: ${asuntoLegible} - ${valores.nombre}`,
-    _template: 'table',
+  const datosFormulario = {
+    access_key: TU_ACCESS_KEY,
+    subject: `Nueva consulta web: ${asuntoLegible} - ${valores.nombre}`,
+    from_name: 'Web María Balbina',
+    replyto: valores.email.trim(),
     Nombre: valores.nombre.trim(),
     Email: valores.email.trim(),
     Asunto: asuntoLegible,
-    'Descripción de la consulta': valores.mensaje.trim(),
+    Mensaje: valores.mensaje.trim(),
   };
 
-  try {
-    const respuesta = await fetch(URL_API_EMAIL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(cuerpoCorreo),
-    });
+  const respuesta = await fetch(URL_API_WEB3FORMS, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(datosFormulario),
+  });
 
-    if (respuesta.ok) {
-      return await respuesta.json();
-    }
-    
-    throw new Error('No se pudo enviar el correo.');
-  } catch (error) {
-    console.error('Error en el servicio de contacto:', error);
-    throw new Error('Hubo un problema de conexión con el servidor de correo.');
+  const resultado = await respuesta.json();
+
+  if (!respuesta.ok || !resultado.success) {
+    throw new Error(resultado.message || 'No se pudo enviar la consulta. Intentá nuevamente.');
   }
+
+  return resultado;
 }
