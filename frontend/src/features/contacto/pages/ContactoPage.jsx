@@ -50,7 +50,7 @@ function ContactoPage() {
               </div>
 
               <div className="mt-4 pt-3 border-top text-muted small">
-                <span>🍷 Estamos para asesorarte en cada experiencia.</span>
+                <span>Estamos para asesorarte en cada experiencia.</span>
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import {
   getEventos, 
   crearEvento, 
   actualizarEvento, 
-  eliminarEvento 
+  cambiarEstadoEvento 
 } from '../services/eventoService';
 
 const FORM_INICIAL = {
@@ -27,7 +27,7 @@ export function EventosPagePrivada() {
 
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [eventoEditando, setEventoEditando] = useState(null); // null = Crear, objeto = Editar
-  const [eventoAEliminar, setEventoAEliminar] = useState(null);
+  const [eventoACambiarEstado, setEventoACambiarEstado] = useState(null);
 
   const [formData, setFormData] = useState(FORM_INICIAL);
   const [alerta, setAlerta] = useState(null);
@@ -38,7 +38,7 @@ export function EventosPagePrivada() {
 
   const cargarLista = async () => {
     try {
-      const data = await getEventos();
+      const data = await getEventos(true);
       setEventos(data || []);
     } catch (err) {
       console.error('Error al cargar eventos:', err);
@@ -83,7 +83,6 @@ export function EventosPagePrivada() {
     try {
       const id = eventoEditando?.e_id;
 
-      // El payload mapea exactamente lo que espera tu controlador backend
       const payload = {
         nombre: formData.e_nombre,
         fecha: formData.e_fecha,
@@ -97,7 +96,6 @@ export function EventosPagePrivada() {
 
         const guardado = await actualizarEvento(id, payload);
 
-        // Actualizamos el estado local usando e_id
         setEventos((prev) =>
           prev.map((item) => (item.e_id === id ? guardado : item))
         );
@@ -115,14 +113,14 @@ export function EventosPagePrivada() {
     }
   };
 
-  const handleSolicitarEliminar = (id) => {
+  const handleSolicitarCambioEstado = (id) => {
     const encontrado = eventos.find((ev) => ev.e_id === id);
-    if (encontrado) setEventoAEliminar(encontrado);
+    if (encontrado) setEventoACambiarEstado(encontrado);
   };
 
-  const handleConfirmarEliminar = async () => {
-    if (!eventoAEliminar) return;
-    const id = eventoAEliminar.e_id;
+  const handleConfirmarCambioEstado = async () => {
+    if (!eventoACambiarEstado) return;
+    const id = eventoACambiarEstado.e_id;
 
     if (!id) {
       mostrarNotificacion('Error: No se encontró el ID del evento.', 'danger');
@@ -130,14 +128,19 @@ export function EventosPagePrivada() {
     }
 
     try {
-      await eliminarEvento(id);
-      setEventos((prev) => prev.filter((item) => item.e_id !== id));
-      setEventoAEliminar(null);
-      mostrarNotificacion('¡Evento eliminado con éxito!', 'success');
+      const actualizado = await cambiarEstadoEvento(id);
+      setEventos((prev) =>
+        prev.map((item) => (item.e_id === id ? actualizado : item))
+      );
+      setEventoACambiarEstado(null);
+      mostrarNotificacion(
+        actualizado.e_activo ? '¡Evento activado con éxito!' : '¡Evento desactivado con éxito!',
+        'success'
+      );
     } catch (error) {
-      console.error('Error al eliminar evento:', error);
-      setEventoAEliminar(null);
-      mostrarNotificacion('Error al eliminar el evento: ' + error.message, 'danger');
+      console.error('Error al cambiar estado del evento:', error);
+      setEventoACambiarEstado(null);
+      mostrarNotificacion('Error al cambiar estado del evento: ' + error.message, 'danger');
     }
   };
 
@@ -190,7 +193,7 @@ export function EventosPagePrivada() {
                 evento={evento}
                 esGestion={true}
                 onEditar={handleAbrirEditar}
-                onEliminar={handleSolicitarEliminar}
+                onCambiarEstado={handleSolicitarCambioEstado}
               />
             </div>
           ))}
@@ -207,10 +210,9 @@ export function EventosPagePrivada() {
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-              {}
               <div className="modal-header border-0 text-white" style={{ backgroundColor: 'var(--titulos, #B5865A)' }}>
                 <h5 className="modal-title fw-bold fs-6">
-                  {eventoEditando ? '✏️ Editar Evento' : ' Crear Nuevo Evento'}
+                  {eventoEditando ? '✏️ Editar Evento' : 'Crear Nuevo Evento'}
                 </h5>
                 <button type="button" className="btn-close btn-close-white" onClick={() => setMostrarModalForm(false)}></button>
               </div>
@@ -305,22 +307,30 @@ export function EventosPagePrivada() {
         </div>
       )}
 
-      {/* MODAL ELIMINAR */}
-      {eventoAEliminar && (
+      {/* MODAL ACTIVAR / DESACTIVAR */}
+      {eventoACambiarEstado && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
               <div className="modal-header border-0 text-white" style={{ backgroundColor: '#3E100F' }}>
-                <h5 className="modal-title fw-bold fs-6">🗑️ Confirmar Eliminación</h5>
-                <button type="button" className="btn-close btn-close-white" onClick={() => setEventoAEliminar(null)}></button>
+                <h5 className="modal-title fw-bold fs-6">
+                  {eventoACambiarEstado.e_activo ? 'Confirmar Desactivación' : 'Confirmar Activación'}
+                </h5>
+                <button type="button" className="btn-close btn-close-white" onClick={() => setEventoACambiarEstado(null)}></button>
               </div>
 
               <div className="modal-body p-4 text-center" style={{ backgroundColor: '#FAF6F0' }}>
-                <p className="mb-2 fs-6" style={{ color: '#1C1614' }}>¿Estás seguro de que deseas eliminar el evento?</p>
+                <p className="mb-2 fs-6" style={{ color: '#1C1614' }}>
+                  ¿Estás seguro de que deseas {eventoACambiarEstado.e_activo ? 'desactivar' : 'activar'} el evento?
+                </p>
                 <div className="p-3 rounded-2 fw-bold text-start mb-3 shadow-sm" style={{ backgroundColor: '#FFFFFF', color: '#3E100F', borderLeft: '4px solid #B5865A' }}>
-                  {eventoAEliminar.e_nombre}
+                  {eventoACambiarEstado.e_nombre}
                 </div>
-                <small className="text-muted">Esta acción no se puede deshacer.</small>
+                <small className="text-muted">
+                  {eventoACambiarEstado.e_activo
+                    ? 'El evento dejará de mostrarse en la cartelera pública, pero se conservará su historial de ventas.'
+                    : 'El evento volverá a mostrarse en la cartelera pública si su fecha es vigente.'}
+                </small>
               </div>
 
               <div className="modal-footer border-0 justify-content-end gap-2" style={{ backgroundColor: '#FAF6F0' }}>
@@ -328,17 +338,20 @@ export function EventosPagePrivada() {
                   type="button" 
                   className="btn btn-sm px-3 fw-semibold" 
                   style={{ backgroundColor: 'transparent', color: '#3E100F', border: '1px solid #3E100F' }} 
-                  onClick={() => setEventoAEliminar(null)}
+                  onClick={() => setEventoACambiarEstado(null)}
                 >
                   Cancelar
                 </button>
                 <button 
                   type="button" 
-                  className="btn btn-sm btn-danger px-3 fw-semibold" 
-                  style={{ backgroundColor: '#A93226', borderColor: '#A93226' }} 
-                  onClick={handleConfirmarEliminar}
+                  className="btn btn-sm text-white px-3 fw-semibold" 
+                  style={{ 
+                    backgroundColor: eventoACambiarEstado.e_activo ? '#A93226' : '#3E100F', 
+                    borderColor: eventoACambiarEstado.e_activo ? '#A93226' : '#3E100F' 
+                  }} 
+                  onClick={handleConfirmarCambioEstado}
                 >
-                  Sí, Eliminar
+                  {eventoACambiarEstado.e_activo ? 'Sí, Desactivar' : 'Sí, Activar'}
                 </button>
               </div>
             </div>
