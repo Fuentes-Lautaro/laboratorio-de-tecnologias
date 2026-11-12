@@ -3,6 +3,15 @@ import { useOutletContext } from 'react-router';
 import { obtenerResumen } from '../services/estadisticasService';
 import { formatearPrecio } from '../../../shared/utils/formato';
 
+const formatearFecha = (fechaStr) => {
+  if (!fechaStr) return '-';
+  const fechaLimpia = String(fechaStr).split('T')[0];
+  const partes = fechaLimpia.split('-');
+  if (partes.length !== 3) return fechaStr;
+  const [anio, mes, dia] = partes;
+  return `${dia}/${mes}/${anio}`;
+};
+
 export function EstadisticasPage() {
   const { usuario } = useOutletContext() || { usuario: { nombre: 'Usuario' } };
   const [resumen, setResumen] = useState(null);
@@ -130,37 +139,51 @@ export function EstadisticasPage() {
         </div>
       </div>
 
-      {/* Fila Doble: Métodos de Pago + Top Productos Más Vendidos */}
+      {/* Fila Doble: Top 3 Métodos de Pago + Top Productos Más Vendidos */}
       <div className="row g-4 mb-4">
-        {/* Métodos de Pago */}
+        {/* Top 3 Métodos de Pago */}
         <div className="col-12 col-lg-6">
           <div className="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
             <div className="card-header bg-white py-3 border-bottom">
-              <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>Métodos de Pago Más Usados</h5>
+              <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>Top 3 Métodos de Pago Más Usados</h5>
             </div>
             <div className="card-body p-4">
-              <div className="d-flex flex-column gap-3">
-                {resumen?.metodosPagoMasUsados?.map((item, index) => (
-                  <div key={index}>
-                    <div className="d-flex justify-content-between align-items-center mb-1">
-                      <span className="fw-medium text-dark">{item.metodo}</span>
-                      <small className="text-muted fw-semibold">
-                        {item.cantidad} ({item.porcentaje}%)
-                      </small>
+              {resumen?.metodosPagoMasUsados?.length > 0 ? (
+                <div className="d-flex flex-column gap-3">
+                  {resumen.metodosPagoMasUsados.map((item, index) => (
+                    <div key={index}>
+                      <div className="d-flex justify-content-between align-items-center mb-1">
+                        <span className="fw-medium text-dark">
+                          <span
+                            className="badge me-2"
+                            style={{ backgroundColor: '#3E100F', color: '#FFFFFF', fontSize: '0.7rem' }}
+                          >
+                            {index + 1}°
+                          </span>
+                          {item.metodo}
+                        </span>
+                        <small className="text-muted fw-semibold">
+                          {item.cantidad} ({item.porcentaje}%)
+                        </small>
+                      </div>
+                      <div className="progress" style={{ height: '10px', backgroundColor: '#F1EFEA' }}>
+                        <div
+                          className="progress-bar rounded-pill"
+                          role="progressbar"
+                          style={{ width: `${item.porcentaje}%`, backgroundColor: '#B5865A' }}
+                          aria-valuenow={item.porcentaje}
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        ></div>
+                      </div>
                     </div>
-                    <div className="progress" style={{ height: '10px', backgroundColor: '#F1EFEA' }}>
-                      <div
-                        className="progress-bar rounded-pill"
-                        role="progressbar"
-                        style={{ width: `${item.porcentaje}%`, backgroundColor: '#B5865A' }}
-                        aria-valuenow={item.porcentaje}
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-muted small">
+                  No hay registros de pagos aún.
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -213,7 +236,7 @@ export function EstadisticasPage() {
       {resumen?.proximosEventos?.length > 0 && (
         <div className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4">
           <div className="card-header bg-white py-3 border-bottom">
-            <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>Próximos Eventos & Cupos</h5>
+            <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>Próximos Eventos</h5>
           </div>
           <div className="card-body p-4">
             <div className="row g-3">
@@ -221,9 +244,9 @@ export function EstadisticasPage() {
                 <div key={i} className="col-12 col-md-4">
                   <div className="p-3 rounded-2 border-start border-4 bg-light shadow-sm" style={{ borderLeftColor: '#3E100F !important' }}>
                     <h6 className="fw-bold mb-1" style={{ color: '#3E100F' }}>{ev.nombre}</h6>
-                    <p className="text-muted small mb-2">📅 {new Date(ev.fecha).toLocaleDateString('es-AR')}</p>
+                    <p className="text-muted small mb-2">{formatearFecha(ev.fecha)}</p>
                     <span className="badge px-3 py-1" style={{ backgroundColor: '#B5865A', color: '#FFF' }}>
-                      👥 {ev.cupos} Cupos Totales
+                      {ev.cupos} Cupos
                     </span>
                   </div>
                 </div>
@@ -232,6 +255,107 @@ export function EstadisticasPage() {
           </div>
         </div>
       )}
+
+      {/* Rendimiento por Evento (Eventos Realizados Activos) */}
+      <div className="card shadow-sm border-0 rounded-3 overflow-hidden mb-4">
+        <div className="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>
+            Rendimiento por Evento
+          </h5>
+          <span className="badge rounded-pill px-3 py-1" style={{ backgroundColor: '#F1EFEA', color: '#3E100F' }}>
+            {resumen?.estadisticasPorEvento?.length || 0} eventos
+          </span>
+        </div>
+        <div className="card-body p-0">
+          {resumen?.estadisticasPorEvento?.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th scope="col" className="ps-4">Evento</th>
+                    <th scope="col" className="text-end">Total de Ventas</th>
+                    <th scope="col">Métodos de Pago</th>
+                    <th scope="col" className="pe-4">Vinos mas Vendidos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resumen.estadisticasPorEvento.map((ev) => (
+                    <tr key={ev.eventoId}>
+                      <td className="ps-4">
+                        <div className="fw-semibold text-dark">{ev.nombre}</div>
+                        <small className="text-muted">{formatearFecha(ev.fecha)}</small>
+                      </td>
+
+                      <td className="text-end">
+                        <div className="fw-bold" style={{ color: '#3E100F' }}>
+                          {formatearPrecio(ev.totalRecaudado)}
+                        </div>
+                        <small className="text-muted">
+                          {ev.cantidadVentas} {ev.cantidadVentas === 1 ? 'venta' : 'ventas'}
+                        </small>
+                      </td>
+
+                      <td>
+                        {ev.topMetodosPago?.length > 0 ? (
+                          <div className="d-flex flex-column gap-1 py-1">
+                            {ev.topMetodosPago.map((mp, idx) => (
+                              <div key={idx} className="d-flex align-items-center justify-content-between gap-2 small">
+                                <span>
+                                  <span
+                                    className="badge me-2"
+                                    style={{ backgroundColor: '#3E100F', color: '#FFFFFF', fontSize: '0.7rem' }}
+                                  >
+                                    {idx + 1}°
+                                  </span>
+                                  <span className="text-dark fw-medium">{mp.metodo}</span>
+                                </span>
+                                <span className="badge bg-light text-dark border">
+                                  {mp.cantidad} pagos
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted fw-semibold">-</span>
+                        )}
+                      </td>
+
+                      <td className="pe-4">
+                        {ev.topVinos?.length > 0 ? (
+                          <div className="d-flex flex-column gap-1 py-1">
+                            {ev.topVinos.map((vino, idx) => (
+                              <div key={idx} className="d-flex align-items-center justify-content-between gap-2 small">
+                                <span>
+                                  <span
+                                    className="badge me-2"
+                                    style={{ backgroundColor: '#3E100F', color: '#FFFFFF', fontSize: '0.7rem' }}
+                                  >
+                                    {idx + 1}°
+                                  </span>
+                                  <span className="text-dark fw-medium">{vino.producto}</span>
+                                </span>
+                                <span className="badge bg-light text-dark border">
+                                  {vino.unidadesVendidas} un.
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted fw-semibold">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-4 text-center text-muted small">
+              Aún no hay eventos realizados registrados.
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
