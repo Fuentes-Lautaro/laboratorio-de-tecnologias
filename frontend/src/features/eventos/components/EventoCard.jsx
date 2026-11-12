@@ -29,7 +29,6 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
 
   if (!evento) return null;
 
-  // Desestructuración con fallbacks para PostgreSQL (e_) y propiedades genéricas
   const id = evento.e_id ?? evento.id;
   const nombre = evento.e_nombre ?? evento.nombre ?? '';
   const fecha = evento.e_fecha ?? evento.fecha ?? '';
@@ -53,16 +52,18 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
       }`}
       style={!estaActivo && esGestion ? { filter: 'grayscale(70%)' } : {}}
     >
-      {/* Portada del Evento */}
-      <div style={{ height: '160px', backgroundColor: '#F3EFEA', overflow: 'hidden' }}>
-        <img
-          src={IMAGEN_EVENTO_FIJA}
-          alt={nombre}
-          className="w-100 h-100"
-          style={{ objectFit: 'cover' }}
-          onError={handleImageError}
-        />
-      </div>
+      {/* Portada del Evento (solo en vista pública) */}
+      {!esGestion && (
+        <div style={{ height: '160px', backgroundColor: '#F3EFEA', overflow: 'hidden' }}>
+          <img
+            src={IMAGEN_EVENTO_FIJA}
+            alt={nombre}
+            className="w-100 h-100"
+            style={{ objectFit: 'cover' }}
+            onError={handleImageError}
+          />
+        </div>
+      )}
 
       <div className="card-header bg-transparent border-0 pt-3 px-3 pb-0 d-flex justify-content-between align-items-center gap-2">
         <div className="d-flex align-items-center gap-1 flex-wrap">
@@ -70,7 +71,7 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
             className="badge rounded-pill px-2.5 py-1" 
             style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#000', fontSize: '0.75rem' }}
           >
-            📅 {formatearFecha(fecha)}
+            {formatearFecha(fecha)}
           </span>
           {mostrarBadgeFinalizado && (
             <span
@@ -96,14 +97,16 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
         <h5 className="card-title fw-bold mb-2" style={{ color: 'var(--titulos, #3E100F)', fontSize: '1.05rem' }}>
           {nombre}
         </h5>
-        <p className="card-text text-secondary small" style={{ lineHeight: '1.4' }}>
-          {descripcion || 'Sin descripción disponible.'}
-        </p>
+        {!esGestion && (
+          <p className="card-text text-secondary small" style={{ lineHeight: '1.4' }}>
+            {descripcion || 'Sin descripción disponible.'}
+          </p>
+        )}
       </div>
 
       {/* Botones de acción en el panel de gestión */}
       {esGestion && (
-        <div className="card-footer bg-light border-0 p-2.5 d-flex gap-2 justify-content-end">
+        <div className="card-footer bg-light border-0 p-2.5 d-flex gap-2 justify-content-end mt-auto">
           <button
             onClick={() => onEditar && onEditar(evento)}
             className="btn btn-sm d-flex align-items-center gap-1 px-3 shadow-sm rounded-2"
