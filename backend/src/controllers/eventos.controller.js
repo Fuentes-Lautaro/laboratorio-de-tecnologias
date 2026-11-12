@@ -43,17 +43,17 @@ export const obtener = async (req, res, next) => {
 
 export const crear = async (req, res, next) => {
     try {
-        const { nombre, fecha, descripcion, cant_asist, url_imagen } = req.body;
+        const { nombre, fecha, descripcion, cant_asist } = req.body;
 
         if (!nombre || !fecha) {
             return res.status(400).json({ error: "El nombre y la fecha son obligatorios" });
         }
 
         const { rows } = await pool.query(
-            `INSERT INTO eventos (e_nombre, e_fecha, e_descripcion, e_cant_asist, e_url_imagen)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO eventos (e_nombre, e_fecha, e_descripcion, e_cant_asist)
+             VALUES ($1, $2, $3, $4)
              RETURNING *`,
-            [nombre, fecha, descripcion, cant_asist, url_imagen]
+            [nombre, fecha, descripcion, cant_asist]
         );
         res.status(201).json(rows[0]);
     } catch (err) {
@@ -63,7 +63,7 @@ export const crear = async (req, res, next) => {
 
 export const modificar = async (req, res, next) => {
     try {
-        const { nombre, fecha, descripcion, cant_asist, url_imagen } = req.body;
+        const { nombre, fecha, descripcion, cant_asist } = req.body;
 
         if (!nombre || !fecha) {
             return res.status(400).json({ error: "El nombre y la fecha son obligatorios" });
@@ -71,10 +71,10 @@ export const modificar = async (req, res, next) => {
 
         const { rows } = await pool.query(
             `UPDATE eventos
-             SET e_nombre = $1, e_fecha = $2, e_descripcion = $3, e_cant_asist = $4, e_url_imagen = $5
-             WHERE e_id = $6
+             SET e_nombre = $1, e_fecha = $2, e_descripcion = $3, e_cant_asist = $4
+             WHERE e_id = $5
              RETURNING *`,
-            [nombre, fecha, descripcion, cant_asist, url_imagen, req.params.id]
+            [nombre, fecha, descripcion, cant_asist, req.params.id]
         );
 
         if (rows.length === 0) {
@@ -89,10 +89,9 @@ export const modificar = async (req, res, next) => {
 
 export const alternar = async (req, res, next) => {
     try {
-        const { id } = req.params;
         const { rows } = await pool.query(
             'UPDATE eventos SET e_activo = NOT e_activo WHERE e_id = $1 RETURNING *',
-            [id]
+            [req.params.id]
         );
 
         if (rows.length === 0) {

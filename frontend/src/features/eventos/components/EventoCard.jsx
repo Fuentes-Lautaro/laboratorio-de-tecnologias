@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+const IMAGEN_EVENTO_FIJA = '/img/eventos/eventos.png';
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
 const obtenerFechaHoyISO = () => {
@@ -34,7 +35,6 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
   const fecha = evento.e_fecha ?? evento.fecha ?? '';
   const descripcion = evento.e_descripcion ?? evento.descripcion ?? '';
   const cantAsist = evento.e_cant_asist ?? evento.e_cant_asists ?? evento.cantAsist ?? 0;
-  const urlImagen = evento.e_url_imagen ?? evento.urlImagen ?? FALLBACK_IMAGEN;
   const estaActivo = evento.e_activo ?? evento.activo ?? true;
 
   const fechaLimpia = fecha ? fecha.split('T')[0] : '';
@@ -56,7 +56,7 @@ export function EventoCard({ evento, esGestion = false, onEditar, onCambiarEstad
       {/* Portada del Evento */}
       <div style={{ height: '160px', backgroundColor: '#F3EFEA', overflow: 'hidden' }}>
         <img
-          src={urlImagen || FALLBACK_IMAGEN}
+          src={IMAGEN_EVENTO_FIJA}
           alt={nombre}
           className="w-100 h-100"
           style={{ objectFit: 'cover' }}

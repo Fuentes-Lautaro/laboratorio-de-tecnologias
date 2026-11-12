@@ -11,8 +11,7 @@ const FORM_INICIAL = {
   e_nombre: '',
   e_fecha: '',
   e_descripcion: '',
-  e_cant_asist: 10,
-  e_url_imagen: '/img/imagenesEventos/eventos.png'
+  e_cant_asist: 10
 };
 
 // Convierte la fecha devuelta por PostgreSQL ("2026-11-15T00:00:00.000Z") al formato YYYY-MM-DD para <input type="date">
@@ -104,8 +103,7 @@ export function EventosPagePrivada() {
       e_nombre: evento.e_nombre || '',
       e_fecha: formatearFechaParaInput(evento.e_fecha),
       e_descripcion: evento.e_descripcion || '',
-      e_cant_asist: evento.e_cant_asist ?? 10,
-      e_url_imagen: evento.e_url_imagen || '/img/imagenesEventos/eventos.png'
+      e_cant_asist: evento.e_cant_asist ?? 10
     });
     setMostrarModalForm(true);
   };
@@ -124,8 +122,7 @@ export function EventosPagePrivada() {
         nombre: formData.e_nombre,
         fecha: formData.e_fecha,
         descripcion: formData.e_descripcion,
-        cant_asist: Number(formData.e_cant_asist),
-        url_imagen: formData.e_url_imagen
+        cant_asist: Number(formData.e_cant_asist)
       };
 
       if (eventoEditando) {
@@ -205,7 +202,7 @@ export function EventosPagePrivada() {
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-3 border-bottom">
         <div>
           <h2 className="fw-bold mb-1" style={{ color: '#3E100F' }}>Gestión de Eventos</h2>
-          <p className="text-muted small mb-0">Administrá la cartelera de eventos, cupos e imágenes.</p>
+          <p className="text-muted small mb-0">Administrá la cartelera de eventos y cupos disponibles.</p>
         </div>
         <button 
           onClick={handleAbrirCrear}
@@ -257,7 +254,7 @@ export function EventosPagePrivada() {
               <form onSubmit={handleSubmitForm}>
                 <div className="modal-body p-4" style={{ backgroundColor: '#FAF6F0' }}>
                   <div className="row g-3">
-                    <div className="col-12 col-md-8">
+                    <div className="col-12">
                       <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Nombre del Evento</label>
                       <input
                         type="text"
@@ -270,7 +267,7 @@ export function EventosPagePrivada() {
                       />
                     </div>
 
-                    <div className="col-12 col-md-4">
+                    <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Fecha</label>
                       <input
                         type="date"
@@ -282,7 +279,7 @@ export function EventosPagePrivada() {
                       />
                     </div>
 
-                    <div className="col-12 col-md-4">
+                    <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Cupos / Asistentes</label>
                       <input
                         type="number"
@@ -292,18 +289,6 @@ export function EventosPagePrivada() {
                         className="form-control"
                         value={formData.e_cant_asist}
                         onChange={handleChangeForm}
-                      />
-                    </div>
-
-                    <div className="col-12 col-md-8">
-                      <label className="form-label small fw-bold" style={{ color: 'var(--titulos, #B5865A)' }}>Ruta de Imagen (`/public` o URL)</label>
-                      <input
-                        type="text"
-                        name="e_url_imagen"
-                        className="form-control"
-                        value={formData.e_url_imagen}
-                        onChange={handleChangeForm}
-                        placeholder="/img/imagenesEventos/eventos.png"
                       />
                     </div>
 

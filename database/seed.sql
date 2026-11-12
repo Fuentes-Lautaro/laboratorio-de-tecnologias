@@ -111,13 +111,11 @@ VALUES
 -- =========================================================
 -- INSERCION DE EVENTOS
 -- =========================================================
-INSERT INTO eventos (e_nombre, e_fecha, e_descripcion, e_cant_asist, e_url_imagen)
+INSERT INTO eventos (e_nombre, e_fecha, e_descripcion, e_cant_asist)
 VALUES
-('Cata de Vinos de Altura', '2026-11-15', 'Degustacion guiada por nuestro sommelier de los mejores Malbecs de Valle de Uco, acompanados de tapeo regional.', 30, '/img/eventos/cata-altura.png'),
-
-('Maridaje y Fin de Anio', '2026-12-10', 'Despedimos el ano con una cena maridaje exclusiva. 5 pasos con vinos de la linea Reserva Especial.', 50, '/img/eventos/cena-fin-anio.png'),
-
-('Feria de Blancos y Rosados', '2026-10-30', 'Feria al aire libre ideal para la primavera, probando mas de 15 etiquetas de vinos blancos y rosados frescos.', 100, '/img/eventos/feria-blancos.png');
+('Cata de Vinos de Altura', '2026-11-15', 'Degustacion guiada por nuestro sommelier de los mejores Malbecs de Valle de Uco, acompanados de tapeo regional.', 30),
+('Maridaje y Fin de Anio', '2026-12-10', 'Despedimos el ano con una cena maridaje exclusiva. 5 pasos con vinos de la linea Reserva Especial.', 50),
+('Feria de Blancos y Rosados', '2026-10-30', 'Feria al aire libre ideal para la primavera, probando mas de 15 etiquetas de vinos blancos y rosados frescos.', 100);
 
 -- =========================================================
 -- INSERCION DE SUSCRIPCIONES

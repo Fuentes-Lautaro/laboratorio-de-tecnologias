@@ -50,7 +50,6 @@ CREATE TABLE eventos (
     e_fecha DATE NOT NULL,
     e_descripcion TEXT,
     e_cant_asist INT,
-    e_url_imagen VARCHAR(255),
     e_activo BOOLEAN NOT NULL DEFAULT TRUE
 );
 
