@@ -12,6 +12,6 @@ router.get('/:id', controller.obtener);
 // RUTAS PROTEGIDAS
 router.post('/', verificarToken, verificarRol(['cm']), controller.crear);
 router.put('/:id', verificarToken, verificarRol(['cm']), controller.modificar);
-router.patch('/:id', verificarToken, verificarRol(['cm']), controller.cambiarEstado);
+router.patch('/:id', verificarToken, verificarRol(['cm']), controller.alternar);
 
 export default router;

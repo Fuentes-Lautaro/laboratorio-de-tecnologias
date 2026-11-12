@@ -80,7 +80,7 @@ export async function eliminarEvento(id) {
   const sesion = obtenerSesion();
 
   const res = await fetch(`${BASE_URL}/eventos/${id}`, {
-    method: 'DELETE',
+    method: 'PATCH',
     headers: {
       'Authorization': `Bearer ${sesion?.token}`
     }
@@ -88,7 +88,7 @@ export async function eliminarEvento(id) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || err.mensaje || 'Error al eliminar el evento');
+    throw new Error(err.error || err.mensaje || 'Error cambiar el estado del evento');
   }
 
   if (res.status === 204) {

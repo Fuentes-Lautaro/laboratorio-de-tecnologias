@@ -78,11 +78,12 @@ export const modificar = async (req, res, next) => {
     }
 };
 
-export const cambiarEstado = async (req, res, next) => {
+export const alternar = async (req, res, next) => {
     try {
+        const { id } = req.params;
         const { rows } = await pool.query(
             'UPDATE eventos SET e_activo = NOT e_activo WHERE e_id = $1 RETURNING *',
-            [req.params.id]
+            [id]
         );
 
         if (rows.length === 0) {
