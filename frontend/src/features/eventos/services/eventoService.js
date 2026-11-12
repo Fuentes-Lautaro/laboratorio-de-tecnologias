@@ -4,8 +4,9 @@ const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 // --- RUTAS PÚBLICAS ---
 
-export async function getEventos() {
-  const res = await fetch(`${BASE_URL}/eventos`);
+export async function getEventos(incluirTodos = false) {
+  const url = incluirTodos ? `${BASE_URL}/eventos?todos=true` : `${BASE_URL}/eventos`;
+  const res = await fetch(url);
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || err.mensaje || 'Error al cargar la lista de eventos');
@@ -76,7 +77,7 @@ export async function actualizarEvento(id, datosEvento) {
   return await res.json();
 }
 
-export async function eliminarEvento(id) {
+export async function cambiarEstadoEvento(id) {
   const sesion = obtenerSesion();
 
   const res = await fetch(`${BASE_URL}/eventos/${id}`, {

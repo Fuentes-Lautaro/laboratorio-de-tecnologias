@@ -21,6 +21,43 @@ const formatearFechaParaInput = (fechaStr) => {
   return fechaStr.split('T')[0];
 };
 
+const obtenerFechaHoyISO = () => {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoy.getDate()).padStart(2, '0');
+  return `${anio}-${mes}-${dia}`;
+};
+
+const ordenarEventosGestion = (lista) => {
+  const hoyISO = obtenerFechaHoyISO();
+
+  const obtenerGrupo = (ev) => {
+    const activo = ev.e_activo ?? true;
+    const fecha = formatearFechaParaInput(ev.e_fecha);
+    const esProximo = fecha >= hoyISO;
+
+    if (activo && esProximo) return 1;
+    if (activo && !esProximo) return 2;
+    if (!activo && esProximo) return 3;
+    return 4;
+  };
+
+  return [...lista].sort((a, b) => {
+    const grupoA = obtenerGrupo(a);
+    const grupoB = obtenerGrupo(b);
+    if (grupoA !== grupoB) return grupoA - grupoB;
+
+    const fechaA = formatearFechaParaInput(a.e_fecha);
+    const fechaB = formatearFechaParaInput(b.e_fecha);
+
+    if (grupoA === 1 || grupoA === 3) {
+      return fechaA.localeCompare(fechaB);
+    }
+    return fechaB.localeCompare(fechaA);
+  });
+};
+
 export function EventosPagePrivada() {
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -39,7 +76,7 @@ export function EventosPagePrivada() {
   const cargarLista = async () => {
     try {
       const data = await getEventos(true);
-      setEventos(data || []);
+      setEventos(ordenarEventosGestion(data || []));
     } catch (err) {
       console.error('Error al cargar eventos:', err);
       mostrarNotificacion('Error al cargar la lista de eventos: ' + err.message, 'danger');
@@ -97,12 +134,12 @@ export function EventosPagePrivada() {
         const guardado = await actualizarEvento(id, payload);
 
         setEventos((prev) =>
-          prev.map((item) => (item.e_id === id ? guardado : item))
+          ordenarEventosGestion(prev.map((item) => (item.e_id === id ? guardado : item)))
         );
         mostrarNotificacion('¡Evento actualizado con éxito!', 'success');
       } else {
         const nuevo = await crearEvento(payload);
-        setEventos((prev) => [...prev, nuevo]);
+        setEventos((prev) => ordenarEventosGestion([...prev, nuevo]));
         mostrarNotificacion('¡Evento creado con éxito!', 'success');
       }
 
@@ -130,7 +167,7 @@ export function EventosPagePrivada() {
     try {
       const actualizado = await cambiarEstadoEvento(id);
       setEventos((prev) =>
-        prev.map((item) => (item.e_id === id ? actualizado : item))
+        ordenarEventosGestion(prev.map((item) => (item.e_id === id ? actualizado : item)))
       );
       setEventoACambiarEstado(null);
       mostrarNotificacion(

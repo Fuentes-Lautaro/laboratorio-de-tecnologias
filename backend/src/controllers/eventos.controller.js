@@ -5,9 +5,18 @@ export const listar = async (req, res, next) => {
         const { todos } = req.query;
 
         if (todos === 'true') {
-            const { rows } = await pool.query(
-                'SELECT * FROM eventos ORDER BY e_activo DESC, e_fecha ASC'
-            );
+            const { rows } = await pool.query(`
+                SELECT * FROM eventos
+                ORDER BY
+                    CASE
+                        WHEN e_activo = true AND e_fecha >= CURRENT_DATE THEN 1
+                        WHEN e_activo = true AND e_fecha < CURRENT_DATE THEN 2
+                        WHEN e_activo = false AND e_fecha >= CURRENT_DATE THEN 3
+                        ELSE 4
+                    END ASC,
+                    CASE WHEN e_fecha >= CURRENT_DATE THEN e_fecha END ASC,
+                    CASE WHEN e_fecha < CURRENT_DATE THEN e_fecha END DESC
+            `);
             return res.json(rows);
         }
 
