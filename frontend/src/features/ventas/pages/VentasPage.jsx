@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { getVentas, crearVenta, getVentaPorId } from '../services/ventaService';
 import { getProductos } from '../../productos/services/productosServices';
+import { getEventos } from '../../eventos/services/eventoService';
 import { TablaVentas } from '../components/TablaVentas';
 import { Modal } from '../../../shared/components/Modal';
 
 export function VentasPage() {
   const [ventas, setVentas] = useState([]);
   const [productosDisponibles, setProductosDisponibles] = useState([]);
+  const [eventosDisponibles, setEventosDisponibles] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,23 +20,53 @@ export function VentasPage() {
 
   const [clienteDni, setClienteDni] = useState('');
   const [metodoPago, setMetodoPago] = useState('Efectivo');
+  const [eventoId, setEventoId] = useState('');
   
   const [carrito, setCarrito] = useState([]);
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState('');
   const [cantidad, setCantidad] = useState(1);
 
-  // Estado para alertas/notificaciones (igual que en Productos)
   const [alerta, setAlerta] = useState(null);
 
   useEffect(() => {
     cargarLista();
   }, []);
 
+  // Filtra eventos activos cuya fecha sea desde ayer en adelante (ayer, hoy y próximos)
+  const filtrarEventosVigentes = (listaEventos = []) => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+
+    return listaEventos
+      .filter((ev) => {
+        if (ev.e_activo === false) return false;
+        if (!ev.e_fecha) return false;
+
+        const [anio, mes, dia] = String(ev.e_fecha).split('T')[0].split('-').map(Number);
+        const fechaEvento = new Date(anio, mes - 1, dia);
+        return fechaEvento >= ayer;
+      })
+      .sort((a, b) => new Date(a.e_fecha) - new Date(b.e_fecha));
+  };
+
+  const formatearFechaCorta = (fechaStr) => {
+    if (!fechaStr) return '';
+    const [anio, mes, dia] = String(fechaStr).split('T')[0].split('-');
+    return `${dia}/${mes}/${anio}`;
+  };
+
   const cargarLista = async () => {
     try {
-      const [datosVentas, datosProductos] = await Promise.all([getVentas(), getProductos()]);
+      const [datosVentas, datosProductos, datosEventos] = await Promise.all([
+        getVentas(),
+        getProductos(),
+        getEventos(true)
+      ]);
       setVentas(datosVentas || []);
       setProductosDisponibles(datosProductos || []);
+      setEventosDisponibles(filtrarEventosVigentes(datosEventos || []));
     } catch (err) {
       console.error('Error al cargar datos:', err);
       mostrarNotificacion('Error al cargar los datos: ' + err.message, 'danger');
@@ -53,8 +85,10 @@ export function VentasPage() {
   const ventasFiltradas = ventas.filter((v) => {
     const busqueda = terminoBusqueda.toLowerCase();
     const codigoCoincide = v.codigo?.toLowerCase().includes(busqueda);
-    const clienteCoincide = (v.clienteDni || '').toLowerCase().includes(busqueda);
-    return codigoCoincide || clienteCoincide;
+    const clienteNombreCoincide = (v.clienteNombre || '').toLowerCase().includes(busqueda);
+    const clienteDniCoincide = (v.clienteDni || '').toLowerCase().includes(busqueda);
+    const eventoCoincide = (v.eventoNombre || '').toLowerCase().includes(busqueda);
+    return codigoCoincide || clienteNombreCoincide || clienteDniCoincide || eventoCoincide;
   });
 
   const handleVerDetalle = async (venta) => {
@@ -121,7 +155,6 @@ export function VentasPage() {
       return;
     }
 
-    // Hora local exacta en formato PostgreSQL TIMESTAMP (YYYY-MM-DD HH:mm:ss)
     const ahora = new Date();
     const anio = ahora.getFullYear();
     const mes = String(ahora.getMonth() + 1).padStart(2, '0');
@@ -135,6 +168,7 @@ export function VentasPage() {
       codigo: `VTA-${Math.floor(1000 + Math.random() * 9000)}`,
       fecha: fechaTimestampLocal,
       clienteDni: clienteDni.trim() !== '' ? clienteDni.trim() : null,
+      eventoId: eventoId !== '' ? Number(eventoId) : null,
       monto: totalVenta,
       metodoPago,
       items: carrito
@@ -148,10 +182,10 @@ export function VentasPage() {
       setMostrarModalForm(false);
       setCarrito([]);
       setClienteDni('');
+      setEventoId('');
       mostrarNotificacion('¡Venta registrada con éxito!', 'success');
     } catch (err) {
       console.error('Error al guardar la venta:', err);
-      // Muestra en el cartel de alerta si el DNI del cliente no existe o hubo un error
       mostrarNotificacion(err.message || 'Error al registrar la venta. Verifique los datos.', 'danger');
     }
   };
@@ -161,7 +195,7 @@ export function VentasPage() {
 
   return (
     <div className="container-fluid py-3">
-      {/* Cartel de Alerta (Éxito / Error) idéntico a Productos */}
+      {/* Cartel de Alerta */}
       {alerta && (
         <div 
           className={`alert alert-${alerta.tipo} alert-dismissible fade show d-flex align-items-center justify-content-between mb-4 shadow-sm rounded-3`} 
@@ -189,6 +223,7 @@ export function VentasPage() {
           onClick={() => {
             setCarrito([]);
             setClienteDni('');
+            setEventoId('');
             setMostrarModalForm(true);
           }} 
           className="btn text-white" 
@@ -203,7 +238,7 @@ export function VentasPage() {
         <input 
           type="text"
           className="form-control"
-          placeholder="Buscar por código de venta o DNI de cliente..."
+          placeholder="Buscar por código de venta, cliente, DNI o evento..."
           value={terminoBusqueda}
           onChange={(e) => setTerminoBusqueda(e.target.value)}
         />
@@ -217,8 +252,8 @@ export function VentasPage() {
               <tr>
                 <th>Código</th>
                 <th>Fecha</th>
-                <th>Cliente (DNI)</th>
-                <th>Empleado (DNI)</th>
+                <th>Cliente</th>
+                <th>Evento</th>
                 <th>Método de Pago</th>
                 <th>Total</th>
                 <th className="text-end">Acciones</th>
@@ -236,10 +271,35 @@ export function VentasPage() {
         <Modal titulo={`Detalle de Venta: ${ventaSeleccionada.codigo}`} onClose={() => setMostrarModalVer(false)}>
           <div className="row mb-3 g-2 small">
             <div className="col-12 col-md-4">
-              <strong>Fecha:</strong> {ventaSeleccionada.fecha ? new Date(ventaSeleccionada.fecha).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+              <strong>Fecha:</strong>{' '}
+              {ventaSeleccionada.fecha
+                ? new Date(ventaSeleccionada.fecha).toLocaleString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                : '-'}
             </div>
-            <div className="col-12 col-md-4"><strong>Cliente DNI:</strong> {ventaSeleccionada.clienteDni || 'Consumidor Final'}</div>
-            <div className="col-12 col-md-4"><strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}</div>
+            <div className="col-12 col-md-4">
+              <strong>Cliente:</strong> {ventaSeleccionada.clienteNombre || '-'}
+            </div>
+            <div className="col-12 col-md-4">
+              <strong>Empleado:</strong>{' '}
+              {ventaSeleccionada.empleadoNombre
+                ? `${ventaSeleccionada.empleadoNombre}${ventaSeleccionada.empleadoDni ? ` (${ventaSeleccionada.empleadoDni})` : ''}`
+                : ventaSeleccionada.empleadoDni || '-'}
+            </div>
+            <div className="col-12 col-md-4 mt-2">
+              <strong>Método de Pago:</strong> {ventaSeleccionada.metodoPago || 'Efectivo'}
+            </div>
+            <div className="col-12 col-md-8 mt-2">
+              <strong>Evento:</strong>{' '}
+              <span className="text-muted">
+                {ventaSeleccionada.eventoNombre || '-'}
+              </span>
+            </div>
           </div>
           
           <h6 className="fw-bold mt-4 mb-2">Productos Comprados:</h6>
@@ -288,7 +348,7 @@ export function VentasPage() {
           <form onSubmit={handleSubmitVenta}>
             <div className="row g-3 mb-3">
               <div className="col-md-6">
-                <label className="form-label small fw-bold">DNI del Cliente (Opcional)</label>
+                <label className="form-label small fw-bold">DNI del Cliente</label>
                 <input 
                   type="text" 
                   className="form-control" 
@@ -298,7 +358,7 @@ export function VentasPage() {
                 />
               </div>
               <div className="col-md-6">
-                <label className="form-label small fw-bold">Método de Pago</label>
+                <label className="form-label small fw-bold">Método de Pago *</label>
                 <select 
                   className="form-select" 
                   value={metodoPago} 
@@ -310,15 +370,29 @@ export function VentasPage() {
                   <option value="Transferencia">Transferencia</option>
                 </select>
               </div>
+              <div className="col-12">
+                  <label className="form-label small fw-bold">Evento Asociado</label>
+                  <select 
+                    className="form-select" 
+                    value={eventoId} 
+                    onChange={(e) => setEventoId(e.target.value)}
+                  >
+                    <option value="">-</option>
+                    {eventosDisponibles.map((ev) => (
+                    <option key={ev.e_id} value={ev.e_id}>
+                      {ev.e_nombre} ({formatearFechaCorta(ev.e_fecha)})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <hr className="my-3" />
-            <h6 className="fw-bold mb-2">Seleccionar Productos del Catálogo</h6>
+            <h6 className="fw-bold mb-2">Seleccionar Productos del Catálogo *</h6>
             
-            {/* Sección de Selección Rediseñada y Compacta */}
             <div className="row g-2 align-items-end mb-3 bg-light p-2 rounded border">
               <div className="col-12 col-md-6">
-                <label className="form-label small text-muted mb-1">Producto (Vino)</label>
+                <label className="form-label small text-muted mb-1">Producto *</label>
                 <select 
                   className="form-select form-select-sm"
                   value={productoSeleccionadoId}
@@ -342,7 +416,7 @@ export function VentasPage() {
                 </select>
               </div>
               <div className="col-4 col-md-3">
-                <label className="form-label small text-muted mb-1">Cantidad</label>
+                <label className="form-label small text-muted mb-1">Cantidad *</label>
                 <input 
                   type="number" 
                   min="1" 
@@ -363,7 +437,7 @@ export function VentasPage() {
               </div>
             </div>
 
-            {/* Tabla del Carrito Temporal Estilizada */}
+            {/* Tabla del Carrito Temporal */}
             <div className="table-responsive border rounded mb-3 bg-white">
               <table className="table table-sm mb-0 align-middle">
                 <thead className="table-light text-secondary small">

@@ -10,6 +10,7 @@ export const listar = async (req, res, next) => {
                 v.v_total AS monto,
                 v.v_metodo_pago AS "metodoPago",
                 v.evento_id AS "eventoId",
+                e.e_nombre AS "eventoNombre",
                 p_cli.pe_dni AS "clienteDni",
                 p_cli.pe_nombre AS "clienteNombre",
                 p_emp.pe_dni AS "empleadoDni",
@@ -17,6 +18,7 @@ export const listar = async (req, res, next) => {
             FROM ventas v
             LEFT JOIN personas p_cli ON v.cliente_id = p_cli.pe_id
             LEFT JOIN personas p_emp ON v.personal_id = p_emp.pe_id
+            LEFT JOIN eventos e ON v.evento_id = e.e_id
             ORDER BY v.v_fecha DESC;
         `;
         const { rows } = await pool.query(query);
@@ -38,6 +40,7 @@ export const detalle = async (req, res, next) => {
                 v.v_total AS monto,
                 v.v_metodo_pago AS "metodoPago",
                 v.evento_id AS "eventoId",
+                e.e_nombre AS "eventoNombre",
                 p_cli.pe_dni AS "clienteDni",
                 p_cli.pe_nombre AS "clienteNombre",
                 p_emp.pe_dni AS "empleadoDni",
@@ -45,6 +48,7 @@ export const detalle = async (req, res, next) => {
             FROM ventas v
             LEFT JOIN personas p_cli ON v.cliente_id = p_cli.pe_id
             LEFT JOIN personas p_emp ON v.personal_id = p_emp.pe_id
+            LEFT JOIN eventos e ON v.evento_id = e.e_id
             WHERE v.v_codigo = $1;
         `;
         const resVenta = await pool.query(queryVenta, [id]);

@@ -1,9 +1,9 @@
-export function TablaVentas({ ventas, onVerDetalle }) {
+export function TablaVentas({ ventas = [], onVerDetalle }) {
   if (ventas.length === 0) {
     return (
       <tr>
-        <td colSpan="7" className="text-center py-4 text-muted">
-          No hay ventas registradas.
+        <td colSpan="7" className="text-center text-muted py-4">
+          No se encontraron ventas registradas.
         </td>
       </tr>
     );
@@ -11,27 +11,40 @@ export function TablaVentas({ ventas, onVerDetalle }) {
 
   return (
     <>
-      {ventas.map((v) => (
-        <tr key={v.codigo || v.id}>
-          <td className="fw-semibold">{v.codigo}</td>
+      {ventas.map((venta) => (
+        <tr key={venta.codigo || venta.id}>
+          <td className="fw-semibold">{venta.codigo}</td>
           <td>
-            {v.fecha ? new Date(v.fecha).toLocaleString('es-AR', { 
-              day: '2-digit', month: '2-digit', year: 'numeric', 
-              hour: '2-digit', minute: '2-digit' 
-            }) : ''}
+            {venta.fecha
+              ? new Date(venta.fecha).toLocaleString('es-AR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              : '-'}
           </td>
-          <td>{v.clienteDni || 'Consumidor Final'}</td>
-          <td>{v.empleadoDni || 'Sin asignar'}</td>
+          <td>{venta.clienteNombre || '-'}</td>
           <td>
-            <span className="badge bg-light text-dark border">{v.metodoPago}</span>
+            {venta.eventoNombre ? (
+              <span
+                className="badge rounded-pill px-2 py-1 fw-semibold"
+                style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A' }}
+              >
+                {venta.eventoNombre}
+              </span>
+            ) : (
+              <span className="text-muted">-</span>
+            )}
           </td>
-          <td className="fw-bold" style={{ color: 'var(--titulos, #64141B)' }}>
-            ${Number(v.monto || v.total || 0).toLocaleString()}
-          </td>
+          <td>{venta.metodoPago || 'Efectivo'}</td>
+          <td className="fw-bold">${Number(venta.monto || 0).toLocaleString()}</td>
           <td className="text-end">
-            <button 
+            <button
+              type="button"
               className="btn btn-sm btn-outline-secondary"
-              onClick={() => onVerDetalle(v)}
+              onClick={() => onVerDetalle(venta)}
             >
               Ver Detalle
             </button>
@@ -41,3 +54,5 @@ export function TablaVentas({ ventas, onVerDetalle }) {
     </>
   );
 }
+
+export default TablaVentas;
