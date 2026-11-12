@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { esEmailValido, esRequerido, tieneLongitudMinima } from '../../../shared/utils/validaciones'
+import { enviarConsulta } from '../services/contactoService'
 
 const VALORES_INICIALES = {
   nombre: '',
@@ -26,14 +27,11 @@ function validar(valores) {
   return errores
 }
 
-function enviarMensaje(valores) {
-  return new Promise((resolve) => setTimeout(() => resolve(valores), 1500))
-}
-
 function FormularioContacto() {
   const [valores, setValores] = useState(VALORES_INICIALES)
   const [errores, setErrores] = useState({})
   const [estado, setEstado] = useState('escribiendo')
+  const [errorEnvio, setErrorEnvio] = useState(null)
   const formularioRef = useRef(null)
 
   function handleChange(e) {
@@ -55,13 +53,21 @@ function FormularioContacto() {
     }
 
     setEstado('enviando')
-    await enviarMensaje(valores)
-    setEstado('enviado')
+    setErrorEnvio(null)
+
+    try {
+      await enviarConsulta(valores)
+      setEstado('enviado')
+    } catch (error) {
+      setErrorEnvio(error.message)
+      setEstado('escribiendo')
+    }
   }
 
   function handleNuevoMensaje() {
     setValores(VALORES_INICIALES)
     setEstado('escribiendo')
+    setErrorEnvio(null)
   }
 
   if (estado === 'enviado') {
@@ -87,6 +93,12 @@ function FormularioContacto() {
   return (
     <form ref={formularioRef} onSubmit={handleSubmit} noValidate>
       
+      {errorEnvio && (
+        <div className="alert alert-danger small py-2 mb-3" role="alert">
+          {errorEnvio}
+        </div>
+      )}
+
       {/* Campo Nombre */}
       <div className="mb-3">
         <label htmlFor="nombre" className="form-label fw-semibold small" style={{ color: '#3E100F' }}>
@@ -165,23 +177,6 @@ function FormularioContacto() {
         <div className="form-text text-end text-muted small">
           {valores.mensaje.length}/{MAXIMO_MENSAJE}
         </div>
-      </div>
-
-      {/* Checkbox Novedades */}
-      <div className="form-check mb-4">
-        <input
-          id="aceptaNovedades"
-          name="aceptaNovedades"
-          type="checkbox"
-          className="form-check-input shadow-none"
-          checked={valores.aceptaNovedades}
-          onChange={handleChange}
-          disabled={enviando}
-          style={{ cursor: 'pointer' }}
-        />
-        <label htmlFor="aceptaNovedades" className="form-check-label text-secondary small" style={{ cursor: 'pointer' }}>
-          Quiero recibir novedades y promociones exclusivas
-        </label>
       </div>
 
       {/* Botón de Enviar */}

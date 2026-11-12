@@ -5,7 +5,7 @@ import Tarjeta from '../../../shared/components/Tarjeta';
 const DATOS_CONTACTO = [
   { id: 1, titulo: 'Dirección', texto: 'San Luis, Argentina' },
   { id: 2, titulo: 'Horario', texto: 'Lunes a sábado de 9 a 20 hs' },
-  { id: 3, titulo: 'Email', texto: 'mariabalbina@gmail.com' },
+  { id: 3, titulo: 'Email', texto: 'maria.balbina.local@gmail.com' },
 ];
 
 function ContactoPage() {
@@ -37,9 +37,9 @@ function ContactoPage() {
                 <h3 className="h4 fw-bold mb-4" style={{ color: '#3E100F' }}>
                   Información
                 </h3>
-                <ul className="list-unstyled">
+                <ul className="list-unstyled mb-3">
                   {DATOS_CONTACTO.map((dato) => (
-                    <li key={dato.id} className="mb-4">
+                    <li key={dato.id} className="mb-3">
                       <strong className="d-block fw-semibold" style={{ color: '#3E100F' }}>
                         {dato.titulo}
                       </strong>
@@ -47,6 +47,28 @@ function ContactoPage() {
                     </li>
                   ))}
                 </ul>
+
+                {/* Contenedor de Ubicación del Local */}
+                <div className="mt-3">
+                  <strong className="d-block fw-semibold mb-2" style={{ color: '#3E100F' }}>
+                    Ubicación del local
+                  </strong>
+                  <div 
+                    className="rounded-3 overflow-hidden shadow-sm border"
+                    style={{ height: '190px', borderColor: '#dee2e6' }}
+                  >
+                    <iframe
+                      title="Ubicación del local"
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3334.468205728863!2d-66.3379!3d-33.3021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95d43981dbfa3237%3A0xa6bf8525b6c7b944!2sMaip%C3%BA%20650%2C%20San%20Luis!5e0!3m2!1ses!2sar!4v1711200000000!5m2!1es!2sar"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, display: 'block' }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-4 pt-3 border-top text-muted small">
