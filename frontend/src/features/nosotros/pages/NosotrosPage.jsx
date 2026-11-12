@@ -70,7 +70,7 @@ function NostrosPages() {
                             <p>
                                 Cada una de nuestras botellas es un tributo a su historia de esfuerzo y esperanza: vinos pensados para celebrar el encuentro, la sobremesa y los lazos que trascienden el tiempo.
                             </p>
-                            <a href="./suscripciones.html" className="btn-nosotros">Conocé nuestras suscripciones</a>
+                            <a href="./suscripciones" className="btn-nosotros">Conocé nuestras suscripciones</a>
                         </div>
 
                 </article>
