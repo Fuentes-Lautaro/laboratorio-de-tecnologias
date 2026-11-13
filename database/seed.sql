@@ -140,3 +140,22 @@ VALUES
     (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucia Gomez (mes siguiente)
     (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
 );
+
+-- Plan 1 (Malbec): Productos 1 y 2
+INSERT INTO registrosMes (ps_id, rm_periodo, p_id) VALUES 
+(1, '2026-12', 1),
+(1, '2026-12', 2);
+
+-- Plan 2 (Malbec-Rosado): Productos 3, 4 y 7
+INSERT INTO registrosMes (ps_id, rm_periodo, p_id) VALUES 
+(2, '2026-12', 3),
+(2, '2026-12', 4),
+(2, '2026-12', 7);
+
+-- Plan 3 (Reserva Especial): Productos 2, 5, 10, 11 y 18
+INSERT INTO registrosMes (ps_id, rm_periodo, p_id) VALUES 
+(3, '2026-12', 2),
+(3, '2026-12', 5),
+(3, '2026-12', 10),
+(3, '2026-12', 11),
+(3, '2026-12', 18);

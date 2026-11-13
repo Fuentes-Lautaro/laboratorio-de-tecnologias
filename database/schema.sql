@@ -81,3 +81,10 @@ CREATE TABLE suscripcion (
     CONSTRAINT fk_plan_suscripcion FOREIGN KEY (ps_id) REFERENCES planes(ps_id)
 );
 
+CREATE TABLE registrosMes (
+    rm_id SERIAL PRIMARY KEY,
+    ps_id INT NOT NULL REFERENCES planes(ps_id) ON DELETE CASCADE,
+    rm_periodo VARCHAR(7) NOT NULL, -- Formato 'YYYY-MM', ej: '2026-12'
+    p_id INT NOT NULL REFERENCES productos(p_id) ON DELETE CASCADE
+);
+

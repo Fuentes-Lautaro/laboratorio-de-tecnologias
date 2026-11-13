@@ -9,7 +9,10 @@ const router = Router();
 router.get('/', controller.listar);
 
 //RUTAS PROTEGIDAS
+
+
 router.post('/', verificarToken,verificarRol(['gerente']), controller.crear);
+router.post('/registroMes/:id',verificarToken, verificarRol(['gerente']), controller.guardarRegistroMes);
 router.put('/:id', verificarToken,verificarRol(['gerente']), controller.modificar);
 router.patch('/:id', verificarToken, verificarRol(['gerente']), controller.alternar);
 //SOLO PARA PRUEBAS, NO SE DEBE USAR EN PRODUCCION
