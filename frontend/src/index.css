@@ -254,12 +254,6 @@ footer {
     object-fit: contain;
 }
 
-.tablas-planes-contenedor {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  align-items: stretch; /* Fuerza a que todas midan exactamente lo mismo de alto */
-}
 
 /*--------------------------------SECCIÓN NOSOTROS--------------------------------*/
 .nosotros-main {
@@ -590,7 +584,7 @@ footer {
 /*------------------------------------------------------------------------------------------------------*/
 /* Tarjeta unificada para el flujo de autenticación/registro */
 .card-auth-flujo {
-  background-color: var(--paneles, #ffffff);
+  background-color: var(--titulos, #ffffff);
   border-radius: 12px;
   border: none;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -632,4 +626,108 @@ footer {
   background-color: var(--titulos);
   border-color: var(--titulos);
   opacity: 0.7;
+}
+
+
+
+/* --- TARJETA DE PLAN --- */
+.card-plan-vip {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(181, 134, 90, 0.25);
+  box-shadow: 0 4px 20px rgba(62, 16, 15, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card-plan-vip:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px rgba(62, 16, 15, 0.1);
+  border-color: var(--detalles, #B5865A);
+}
+
+.border-bottom-sutil {
+  border-bottom: 1px solid rgba(181, 134, 90, 0.18);
+}
+
+.plan-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--detalles, #B5865A);
+}
+
+.plan-titulo {
+  color: var(--titulos, #3E100F);
+  font-size: 1.45rem;
+  letter-spacing: -0.3px;
+}
+
+.plan-descripcion {
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limita a 3 líneas para que todas las tarjetas midan igual */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.precio-monto {
+  font-size: 2rem;
+  color: var(--detalles, #3E100F);
+  letter-spacing: -0.5px;
+}
+
+.badge-cantidad {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--titulos, #3E100F);
+  background-color: rgba(181, 134, 90, 0.12);
+  padding: 3px 10px;
+  border-radius: 50rem;
+}
+
+.lista-vinos-limpia li {
+  font-size: 0.88rem;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+
+.lista-vinos-limpia li:last-child {
+  border-bottom: none;
+}
+
+.btn-suscribir-vip {
+  background-color: var(--titulos, #3E100F);
+  border: none;
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-suscribir-vip:hover {
+  background-color: var(--detalles, #B5865A);
+  transform: translateY(-1px);
+}
+
+.tablas-planes-contenedor {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  align-items: stretch;
+}
+
+@media (max-width: 992px) {
+  .tablas-planes-contenedor {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+.fondo-suscripciones-home {
+  background-color: var(--fondo-secundario) !important;
+  width: 100vw !important;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
 }

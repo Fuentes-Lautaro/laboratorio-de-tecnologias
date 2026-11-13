@@ -59,7 +59,7 @@ export function VerSuscripcionPage() {
 
     if (cargando) {
         return (
-            <div className="container py-5 text-center">
+            <div className="container py-5 text-center st">
                 <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Cargando...</span>
                 </div>
