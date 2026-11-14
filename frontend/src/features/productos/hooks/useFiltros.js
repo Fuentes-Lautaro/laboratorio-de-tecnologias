@@ -1,72 +1,94 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react';
 
-export function useFiltros(productos) {
-  const [marcasSeleccionadas, setMarcas] = useState([])
-  const [tiposSeleccionados, setTipos] = useState([])
-  const [varietalesSeleccionados, setVarietales] = useState([])
-  const [medidasSeleccionadas, setMedidas] = useState([])
-  const [bodegasSeleccionadas, setBodegas] = useState([])
-  const [busqueda, setBusqueda] = useState('')
+export function useFiltros(productos = [], productosOpciones = null) {
+  const [marcasSeleccionadas, setMarcas] = useState([]);
+  const [tiposSeleccionados, setTipos] = useState([]);
+  const [varietalesSeleccionados, setVarietales] = useState([]);
+  const [medidasSeleccionadas, setMedidas] = useState([]);
+  const [bodegasSeleccionadas, setBodegas] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
 
-  const lista = productos ?? []
+  const lista = productos ?? [];
+  const fuenteOpciones = productosOpciones ?? lista;
 
-  // Extraemos las opciones únicas soportando tanto prefijo `p_` como formato plano
-  const marcas = [...new Set(lista.map((p) => p.p_marca || p.marca).filter(Boolean))].sort()
-  const tipos = [...new Set(lista.map((p) => p.p_tipo || p.tipo).filter(Boolean))].sort()
-  const varietales = [...new Set(lista.map((p) => p.p_varietal || p.varietal).filter(Boolean))].sort()
-  const bodegas = [...new Set(lista.map((p) => p.p_bodega || p.bodega).filter(Boolean))].sort()
-  const medidas = [...new Set(lista.map((p) => String(p.p_medida || p.medida)).filter(Boolean))].sort()
+  // Opciones únicas para los menús desplegables
+  const marcas = useMemo(
+    () => [...new Set(fuenteOpciones.map((p) => p.p_marca || p.marca).filter(Boolean))].sort(),
+    [fuenteOpciones]
+  );
+  const tipos = useMemo(
+    () => [...new Set(fuenteOpciones.map((p) => p.p_tipo || p.tipo).filter(Boolean))].sort(),
+    [fuenteOpciones]
+  );
+  const varietales = useMemo(
+    () => [...new Set(fuenteOpciones.map((p) => p.p_varietal || p.varietal).filter(Boolean))].sort(),
+    [fuenteOpciones]
+  );
+  const bodegas = useMemo(
+    () => [...new Set(fuenteOpciones.map((p) => p.p_bodega || p.bodega).filter(Boolean))].sort(),
+    [fuenteOpciones]
+  );
+  const medidas = useMemo(
+    () => [...new Set(fuenteOpciones.map((p) => String(p.p_medida || p.medida)).filter(Boolean))].sort(),
+    [fuenteOpciones]
+  );
 
-  const textoBuscado = busqueda.trim().toLowerCase()
+  // Objeto estable de filtros que viaja como query params al backend
+  const paramsBack = useMemo(() => {
+    const tieneFiltros =
+      marcasSeleccionadas.length > 0 ||
+      tiposSeleccionados.length > 0 ||
+      varietalesSeleccionados.length > 0 ||
+      medidasSeleccionadas.length > 0 ||
+      bodegasSeleccionadas.length > 0;
 
-  const productosFiltrados = lista.filter((p) => {
-    // Normalizamos la lectura de los campos
-    const marca = p.p_marca || p.marca || ''
-    const tipo = p.p_tipo || p.tipo || ''
-    const varietal = p.p_varietal || p.varietal || ''
-    const bodega = p.p_bodega || p.bodega || ''
-    const medida = String(p.p_medida || p.medida || '')
+    if (!tieneFiltros) return undefined;
 
-    // Validación de selecciones desplegables
-    const coincideMarca = marcasSeleccionadas.length === 0 || marcasSeleccionadas.includes(marca)
-    const coincideTipo = tiposSeleccionados.length === 0 || tiposSeleccionados.includes(tipo)
-    const coincideVarietal = varietalesSeleccionados.length === 0 || varietalesSeleccionados.includes(varietal)
-    const coincideBodega = bodegasSeleccionadas.length === 0 || bodegasSeleccionadas.includes(bodega)
-    const coincideMedida = medidasSeleccionadas.length === 0 || medidasSeleccionadas.includes(medida)
+    return {
+      marca: marcasSeleccionadas,
+      tipo: tiposSeleccionados,
+      varietal: varietalesSeleccionados,
+      medida: medidasSeleccionadas,
+      bodega: bodegasSeleccionadas,
+    };
+  }, [
+    marcasSeleccionadas,
+    tiposSeleccionados,
+    varietalesSeleccionados,
+    medidasSeleccionadas,
+    bodegasSeleccionadas,
+  ]);
 
-    // Validación de la búsqueda general por texto
-    const coincideBusqueda =
-      !textoBuscado ||
-      marca.toLowerCase().includes(textoBuscado) ||
-      tipo.toLowerCase().includes(textoBuscado) ||
-      varietal.toLowerCase().includes(textoBuscado) ||
-      bodega.toLowerCase().includes(textoBuscado)
+  // El cuadro de texto filtra en el frontend sobre los resultados devueltos por el backend
+  const textoBuscado = busqueda.trim().toLowerCase();
 
-    return (
-      coincideMarca &&
-      coincideTipo &&
-      coincideVarietal &&
-      coincideBodega &&
-      coincideMedida &&
-      coincideBusqueda
-    )
-  })
+  const productosFiltrados = useMemo(() => {
+    if (!textoBuscado) return lista;
 
-  const hayFiltrosActivos =
-    marcasSeleccionadas.length > 0 ||
-    tiposSeleccionados.length > 0 ||
-    varietalesSeleccionados.length > 0 ||
-    medidasSeleccionadas.length > 0 ||
-    bodegasSeleccionadas.length > 0 ||
-    textoBuscado !== ''
+    return lista.filter((p) => {
+      const marca = p.p_marca || p.marca || '';
+      const tipo = p.p_tipo || p.tipo || '';
+      const varietal = p.p_varietal || p.varietal || '';
+      const bodega = p.p_bodega || p.bodega || '';
+
+      return (
+        marca.toLowerCase().includes(textoBuscado) ||
+        tipo.toLowerCase().includes(textoBuscado) ||
+        varietal.toLowerCase().includes(textoBuscado) ||
+        bodega.toLowerCase().includes(textoBuscado)
+      );
+    });
+  }, [lista, textoBuscado]);
+
+  const hayFiltrosActivos = Boolean(paramsBack) || textoBuscado !== '';
 
   function limpiarFiltros() {
-    setMarcas([])
-    setTipos([])
-    setVarietales([])
-    setMedidas([])
-    setBodegas([])
-    setBusqueda('')
+    setMarcas([]);
+    setTipos([]);
+    setVarietales([]);
+    setMedidas([]);
+    setBodegas([]);
+    setBusqueda('');
   }
 
   return {
@@ -87,8 +109,9 @@ export function useFiltros(productos) {
     bodegas,
     busqueda,
     setBusqueda,
+    paramsBack,
     productosFiltrados,
     hayFiltrosActivos,
     limpiarFiltros,
-  }
+  };
 }

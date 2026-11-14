@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ProductoCard from '../components/ProductoCard';
+import FiltroDesplegable from '../components/FiltroDesplegable';
+import Boton from '../../../shared/components/Boton';
+import { useFiltros } from '../hooks/useFiltros';
 import { 
   getProductos, 
   crearProducto, 
@@ -14,38 +17,19 @@ const FORM_INICIAL = {
 
 export function ProductosPagePrivada() {
   const [productos, setProductos] = useState([]);
+  const [productosOpciones, setProductosOpciones] = useState([]);
   const [cargando, setCargando] = useState(true);
 
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
-  
-  // Estado para el producto al que se le alterará el estado
   const [productoAAlternar, setProductoAAlternar] = useState(null);
 
   const [formData, setFormData] = useState(FORM_INICIAL);
-  const [terminoBusqueda, setTerminoBusqueda] = useState('');
-
-  // Estado para alertas/notificaciones generales
   const [alerta, setAlerta] = useState(null);
+  const [errorModal, setErrorModal] = useState(null);
 
-  // Estado para errores dentro del modal (incluye opción de reactivar si ya existe inactivo)
-  const [errorModal, setErrorModal] = useState(null); // { texto: string, productoInactivo?: object }
-
-  useEffect(() => {
-    cargarLista();
-  }, []);
-
-  const cargarLista = async () => {
-    try {
-      const data = await getProductos();
-      setProductos(data || []);
-    } catch (err) {
-      console.error('Error al cargar productos:', err);
-      mostrarNotificacion('Error al cargar la lista de productos: ' + err.message, 'danger');
-    } finally {
-      setCargando(false);
-    }
-  };
+  // Hook de filtros compartido con Catálogo
+  const filtros = useFiltros(productos, productosOpciones);
 
   const mostrarNotificacion = (texto, tipo = 'success') => {
     setAlerta({ texto, tipo });
@@ -54,14 +38,37 @@ export function ProductosPagePrivada() {
     }, 3500);
   };
 
-  const productosFiltrados = productos.filter((producto) => {
-    const busquedaMinuscula = terminoBusqueda.toLowerCase();
-    const coincideMarca = (producto.p_marca || producto.marca || '').toLowerCase().includes(busquedaMinuscula);
-    const coincideTipo = (producto.p_tipo || producto.tipo || '').toLowerCase().includes(busquedaMinuscula);
-    const coincideVarietal = (producto.p_varietal || producto.varietal || '').toLowerCase().includes(busquedaMinuscula);
-    const coincideBodega = (producto.p_bodega || producto.bodega || '').toLowerCase().includes(busquedaMinuscula);
-    return coincideMarca || coincideTipo || coincideVarietal || coincideBodega;
-  });
+  // Carga las opciones completas de los desplegables sin filtrar
+  const cargarOpcionesBase = useCallback(async () => {
+    try {
+      const todos = await getProductos();
+      setProductosOpciones(todos || []);
+    } catch (err) {
+      console.error('Error al cargar opciones de filtro:', err);
+    }
+  }, []);
+
+  // Carga los productos enviando los filtros desplegables al backend
+  const cargarLista = useCallback(async () => {
+    setCargando(true);
+    try {
+      const data = await getProductos(filtros.paramsBack);
+      setProductos(data || []);
+    } catch (err) {
+      console.error('Error al cargar productos:', err);
+      mostrarNotificacion('Error al cargar la lista de productos: ' + err.message, 'danger');
+    } finally {
+      setCargando(false);
+    }
+  }, [filtros.paramsBack]);
+
+  useEffect(() => {
+    cargarOpcionesBase();
+  }, [cargarOpcionesBase]);
+
+  useEffect(() => {
+    cargarLista();
+  }, [cargarLista]);
 
   const handleAbrirCrear = () => {
     setProductoEditando(null);
@@ -103,18 +110,15 @@ export function ProductosPagePrivada() {
     try {
       if (productoEditando) {
         const id = productoEditando.p_id || productoEditando.id || formData.id;
-        const guardado = await actualizarProducto(id, formData);
-        
-        setProductos((prev) =>
-          prev.map((ev) => ((ev.p_id || ev.id) === id ? { ...ev, ...guardado } : ev))
-        );
+        await actualizarProducto(id, formData);
         mostrarNotificacion('¡Producto modificado con éxito!', 'success');
       } else {
-        const nuevo = await crearProducto(formData);
-        setProductos((prev) => [...prev, nuevo]);
+        await crearProducto(formData);
         mostrarNotificacion('¡Producto creado con éxito!', 'success');
       }
       setMostrarModalForm(false);
+      cargarLista();
+      cargarOpcionesBase();
     } catch (error) {
       console.error('Error al guardar el producto:', error);
       setErrorModal({
@@ -124,36 +128,27 @@ export function ProductosPagePrivada() {
     }
   };
 
-  // Reactivar directamente el producto inactivo detectado por duplicidad
   const handleReactivarDesdeModal = async () => {
     const prodInactivo = errorModal?.productoInactivo;
     if (!prodInactivo) return;
 
     const id = prodInactivo.p_id || prodInactivo.id;
     try {
-      const productoReactivado = await alternarEstadoProducto(id);
-      setProductos((prev) =>
-        prev.map((item) => ((item.p_id || item.id) === id ? { ...item, ...productoReactivado, p_activo: true } : item))
-      );
+      await alternarEstadoProducto(id);
       setErrorModal(null);
       setMostrarModalForm(false);
       mostrarNotificacion('¡El producto existente fue reactivado con éxito!', 'success');
+      cargarLista();
     } catch (error) {
       setErrorModal({ texto: 'Error al reactivar el producto: ' + error.message });
     }
   };
 
-  const handleBusquedaChange = (e) => {
-    setTerminoBusqueda(e.target.value);
-  };
-
-  // Abrir modal de alteración de estado
   const handleSolicitarAlternarEstado = (id) => {
     const encontrado = productos.find((pr) => (pr.p_id || pr.id) === id);
     if (encontrado) setProductoAAlternar(encontrado);
   };
 
-  // Confirmar la alteración de estado (Activar / Desactivar)
   const handleConfirmarAlternarEstado = async () => {
     if (!productoAAlternar) return;
     const id = productoAAlternar.p_id || productoAAlternar.id;
@@ -228,42 +223,99 @@ export function ProductosPagePrivada() {
         </button>
       </div>
 
-      <div className="mb-3">
-        <input 
-          type="text" 
-          className="form-control" 
-          placeholder="Buscar producto por marca, tipo, varietal o bodega..." 
-          value={terminoBusqueda}
-          onChange={handleBusquedaChange}
-          style={{ maxWidth: '500px' }}
-        />
-      </div>
-      
-      {/* Grilla de Productos */}
-      {cargando ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-warning" role="status"></div>
-          <p className="text-muted small mt-2">Cargando gestión...</p>
-        </div>
-      ) : (
-        <div className="row g-4">
-          {productosFiltrados.map((producto) => (
-            <div key={producto.p_id || producto.id} className="col-12 col-md-6 col-lg-4">
-              <ProductoCard
-                producto={producto}
-                esGestion={true}
-                onEditar={handleAbrirEditar}
-                onEliminar={handleSolicitarAlternarEstado}
-              />
+      {/* Layout con Barra Lateral de Filtros + Grilla */}
+      <div className="row g-3">
+        <aside className="col-lg-3 d-flex flex-column gap-1">
+          <label htmlFor="busqueda-privada" className="rotulo-filtro mb-2">
+            Buscar
+          </label>
+          <input
+            id="busqueda-privada"
+            type="search"
+            className="form-control input-busqueda campo-busqueda-tag mb-2"
+            placeholder="Marca, tipo, varietal o bodega..."
+            value={filtros.busqueda}
+            onChange={(e) => filtros.setBusqueda(e.target.value)}
+          />
+
+          <FiltroDesplegable
+            titulo="Marcas"
+            opciones={filtros.marcas}
+            seleccionados={filtros.marcasSeleccionadas}
+            onCambio={filtros.setMarcas}
+          />
+
+          <FiltroDesplegable
+            titulo="Tipos"
+            opciones={filtros.tipos}
+            seleccionados={filtros.tiposSeleccionados}
+            onCambio={filtros.setTipos}
+          />
+
+          <FiltroDesplegable
+            titulo="Varietal"
+            opciones={filtros.varietales}
+            seleccionados={filtros.varietalesSeleccionados}
+            onCambio={filtros.setVarietales}
+          />
+
+          <FiltroDesplegable
+            titulo="Bodega"
+            opciones={filtros.bodegas}
+            seleccionados={filtros.bodegasSeleccionadas}
+            onCambio={filtros.setBodegas}
+          />
+
+          <FiltroDesplegable
+            titulo="Medida"
+            opciones={filtros.medidas}
+            seleccionados={filtros.medidasSeleccionadas}
+            onCambio={filtros.setMedidas}
+          />
+
+          {filtros.hayFiltrosActivos && (
+            <Boton
+              variante="outline-secondary"
+              tamanio="sm"
+              className="boton-error mt-2"
+              onClick={filtros.limpiarFiltros}
+            >
+              Limpiar filtros
+            </Boton>
+          )}
+        </aside>
+
+        <section className="col-lg-9">
+          <p className="small text-body-secondary">
+            Mostrando {filtros.productosFiltrados.length} de {productosOpciones.length} productos
+          </p>
+
+          {cargando ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-warning" role="status"></div>
+              <p className="text-muted small mt-2">Cargando gestión...</p>
             </div>
-          ))}
-          {productos.length === 0 && (
-            <div className="col-12 text-center py-5 text-muted">
-              No hay productos registrados. Hacé clic en "Nuevo Producto" para agregar uno.
+          ) : (
+            <div className="row g-4">
+              {filtros.productosFiltrados.map((producto) => (
+                <div key={producto.p_id || producto.id} className="col-12 col-md-6 col-lg-4">
+                  <ProductoCard
+                    producto={producto}
+                    esGestion={true}
+                    onEditar={handleAbrirEditar}
+                    onEliminar={handleSolicitarAlternarEstado}
+                  />
+                </div>
+              ))}
+              {filtros.productosFiltrados.length === 0 && (
+                <div className="col-12 text-center py-5 text-muted">
+                  No se encontraron productos con los filtros aplicados.
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
+        </section>
+      </div>
 
       {/* MODAL CREACIÓN / EDICIÓN */}
       {mostrarModalForm && (
@@ -279,7 +331,6 @@ export function ProductosPagePrivada() {
 
               <form onSubmit={handleSubmitForm}>
                 <div className="modal-body p-4">
-                  {/* Alerta interna del modal (duplicados / opción reactivar) */}
                   {errorModal && (
                     <div className="alert alert-danger d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3" role="alert">
                       <div className="small">

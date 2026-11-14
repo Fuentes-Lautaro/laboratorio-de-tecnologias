@@ -32,8 +32,31 @@ async function buscarProductoDuplicado({ marca, tipo, varietal, medida, bodega, 
 
 export const listar = async (req, res, next) => {
   try {
-    const { rows } = await pool.query(`
-      SELECT * FROM productos 
+    const { marca, tipo, varietal, bodega, medida } = req.query;
+
+    let query = 'SELECT * FROM productos WHERE 1=1';
+    const values = [];
+
+    const agregarFiltroMultiple = (columna, valorQuery) => {
+      if (!valorQuery) return;
+      const lista = String(valorQuery)
+        .split(',')
+        .map((v) => v.trim())
+        .filter(Boolean);
+
+      if (lista.length > 0) {
+        values.push(lista);
+        query += ` AND ${columna} = ANY($${values.length})`;
+      }
+    };
+
+    agregarFiltroMultiple('p_marca', marca);
+    agregarFiltroMultiple('p_tipo', tipo);
+    agregarFiltroMultiple('p_varietal', varietal);
+    agregarFiltroMultiple('p_bodega', bodega);
+    agregarFiltroMultiple('p_medida', medida);
+
+    query += `
       ORDER BY 
         CASE 
           WHEN p_activo = true AND p_stock > 0 THEN 1
@@ -41,7 +64,9 @@ export const listar = async (req, res, next) => {
           ELSE 3
         END ASC,
         p_precio ASC
-    `);
+    `;
+
+    const { rows } = await pool.query(query, values);
     res.json(rows);
   } catch (err) {
     next(err);

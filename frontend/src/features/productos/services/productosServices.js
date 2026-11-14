@@ -21,8 +21,23 @@ async function procesarRespuesta(respuesta, mensajeError) {
   return respuesta.json();
 }
 
-export async function getProductos() {
-  const respuesta = await fetch(`${URL_BASE}/productos`);
+export async function getProductos(filtros = {}) {
+  const queryParams = new URLSearchParams();
+
+  if (filtros && typeof filtros === 'object') {
+    Object.entries(filtros).forEach(([clave, valor]) => {
+      if (Array.isArray(valor) && valor.length > 0) {
+        queryParams.append(clave, valor.join(','));
+      } else if (typeof valor === 'string' && valor.trim() !== '') {
+        queryParams.append(clave, valor.trim());
+      }
+    });
+  }
+
+  const queryString = queryParams.toString();
+  const url = queryString ? `${URL_BASE}/productos?${queryString}` : `${URL_BASE}/productos`;
+
+  const respuesta = await fetch(url);
 
   if (!respuesta.ok) {
     throw new Error('No se pudieron obtener los productos');
