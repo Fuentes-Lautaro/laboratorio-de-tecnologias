@@ -32,7 +32,7 @@ async function buscarProductoDuplicado({ marca, tipo, varietal, medida, bodega, 
 
 export const listar = async (req, res, next) => {
   try {
-    const { marca, tipo, varietal, bodega, medida, page, limit } = req.query;
+    const { marca, tipo, varietal, bodega, medida, page, limit, todos } = req.query;
 
     const conPaginado = page !== undefined || limit !== undefined;
     const limiteNum = Math.max(1, parseInt(limit, 10) || 30);
@@ -42,6 +42,11 @@ export const listar = async (req, res, next) => {
     let query = conPaginado
       ? 'SELECT *, COUNT(*) OVER() AS total_registros FROM productos WHERE 1=1'
       : 'SELECT * FROM productos WHERE 1=1';
+
+    // Por defecto (catálogo público) solo trae productos activos
+    if (todos !== 'true') {
+      query += ' AND p_activo = true';
+    }
 
     const values = [];
 
@@ -88,7 +93,6 @@ export const listar = async (req, res, next) => {
     const total = rows.length > 0 ? Number(rows[0].total_registros) : 0;
     const totalPaginas = Math.max(1, Math.ceil(total / limiteNum));
 
-    // Quitamos la columna auxiliar total_registros de cada producto
     const productos = rows.map(({ total_registros, ...producto }) => producto);
 
     res.json({

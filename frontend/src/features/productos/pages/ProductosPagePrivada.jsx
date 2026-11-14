@@ -49,7 +49,7 @@ export function ProductosPagePrivada() {
 
   const cargarOpcionesBase = useCallback(async () => {
     try {
-      const todos = await getProductos();
+      const todos = await getProductos({ todos: 'true' });
       setProductosOpciones(todos || []);
     } catch (err) {
       console.error('Error al cargar opciones de filtro:', err);
@@ -63,6 +63,7 @@ export function ProductosPagePrivada() {
         ...(filtros.paramsBack || {}),
         page: pagina,
         limit: LIMITE_POR_PAGINA,
+        todos: 'true',
       });
 
       setProductos(respuesta.productos || []);
