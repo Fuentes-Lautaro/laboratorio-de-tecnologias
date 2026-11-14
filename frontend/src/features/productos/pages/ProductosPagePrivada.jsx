@@ -25,8 +25,11 @@ export function ProductosPagePrivada() {
   const [formData, setFormData] = useState(FORM_INICIAL);
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
 
-  // Estado para alertas/notificaciones
+  // Estado para alertas/notificaciones generales
   const [alerta, setAlerta] = useState(null);
+
+  // Estado para errores dentro del modal (incluye opción de reactivar si ya existe inactivo)
+  const [errorModal, setErrorModal] = useState(null); // { texto: string, productoInactivo?: object }
 
   useEffect(() => {
     cargarLista();
@@ -63,11 +66,13 @@ export function ProductosPagePrivada() {
   const handleAbrirCrear = () => {
     setProductoEditando(null);
     setFormData(FORM_INICIAL);
+    setErrorModal(null);
     setMostrarModalForm(true);
   };
 
   const handleAbrirEditar = (producto) => {
     setProductoEditando(producto);
+    setErrorModal(null);
     setFormData({
       id: producto.p_id || producto.id || '',
       marca: producto.p_marca || producto.marca || '',
@@ -88,10 +93,13 @@ export function ProductosPagePrivada() {
   const handleChangeForm = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errorModal) setErrorModal(null);
   };
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
+    setErrorModal(null);
+
     try {
       if (productoEditando) {
         const id = productoEditando.p_id || productoEditando.id || formData.id;
@@ -109,7 +117,29 @@ export function ProductosPagePrivada() {
       setMostrarModalForm(false);
     } catch (error) {
       console.error('Error al guardar el producto:', error);
-      mostrarNotificacion('Error al guardar el producto: ' + error.message, 'danger');
+      setErrorModal({
+        texto: error.message,
+        productoInactivo: error.productoInactivo || null
+      });
+    }
+  };
+
+  // Reactivar directamente el producto inactivo detectado por duplicidad
+  const handleReactivarDesdeModal = async () => {
+    const prodInactivo = errorModal?.productoInactivo;
+    if (!prodInactivo) return;
+
+    const id = prodInactivo.p_id || prodInactivo.id;
+    try {
+      const productoReactivado = await alternarEstadoProducto(id);
+      setProductos((prev) =>
+        prev.map((item) => ((item.p_id || item.id) === id ? { ...item, ...productoReactivado, p_activo: true } : item))
+      );
+      setErrorModal(null);
+      setMostrarModalForm(false);
+      mostrarNotificacion('¡El producto existente fue reactivado con éxito!', 'success');
+    } catch (error) {
+      setErrorModal({ texto: 'Error al reactivar el producto: ' + error.message });
     }
   };
 
@@ -131,9 +161,8 @@ export function ProductosPagePrivada() {
     const nuevoEstado = !estadoActual;
 
     try {
-      const productoActualizado = await alternarEstadoProducto(id, nuevoEstado);
+      const productoActualizado = await alternarEstadoProducto(id);
 
-      // Actualizamos el objeto en la lista (no lo eliminamos de la vista del gestor)
       setProductos((prev) =>
         prev.map((item) => {
           const itemId = item.p_id || item.id;
@@ -160,7 +189,6 @@ export function ProductosPagePrivada() {
     }
   };
 
-  // Verificamos si el producto seleccionado en el modal está activo
   const estaActivoModal = productoAAlternar 
     ? (productoAAlternar.p_activo ?? productoAAlternar.activo ?? true)
     : true;
@@ -251,10 +279,27 @@ export function ProductosPagePrivada() {
 
               <form onSubmit={handleSubmitForm}>
                 <div className="modal-body p-4">
-                  <div className="row g-3">
+                  {/* Alerta interna del modal (duplicados / opción reactivar) */}
+                  {errorModal && (
+                    <div className="alert alert-danger d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mb-3" role="alert">
+                      <div className="small">
+                        <strong>⚠️ </strong> {errorModal.texto}
+                      </div>
+                      {errorModal.productoInactivo && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-warning fw-semibold text-nowrap"
+                          onClick={handleReactivarDesdeModal}
+                        >
+                          Reactivar producto existente
+                        </button>
+                      )}
+                    </div>
+                  )}
 
+                  <div className="row g-3">
                     <div className="col-12 col-md-6">
-                      <label className="form-label small fw-bold">Marca</label>
+                      <label className="form-label small fw-bold">Marca *</label>
                       <input
                         type="text"
                         name="marca"
@@ -267,7 +312,7 @@ export function ProductosPagePrivada() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label small fw-bold">Tipo</label>
+                      <label className="form-label small fw-bold">Tipo *</label>
                       <input
                         type="text"
                         name="tipo"
@@ -280,10 +325,11 @@ export function ProductosPagePrivada() {
                     </div>    
 
                     <div className="col-12 col-md-6">
-                      <label className="form-label small fw-bold">Bodega</label>
+                      <label className="form-label small fw-bold">Bodega *</label>
                       <input
                         type="text"
                         name="bodega"
+                        required
                         className="form-control"
                         value={formData.bodega}
                         onChange={handleChangeForm}
@@ -299,14 +345,16 @@ export function ProductosPagePrivada() {
                         className="form-control"
                         value={formData.varietal}
                         onChange={handleChangeForm}
-                        placeholder="Ej: Malbec"
+                        placeholder="Ej: Malbec (Opcional)"
                       />
                     </div>
 
                     <div className="col-12 col-md-4">
-                      <label className="form-label small fw-bold">Precio</label>
+                      <label className="form-label small fw-bold">Precio *</label>
                       <input
-                        type="text"
+                        type="number"
+                        step="0.01"
+                        min="0"
                         name="precio"
                         required
                         className="form-control"
@@ -319,7 +367,9 @@ export function ProductosPagePrivada() {
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Costo</label>
                       <input
-                        type="text"
+                        type="number"
+                        step="0.01"
+                        min="0"
                         name="costo"
                         className="form-control"
                         value={formData.costo}
@@ -329,7 +379,7 @@ export function ProductosPagePrivada() {
                     </div>
 
                     <div className="col-12 col-md-4">
-                      <label className="form-label small fw-bold">Stock</label>
+                      <label className="form-label small fw-bold">Stock *</label>
                       <input
                         type="number"
                         name="stock"
@@ -344,8 +394,10 @@ export function ProductosPagePrivada() {
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Año</label>
                       <input
-                        type="text"
+                        type="number"
                         name="anio"
+                        min="1800"
+                        max={new Date().getFullYear()}
                         className="form-control"
                         value={formData.anio}
                         onChange={handleChangeForm}
@@ -354,10 +406,11 @@ export function ProductosPagePrivada() {
                     </div>
 
                     <div className="col-12 col-md-8">
-                      <label className="form-label small fw-bold">Medida</label>
+                      <label className="form-label small fw-bold">Medida *</label>
                       <input
                         type="text"
                         name="medida"
+                        required
                         className="form-control"
                         value={formData.medida}
                         onChange={handleChangeForm}
@@ -410,8 +463,6 @@ export function ProductosPagePrivada() {
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-              
-              {/* Encabezado con color institucional */}
               <div className="modal-header border-0 text-white" style={{ backgroundColor: 'var(--titulos, #3E100F)' }}>
                 <h5 className="modal-title fw-bold fs-6">
                   {estaActivoModal ? 'Confirmar Desactivación' : 'Confirmar Activación'}
@@ -446,7 +497,6 @@ export function ProductosPagePrivada() {
                   {estaActivoModal ? 'Sí, Desactivar' : 'Sí, Activar'}
                 </button>
               </div>
-
             </div>
           </div>
         </div>

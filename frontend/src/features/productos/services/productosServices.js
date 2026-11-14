@@ -3,7 +3,6 @@ import { obtenerSesion, cerrarSesion } from '../../auth';
 const URL_BASE = `${import.meta.env.VITE_API_URL}/api`;
 
 async function procesarRespuesta(respuesta, mensajeError) {
-  // Si el token venció o no está autorizado, expulsa la sesión y manda a /login
   if (respuesta.status === 401 || respuesta.status === 403) {
     cerrarSesion();
     window.location.href = '/login';
@@ -12,7 +11,11 @@ async function procesarRespuesta(respuesta, mensajeError) {
 
   if (!respuesta.ok) {
     const err = await respuesta.json().catch(() => ({}));
-    throw new Error(err.error || err.mensaje || mensajeError);
+    const error = new Error(err.error || err.mensaje || mensajeError);
+    if (err.productoInactivo) {
+      error.productoInactivo = err.productoInactivo;
+    }
+    throw error;
   }
 
   return respuesta.json();

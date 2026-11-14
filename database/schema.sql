@@ -26,13 +26,22 @@ CREATE TABLE productos (
     p_precio NUMERIC(10, 2) NOT NULL CHECK (p_precio >= 0),
     p_costo NUMERIC(10, 2) NOT NULL CHECK (p_costo >= 0),
     p_anio INT CHECK (p_anio BETWEEN 1800 AND EXTRACT(YEAR FROM CURRENT_DATE)),
-    p_medida VARCHAR(20),
+    p_medida VARCHAR(20) NOT NULL,
     p_varietal VARCHAR(50),
-    p_bodega VARCHAR(50),
+    p_bodega VARCHAR(50) NOT NULL,
     p_descripcion VARCHAR(500),
     p_imagen_url VARCHAR(200),
     p_stock INT NOT NULL DEFAULT 0 CHECK (p_stock >= 0),
     p_activo BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE UNIQUE INDEX idx_productos_unicidad ON productos (
+    LOWER(TRIM(p_marca)),
+    LOWER(TRIM(p_tipo)),
+    LOWER(TRIM(COALESCE(p_varietal, ''))),
+    LOWER(TRIM(p_medida)),
+    LOWER(TRIM(p_bodega)),
+    COALESCE(p_anio, 0)
 );
 
 CREATE TABLE planes (
