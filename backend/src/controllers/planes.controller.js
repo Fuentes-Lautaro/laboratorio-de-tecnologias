@@ -75,8 +75,6 @@ export const listar = async (req, res, next) => {
         const mes = String(proximoMesDate.getMonth() + 1).padStart(2, '0');
         const periodoProximoMes = `${anio}-${mes}`;
 
-        console.log("PERIODO BUSCADO EN DB:", periodoProximoMes);
-
         const query = `
             SELECT 
                 p.ps_id, 
@@ -105,7 +103,6 @@ export const listar = async (req, res, next) => {
         `;
 
         const { rows } = await pool.query(query, [periodoProximoMes]);
-        console.log("PLANES CON PRODUCTOS:", JSON.stringify(rows, null, 2));
         res.json(rows);
     } catch (err) {
         next(err);

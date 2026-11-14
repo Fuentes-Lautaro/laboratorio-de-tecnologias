@@ -55,7 +55,7 @@ export const listar = async (req, res, next) => {
     agregarFiltroMultiple('p_varietal', varietal);
     agregarFiltroMultiple('p_bodega', bodega);
     agregarFiltroMultiple('p_medida', medida);
-
+    
     query += `
       ORDER BY 
         CASE 
@@ -96,7 +96,7 @@ export const crear = async (req, res, next) => {
     }
 
     const duplicado = await buscarProductoDuplicado({ marca, tipo, varietal, medida, bodega, anio });
-
+    
     if (duplicado) {
       if (!duplicado.p_activo) {
         return res.status(409).json({
