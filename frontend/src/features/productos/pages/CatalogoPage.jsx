@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useOutletContext } from 'react-router';
 import GrillaProductos from '../components/GrillaProductos';
 import FiltroDesplegable from '../components/FiltroDesplegable';
@@ -8,37 +8,20 @@ import Boton from '../../../shared/components/Boton';
 import Spinner from '../../../shared/components/Spinner';
 import MensajeVacio from '../../../shared/components/MensajeVacio';
 
+const LIMITE_POR_PAGINA = 30;
+
 function CatalogoPage() {
   const { agregarProducto } = useOutletContext();
 
-  // Estados de los filtros desplegables (viajan al backend)
   const [marcasSeleccionadas, setMarcas] = useState([]);
   const [tiposSeleccionados, setTipos] = useState([]);
   const [varietalesSeleccionados, setVarietales] = useState([]);
   const [medidasSeleccionadas, setMedidas] = useState([]);
   const [bodegasSeleccionadas, setBodegas] = useState([]);
+  const [pagina, setPagina] = useState(1);
 
-  // Estado de búsqueda por texto (filtra en el frontend)
-  const [busqueda, setBusqueda] = useState('');
-
-  // Objeto estable que dispara useFetch cada vez que cambia un desplegable
-  const paramsBack = useMemo(() => {
-    const tieneFiltros =
-      marcasSeleccionadas.length > 0 ||
-      tiposSeleccionados.length > 0 ||
-      varietalesSeleccionados.length > 0 ||
-      medidasSeleccionadas.length > 0 ||
-      bodegasSeleccionadas.length > 0;
-
-    if (!tieneFiltros) return undefined;
-
-    return {
-      marca: marcasSeleccionadas,
-      tipo: tiposSeleccionados,
-      varietal: varietalesSeleccionados,
-      medida: medidasSeleccionadas,
-      bodega: bodegasSeleccionadas,
-    };
+  useEffect(() => {
+    setPagina(1);
   }, [
     marcasSeleccionadas,
     tiposSeleccionados,
@@ -47,16 +30,36 @@ function CatalogoPage() {
     bodegasSeleccionadas,
   ]);
 
-  // 1. Carga base sin filtros (para mantener todas las opciones de los desplegables)
-  const { datos: todosLosProductos } = useFetch(getProductos);
+  const paramsBack = useMemo(() => {
+    const params = {
+      page: pagina,
+      limit: LIMITE_POR_PAGINA,
+    };
 
-  // 2. Carga filtrada desde el backend (se re-ejecuta cada vez que cambia paramsBack)
-  const { datos: productosBack, cargando, error } = useFetch(getProductos, paramsBack);
+    if (marcasSeleccionadas.length > 0) params.marca = marcasSeleccionadas;
+    if (tiposSeleccionados.length > 0) params.tipo = tiposSeleccionados;
+    if (varietalesSeleccionados.length > 0) params.varietal = varietalesSeleccionados;
+    if (medidasSeleccionadas.length > 0) params.medida = medidasSeleccionadas;
+    if (bodegasSeleccionadas.length > 0) params.bodega = bodegasSeleccionadas;
+
+    return params;
+  }, [
+    pagina,
+    marcasSeleccionadas,
+    tiposSeleccionados,
+    varietalesSeleccionados,
+    medidasSeleccionadas,
+    bodegasSeleccionadas,
+  ]);
+
+  const { datos: todosLosProductos } = useFetch(getProductos);
+  const { datos: respuestaPaginada, cargando, error } = useFetch(getProductos, paramsBack);
 
   const baseOpciones = todosLosProductos || [];
-  const listaBack = productosBack || [];
+  const listaProductos = respuestaPaginada?.productos || [];
+  const totalRegistros = respuestaPaginada?.total ?? 0;
+  const totalPaginas = respuestaPaginada?.totalPaginas ?? 1;
 
-  // Opciones únicas de los desplegables
   const marcas = useMemo(
     () => [...new Set(baseOpciones.map((p) => p.p_marca || p.marca).filter(Boolean))].sort(),
     [baseOpciones]
@@ -78,27 +81,12 @@ function CatalogoPage() {
     [baseOpciones]
   );
 
-  // Filtrado por texto en el frontend sobre lo que devolvió el backend
-  const textoBuscado = busqueda.trim().toLowerCase();
-  const productosFiltrados = useMemo(() => {
-    if (!textoBuscado) return listaBack;
-
-    return listaBack.filter((p) => {
-      const marca = p.p_marca || p.marca || '';
-      const tipo = p.p_tipo || p.tipo || '';
-      const varietal = p.p_varietal || p.varietal || '';
-      const bodega = p.p_bodega || p.bodega || '';
-
-      return (
-        marca.toLowerCase().includes(textoBuscado) ||
-        tipo.toLowerCase().includes(textoBuscado) ||
-        varietal.toLowerCase().includes(textoBuscado) ||
-        bodega.toLowerCase().includes(textoBuscado)
-      );
-    });
-  }, [listaBack, textoBuscado]);
-
-  const hayFiltrosActivos = Boolean(paramsBack) || textoBuscado !== '';
+  const hayFiltrosActivos =
+    marcasSeleccionadas.length > 0 ||
+    tiposSeleccionados.length > 0 ||
+    varietalesSeleccionados.length > 0 ||
+    medidasSeleccionadas.length > 0 ||
+    bodegasSeleccionadas.length > 0;
 
   const limpiarFiltros = () => {
     setMarcas([]);
@@ -106,7 +94,12 @@ function CatalogoPage() {
     setVarietales([]);
     setMedidas([]);
     setBodegas([]);
-    setBusqueda('');
+    setPagina(1);
+  };
+
+  const cambiarPagina = (nuevaPagina) => {
+    setPagina(nuevaPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (cargando && !todosLosProductos) return <Spinner texto="Cargando catálogo..." />;
@@ -114,8 +107,8 @@ function CatalogoPage() {
 
   return (
     <>
-      <div className="text-center py-5 max-w-2xl mx-auto">
-        <span 
+      <div className="text-center py-4 max-w-2xl mx-auto">
+        <span
           className="badge rounded-pill px-3 py-2 mb-2 text-uppercase fw-semibold"
           style={{ backgroundColor: 'rgba(181, 134, 90, 0.15)', color: '#B5865A', letterSpacing: '1px' }}
         >
@@ -129,83 +122,89 @@ function CatalogoPage() {
         </p>
       </div>
 
-      <div className="row g-3">
-        <aside className="col-lg-3 d-flex flex-column gap-1">
-          <label htmlFor="busqueda" className="rotulo-filtro mb-2">
-            Buscar
-          </label>
-          <input
-            id="busqueda"
-            type="search"
-            className="form-control input-busqueda campo-busqueda-tag mb-2"
-            placeholder="Ej: Trapiche"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-
-          <FiltroDesplegable
-            titulo="Marcas"
-            opciones={marcas}
-            seleccionados={marcasSeleccionadas}
-            onCambio={setMarcas}
-          />
-
-          <FiltroDesplegable
-            titulo="Tipos"
-            opciones={tipos}
-            seleccionados={tiposSeleccionados}
-            onCambio={setTipos}
-          />
-
-          <FiltroDesplegable
-            titulo="Varietal"
-            opciones={varietales}
-            seleccionados={varietalesSeleccionados}
-            onCambio={setVarietales}
-          />
-
-          <FiltroDesplegable
-            titulo="Bodega"
-            opciones={bodegas}
-            seleccionados={bodegasSeleccionadas}
-            onCambio={setBodegas}
-          />
-
-          <FiltroDesplegable
-            titulo="Medida"
-            opciones={medidas}
-            seleccionados={medidasSeleccionadas}
-            onCambio={setMedidas}
-          />
+      {/* BARRA HORIZONTAL DE FILTROS */}
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 p-3 mb-3 rounded-3 bg-light border">
+        <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+          <FiltroDesplegable titulo="Marca" opciones={marcas} seleccionados={marcasSeleccionadas} onCambio={setMarcas} />
+          <FiltroDesplegable titulo="Tipo" opciones={tipos} seleccionados={tiposSeleccionados} onCambio={setTipos} />
+          <FiltroDesplegable titulo="Varietal" opciones={varietales} seleccionados={varietalesSeleccionados} onCambio={setVarietales} />
+          <FiltroDesplegable titulo="Bodega" opciones={bodegas} seleccionados={bodegasSeleccionadas} onCambio={setBodegas} />
+          <FiltroDesplegable titulo="Medida" opciones={medidas} seleccionados={medidasSeleccionadas} onCambio={setMedidas} />
 
           {hayFiltrosActivos && (
-            <Boton
-              variante="outline-secondary"
-              tamanio="sm"
-              className="boton-error mt-2"
+            <button
+              type="button"
+              className="btn btn-sm btn-link text-decoration-none text-danger fw-semibold px-2"
               onClick={limpiarFiltros}
             >
-              Limpiar filtros
-            </Boton>
+              ✕ Limpiar
+            </button>
           )}
-        </aside>
+        </div>
 
-        <section className="col-lg-9">
-          <p className="small text-body-secondary">
-            {cargando
-              ? 'Actualizando resultados...'
-              : `Mostrando ${productosFiltrados.length} de ${baseOpciones.length} productos`}
-          </p>
-
-          {productosFiltrados.length > 0 ? (
-            <GrillaProductos productos={productosFiltrados} onAgregar={agregarProducto} />
-          ) : (
-            <MensajeVacio titulo="No hay productos con esos filtros" texto="Pruebe con otros filtros">
-              <Boton onClick={limpiarFiltros} className="boton-error">Ver todo</Boton>
-            </MensajeVacio>
-          )}
-        </section>
+        <span className="small text-body-secondary text-nowrap">
+          {cargando
+            ? 'Actualizando...'
+            : `Mostrando ${listaProductos.length} de ${totalRegistros} productos (Pág. ${pagina} de ${totalPaginas})`}
+        </span>
       </div>
+
+      {/* GRILLA CON ESPACIADO INFERIOR */}
+      <section className="pb-5 mb-4">
+        {listaProductos.length > 0 ? (
+          <GrillaProductos productos={listaProductos} onAgregar={agregarProducto} />
+        ) : (
+          <MensajeVacio titulo="No hay productos con esos filtros" texto="Pruebe con otros filtros">
+            <Boton onClick={limpiarFiltros} className="boton-error">
+              Ver todo
+            </Boton>
+          </MensajeVacio>
+        )}
+
+        {totalPaginas > 1 && (
+          <nav aria-label="Paginación de catálogo" className="d-flex justify-content-center mt-5">
+            <ul className="pagination pagination-sm mb-0">
+              <li className={`page-item ${pagina <= 1 ? 'disabled' : ''}`}>
+                <button
+                  className="page-link"
+                  onClick={() => cambiarPagina(pagina - 1)}
+                  disabled={pagina <= 1}
+                  style={{ color: '#3E100F' }}
+                >
+                  Anterior
+                </button>
+              </li>
+
+              {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                <li key={num} className={`page-item ${pagina === num ? 'active' : ''}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => cambiarPagina(num)}
+                    style={
+                      pagina === num
+                        ? { backgroundColor: '#64141B', borderColor: '#64141B', color: '#FFFFFF' }
+                        : { color: '#3E100F' }
+                    }
+                  >
+                    {num}
+                  </button>
+                </li>
+              ))}
+
+              <li className={`page-item ${pagina >= totalPaginas ? 'disabled' : ''}`}>
+                <button
+                  className="page-link"
+                  onClick={() => cambiarPagina(pagina + 1)}
+                  disabled={pagina >= totalPaginas}
+                  style={{ color: '#3E100F' }}
+                >
+                  Siguiente
+                </button>
+              </li>
+            </ul>
+          </nav>
+        )}
+      </section>
     </>
   );
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProductoCard from '../components/ProductoCard';
 import FiltroDesplegable from '../components/FiltroDesplegable';
-import Boton from '../../../shared/components/Boton';
 import { useFiltros } from '../hooks/useFiltros';
 import { 
   getProductos, 
@@ -15,10 +14,16 @@ const FORM_INICIAL = {
   medida: '', varietal: '', bodega: '', descripcion: '', img: '', stock: 0 
 };
 
+const LIMITE_POR_PAGINA = 30;
+
 export function ProductosPagePrivada() {
   const [productos, setProductos] = useState([]);
   const [productosOpciones, setProductosOpciones] = useState([]);
   const [cargando, setCargando] = useState(true);
+
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [totalRegistros, setTotalRegistros] = useState(0);
 
   const [mostrarModalForm, setMostrarModalForm] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
@@ -28,7 +33,6 @@ export function ProductosPagePrivada() {
   const [alerta, setAlerta] = useState(null);
   const [errorModal, setErrorModal] = useState(null);
 
-  // Hook de filtros compartido con Catálogo
   const filtros = useFiltros(productos, productosOpciones);
 
   const mostrarNotificacion = (texto, tipo = 'success') => {
@@ -38,7 +42,11 @@ export function ProductosPagePrivada() {
     }, 3500);
   };
 
-  // Carga las opciones completas de los desplegables sin filtrar
+  // Volver a la página 1 cada vez que cambian los filtros desplegables
+  useEffect(() => {
+    setPagina(1);
+  }, [filtros.paramsBack]);
+
   const cargarOpcionesBase = useCallback(async () => {
     try {
       const todos = await getProductos();
@@ -48,19 +56,25 @@ export function ProductosPagePrivada() {
     }
   }, []);
 
-  // Carga los productos enviando los filtros desplegables al backend
   const cargarLista = useCallback(async () => {
     setCargando(true);
     try {
-      const data = await getProductos(filtros.paramsBack);
-      setProductos(data || []);
+      const respuesta = await getProductos({
+        ...(filtros.paramsBack || {}),
+        page: pagina,
+        limit: LIMITE_POR_PAGINA,
+      });
+
+      setProductos(respuesta.productos || []);
+      setTotalRegistros(respuesta.total ?? 0);
+      setTotalPaginas(respuesta.totalPaginas ?? 1);
     } catch (err) {
       console.error('Error al cargar productos:', err);
       mostrarNotificacion('Error al cargar la lista de productos: ' + err.message, 'danger');
     } finally {
       setCargando(false);
     }
-  }, [filtros.paramsBack]);
+  }, [filtros.paramsBack, pagina]);
 
   useEffect(() => {
     cargarOpcionesBase();
@@ -156,32 +170,23 @@ export function ProductosPagePrivada() {
     const nuevoEstado = !estadoActual;
 
     try {
-      const productoActualizado = await alternarEstadoProducto(id);
-
-      setProductos((prev) =>
-        prev.map((item) => {
-          const itemId = item.p_id || item.id;
-          if (itemId === id) {
-            return {
-              ...item,
-              ...productoActualizado,
-              p_activo: productoActualizado.p_activo ?? nuevoEstado
-            };
-          }
-          return item;
-        })
-      );
-
+      await alternarEstadoProducto(id);
       setProductoAAlternar(null);
       mostrarNotificacion(
         `¡Producto ${nuevoEstado ? 'activado' : 'desactivado'} con éxito!`,
         'success'
       );
+      cargarLista();
     } catch (error) {
       console.error('Error al cambiar el estado del producto:', error);
       setProductoAAlternar(null);
       mostrarNotificacion('Error al cambiar el estado: ' + error.message, 'danger');
     }
+  };
+
+  const cambiarPagina = (nuevaPagina) => {
+    setPagina(nuevaPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const estaActivoModal = productoAAlternar 
@@ -190,7 +195,6 @@ export function ProductosPagePrivada() {
 
   return (
     <div className="container-fluid py-3">
-      {/* Cartel de Alerta (Éxito / Error) */}
       {alerta && (
         <div 
           className={`alert alert-${alerta.tipo} alert-dismissible fade show d-flex align-items-center justify-content-between mb-4 shadow-sm rounded-3`} 
@@ -199,16 +203,10 @@ export function ProductosPagePrivada() {
           <div>
             <strong>{alerta.tipo === 'success' ? '✓ ' : '⚠️ '}</strong> {alerta.texto}
           </div>
-          <button 
-            type="button" 
-            className="btn-close" 
-            onClick={() => setAlerta(null)}
-            aria-label="Cerrar"
-          ></button>
+          <button type="button" className="btn-close" onClick={() => setAlerta(null)} aria-label="Cerrar"></button>
         </div>
       )}
 
-      {/* Encabezado */}
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-3 border-bottom">
         <div>
           <h2 className="fw-bold mb-1" style={{ color: 'var(--titulos, #3E100F)' }}>Gestión de Productos</h2>
@@ -223,79 +221,43 @@ export function ProductosPagePrivada() {
         </button>
       </div>
 
-      {/* Layout con Barra Lateral de Filtros + Grilla */}
-      <div className="row g-3">
-        <aside className="col-lg-3 d-flex flex-column gap-1">
-          <label htmlFor="busqueda-privada" className="rotulo-filtro mb-2">
-            Buscar
-          </label>
-          <input
-            id="busqueda-privada"
-            type="search"
-            className="form-control input-busqueda campo-busqueda-tag mb-2"
-            placeholder="Marca, tipo, varietal o bodega..."
-            value={filtros.busqueda}
-            onChange={(e) => filtros.setBusqueda(e.target.value)}
-          />
-
-          <FiltroDesplegable
-            titulo="Marcas"
-            opciones={filtros.marcas}
-            seleccionados={filtros.marcasSeleccionadas}
-            onCambio={filtros.setMarcas}
-          />
-
-          <FiltroDesplegable
-            titulo="Tipos"
-            opciones={filtros.tipos}
-            seleccionados={filtros.tiposSeleccionados}
-            onCambio={filtros.setTipos}
-          />
-
-          <FiltroDesplegable
-            titulo="Varietal"
-            opciones={filtros.varietales}
-            seleccionados={filtros.varietalesSeleccionados}
-            onCambio={filtros.setVarietales}
-          />
-
-          <FiltroDesplegable
-            titulo="Bodega"
-            opciones={filtros.bodegas}
-            seleccionados={filtros.bodegasSeleccionadas}
-            onCambio={filtros.setBodegas}
-          />
-
-          <FiltroDesplegable
-            titulo="Medida"
-            opciones={filtros.medidas}
-            seleccionados={filtros.medidasSeleccionadas}
-            onCambio={filtros.setMedidas}
-          />
+      {/* BARRA HORIZONTAL DE FILTROS */}
+      <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 p-3 mb-4 rounded-3 bg-light border">
+        <div className="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+          <FiltroDesplegable titulo="Marca" opciones={filtros.marcas} seleccionados={filtros.marcasSeleccionadas} onCambio={filtros.setMarcas} />
+          <FiltroDesplegable titulo="Tipo" opciones={filtros.tipos} seleccionados={filtros.tiposSeleccionados} onCambio={filtros.setTipos} />
+          <FiltroDesplegable titulo="Varietal" opciones={filtros.varietales} seleccionados={filtros.varietalesSeleccionados} onCambio={filtros.setVarietales} />
+          <FiltroDesplegable titulo="Bodega" opciones={filtros.bodegas} seleccionados={filtros.bodegasSeleccionadas} onCambio={filtros.setBodegas} />
+          <FiltroDesplegable titulo="Medida" opciones={filtros.medidas} seleccionados={filtros.medidasSeleccionadas} onCambio={filtros.setMedidas} />
 
           {filtros.hayFiltrosActivos && (
-            <Boton
-              variante="outline-secondary"
-              tamanio="sm"
-              className="boton-error mt-2"
-              onClick={filtros.limpiarFiltros}
+            <button
+              type="button"
+              className="btn btn-sm btn-link text-decoration-none text-danger fw-semibold px-2"
+              onClick={() => {
+                filtros.limpiarFiltros();
+                setPagina(1);
+              }}
             >
-              Limpiar filtros
-            </Boton>
+              Limpiar
+            </button>
           )}
-        </aside>
+        </div>
 
-        <section className="col-lg-9">
-          <p className="small text-body-secondary">
-            Mostrando {filtros.productosFiltrados.length} de {productosOpciones.length} productos
-          </p>
+        <span className="small text-body-secondary text-nowrap">
+          Mostrando {filtros.productosFiltrados.length} de {totalRegistros} (Pág. {pagina} de {totalPaginas})
+        </span>
+      </div>
 
-          {cargando ? (
-            <div className="text-center py-5">
-              <div className="spinner-border text-warning" role="status"></div>
-              <p className="text-muted small mt-2">Cargando gestión...</p>
-            </div>
-          ) : (
+      {/* GRILLA */}
+      <section>
+        {cargando ? (
+          <div className="text-center py-5">
+            <div className="spinner-border text-warning" role="status"></div>
+            <p className="text-muted small mt-2">Cargando gestión...</p>
+          </div>
+        ) : (
+          <>
             <div className="row g-4">
               {filtros.productosFiltrados.map((producto) => (
                 <div key={producto.p_id || producto.id} className="col-12 col-md-6 col-lg-4">
@@ -313,9 +275,54 @@ export function ProductosPagePrivada() {
                 </div>
               )}
             </div>
-          )}
-        </section>
-      </div>
+
+            {/* CONTROLES DE PAGINACIÓN */}
+            {totalPaginas > 1 && (
+              <nav aria-label="Paginación de gestión" className="d-flex justify-content-center mt-4">
+                <ul className="pagination pagination-sm mb-0">
+                  <li className={`page-item ${pagina <= 1 ? 'disabled' : ''}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => cambiarPagina(pagina - 1)}
+                      disabled={pagina <= 1}
+                      style={{ color: '#3E100F' }}
+                    >
+                      Anterior
+                    </button>
+                  </li>
+
+                  {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                    <li key={num} className={`page-item ${pagina === num ? 'active' : ''}`}>
+                      <button
+                        className="page-link"
+                        onClick={() => cambiarPagina(num)}
+                        style={
+                          pagina === num
+                            ? { backgroundColor: '#64141B', borderColor: '#64141B', color: '#FFFFFF' }
+                            : { color: '#3E100F' }
+                        }
+                      >
+                        {num}
+                      </button>
+                    </li>
+                  ))}
+
+                  <li className={`page-item ${pagina >= totalPaginas ? 'disabled' : ''}`}>
+                    <button
+                      className="page-link"
+                      onClick={() => cambiarPagina(pagina + 1)}
+                      disabled={pagina >= totalPaginas}
+                      style={{ color: '#3E100F' }}
+                    >
+                      Siguiente
+                    </button>
+                  </li>
+                </ul>
+              </nav>
+            )}
+          </>
+        )}
+      </section>
 
       {/* MODAL CREACIÓN / EDICIÓN */}
       {mostrarModalForm && (
@@ -351,146 +358,47 @@ export function ProductosPagePrivada() {
                   <div className="row g-3">
                     <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold">Marca *</label>
-                      <input
-                        type="text"
-                        name="marca"
-                        required
-                        className="form-control"
-                        value={formData.marca}
-                        onChange={handleChangeForm}
-                        placeholder="Ej: Rutini"
-                      />
+                      <input type="text" name="marca" required className="form-control" value={formData.marca} onChange={handleChangeForm} placeholder="Ej: Rutini" />
                     </div>
-
                     <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold">Tipo *</label>
-                      <input
-                        type="text"
-                        name="tipo"
-                        required
-                        className="form-control"
-                        value={formData.tipo}
-                        onChange={handleChangeForm}
-                        placeholder="Ej: Tinto"
-                      />
-                    </div>    
-
+                      <input type="text" name="tipo" required className="form-control" value={formData.tipo} onChange={handleChangeForm} placeholder="Ej: Tinto" />
+                    </div>
                     <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold">Bodega *</label>
-                      <input
-                        type="text"
-                        name="bodega"
-                        required
-                        className="form-control"
-                        value={formData.bodega}
-                        onChange={handleChangeForm}
-                        placeholder="Ej: Rutini Wines"
-                      />
+                      <input type="text" name="bodega" required className="form-control" value={formData.bodega} onChange={handleChangeForm} placeholder="Ej: Rutini Wines" />
                     </div>
-
                     <div className="col-12 col-md-6">
                       <label className="form-label small fw-bold">Varietal</label>
-                      <input
-                        type="text"
-                        name="varietal"
-                        className="form-control"
-                        value={formData.varietal}
-                        onChange={handleChangeForm}
-                        placeholder="Ej: Malbec (Opcional)"
-                      />
+                      <input type="text" name="varietal" className="form-control" value={formData.varietal} onChange={handleChangeForm} placeholder="Ej: Malbec (Opcional)" />
                     </div>
-
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Precio *</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        name="precio"
-                        required
-                        className="form-control"
-                        value={formData.precio}
-                        onChange={handleChangeForm}
-                        placeholder="15000"
-                      />
+                      <input type="number" step="0.01" min="0" name="precio" required className="form-control" value={formData.precio} onChange={handleChangeForm} placeholder="15000" />
                     </div>
-
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Costo</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        name="costo"
-                        className="form-control"
-                        value={formData.costo}
-                        onChange={handleChangeForm}
-                        placeholder="10000"
-                      />
+                      <input type="number" step="0.01" min="0" name="costo" className="form-control" value={formData.costo} onChange={handleChangeForm} placeholder="10000" />
                     </div>
-
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Stock *</label>
-                      <input
-                        type="number"
-                        name="stock"
-                        min="0"
-                        required
-                        className="form-control"
-                        value={formData.stock}
-                        onChange={handleChangeForm}
-                      />
+                      <input type="number" name="stock" min="0" required className="form-control" value={formData.stock} onChange={handleChangeForm} />
                     </div>
-
                     <div className="col-12 col-md-4">
                       <label className="form-label small fw-bold">Año</label>
-                      <input
-                        type="number"
-                        name="anio"
-                        min="1800"
-                        max={new Date().getFullYear()}
-                        className="form-control"
-                        value={formData.anio}
-                        onChange={handleChangeForm}
-                        placeholder="2021"
-                      />
+                      <input type="number" name="anio" min="1800" max={new Date().getFullYear()} className="form-control" value={formData.anio} onChange={handleChangeForm} placeholder="2021" />
                     </div>
-
                     <div className="col-12 col-md-8">
                       <label className="form-label small fw-bold">Medida *</label>
-                      <input
-                        type="text"
-                        name="medida"
-                        required
-                        className="form-control"
-                        value={formData.medida}
-                        onChange={handleChangeForm}
-                        placeholder="Ej: 750 ml"
-                      />          
+                      <input type="text" name="medida" required className="form-control" value={formData.medida} onChange={handleChangeForm} placeholder="Ej: 750 ml" />
                     </div>
-
                     <div className="col-12">
                       <label className="form-label small fw-bold">Ruta de Imagen (`/public`)</label>
-                      <input
-                        type="text"
-                        name="img"
-                        className="form-control"
-                        value={formData.img}
-                        onChange={handleChangeForm}
-                        placeholder="/img/imagenesProductos/producto.png"
-                      />
+                      <input type="text" name="img" className="form-control" value={formData.img} onChange={handleChangeForm} placeholder="/img/imagenesProductos/producto.png" />
                     </div>
-
                     <div className="col-12">
                       <label className="form-label small fw-bold">Descripción</label>
-                      <textarea
-                        name="descripcion"
-                        rows="3"
-                        className="form-control"
-                        value={formData.descripcion}
-                        onChange={handleChangeForm}
-                        placeholder="Notas de cata, maridaje o detalles del producto..."
-                      ></textarea>
+                      <textarea name="descripcion" rows="3" className="form-control" value={formData.descripcion} onChange={handleChangeForm} placeholder="Notas de cata, maridaje o detalles del producto..."></textarea>
                     </div>
                   </div>
                 </div>
@@ -509,7 +417,7 @@ export function ProductosPagePrivada() {
         </div>
       )}
 
-      {/* MODAL DINÁMICO: ALTERAR ESTADO (ACTIVAR / DESACTIVAR) */}
+      {/* MODAL DINÁMICO: ALTERAR ESTADO */}
       {productoAAlternar && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(2px)' }}>
           <div className="modal-dialog modal-dialog-centered">

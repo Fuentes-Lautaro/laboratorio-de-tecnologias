@@ -30,6 +30,8 @@ export async function getProductos(filtros = {}) {
         queryParams.append(clave, valor.join(','));
       } else if (typeof valor === 'string' && valor.trim() !== '') {
         queryParams.append(clave, valor.trim());
+      } else if (typeof valor === 'number' && !Number.isNaN(valor)) {
+        queryParams.append(clave, String(valor));
       }
     });
   }

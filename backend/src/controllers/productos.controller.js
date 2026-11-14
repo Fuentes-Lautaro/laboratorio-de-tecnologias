@@ -32,9 +32,17 @@ async function buscarProductoDuplicado({ marca, tipo, varietal, medida, bodega, 
 
 export const listar = async (req, res, next) => {
   try {
-    const { marca, tipo, varietal, bodega, medida } = req.query;
+    const { marca, tipo, varietal, bodega, medida, page, limit } = req.query;
 
-    let query = 'SELECT * FROM productos WHERE 1=1';
+    const conPaginado = page !== undefined || limit !== undefined;
+    const limiteNum = Math.max(1, parseInt(limit, 10) || 30);
+    const paginaNum = Math.max(1, parseInt(page, 10) || 1);
+    const offset = (paginaNum - 1) * limiteNum;
+
+    let query = conPaginado
+      ? 'SELECT *, COUNT(*) OVER() AS total_registros FROM productos WHERE 1=1'
+      : 'SELECT * FROM productos WHERE 1=1';
+
     const values = [];
 
     const agregarFiltroMultiple = (columna, valorQuery) => {
@@ -55,7 +63,7 @@ export const listar = async (req, res, next) => {
     agregarFiltroMultiple('p_varietal', varietal);
     agregarFiltroMultiple('p_bodega', bodega);
     agregarFiltroMultiple('p_medida', medida);
-    
+
     query += `
       ORDER BY 
         CASE 
@@ -66,8 +74,29 @@ export const listar = async (req, res, next) => {
         p_precio ASC
     `;
 
+    if (conPaginado) {
+      values.push(limiteNum, offset);
+      query += ` LIMIT $${values.length - 1} OFFSET $${values.length}`;
+    }
+
     const { rows } = await pool.query(query, values);
-    res.json(rows);
+
+    if (!conPaginado) {
+      return res.json(rows);
+    }
+
+    const total = rows.length > 0 ? Number(rows[0].total_registros) : 0;
+    const totalPaginas = Math.max(1, Math.ceil(total / limiteNum));
+
+    // Quitamos la columna auxiliar total_registros de cada producto
+    const productos = rows.map(({ total_registros, ...producto }) => producto);
+
+    res.json({
+      productos,
+      total,
+      pagina: paginaNum,
+      totalPaginas,
+    });
   } catch (err) {
     next(err);
   }

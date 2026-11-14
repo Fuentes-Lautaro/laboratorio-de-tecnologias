@@ -6,12 +6,10 @@ export function useFiltros(productos = [], productosOpciones = null) {
   const [varietalesSeleccionados, setVarietales] = useState([]);
   const [medidasSeleccionadas, setMedidas] = useState([]);
   const [bodegasSeleccionadas, setBodegas] = useState([]);
-  const [busqueda, setBusqueda] = useState('');
 
   const lista = productos ?? [];
   const fuenteOpciones = productosOpciones ?? lista;
 
-  // Opciones únicas para los menús desplegables
   const marcas = useMemo(
     () => [...new Set(fuenteOpciones.map((p) => p.p_marca || p.marca).filter(Boolean))].sort(),
     [fuenteOpciones]
@@ -33,7 +31,6 @@ export function useFiltros(productos = [], productosOpciones = null) {
     [fuenteOpciones]
   );
 
-  // Objeto estable de filtros que viaja como query params al backend
   const paramsBack = useMemo(() => {
     const tieneFiltros =
       marcasSeleccionadas.length > 0 ||
@@ -59,28 +56,7 @@ export function useFiltros(productos = [], productosOpciones = null) {
     bodegasSeleccionadas,
   ]);
 
-  // El cuadro de texto filtra en el frontend sobre los resultados devueltos por el backend
-  const textoBuscado = busqueda.trim().toLowerCase();
-
-  const productosFiltrados = useMemo(() => {
-    if (!textoBuscado) return lista;
-
-    return lista.filter((p) => {
-      const marca = p.p_marca || p.marca || '';
-      const tipo = p.p_tipo || p.tipo || '';
-      const varietal = p.p_varietal || p.varietal || '';
-      const bodega = p.p_bodega || p.bodega || '';
-
-      return (
-        marca.toLowerCase().includes(textoBuscado) ||
-        tipo.toLowerCase().includes(textoBuscado) ||
-        varietal.toLowerCase().includes(textoBuscado) ||
-        bodega.toLowerCase().includes(textoBuscado)
-      );
-    });
-  }, [lista, textoBuscado]);
-
-  const hayFiltrosActivos = Boolean(paramsBack) || textoBuscado !== '';
+  const hayFiltrosActivos = Boolean(paramsBack);
 
   function limpiarFiltros() {
     setMarcas([]);
@@ -88,7 +64,6 @@ export function useFiltros(productos = [], productosOpciones = null) {
     setVarietales([]);
     setMedidas([]);
     setBodegas([]);
-    setBusqueda('');
   }
 
   return {
@@ -107,10 +82,8 @@ export function useFiltros(productos = [], productosOpciones = null) {
     bodegasSeleccionadas,
     setBodegas,
     bodegas,
-    busqueda,
-    setBusqueda,
     paramsBack,
-    productosFiltrados,
+    productosFiltrados: lista,
     hayFiltrosActivos,
     limpiarFiltros,
   };
