@@ -27,7 +27,7 @@ VALUES
 ('Luigi Bosca', 'tinto', 14200.00, 8500.00, 2022, '750', 'Luigi Bosca', 'Pinot Noir', 15, '/img/productos/luigi-bosca-pinot-750.png', 
 'De color rojo rubi translucido y brillante. Nariz muy expresiva con notas de cerezas, frambuesas y delicados dejos terrosos y florales. En boca se destaca por su frescura, sutileza, taninos delicados y gran fineza.'),
 
-('Norton', 'blanco', 4800.00, 2700.00, 2023, '750', 'Bodega Norton', 'Sauvignon Blanc', 30, '/img/productos/norton-sauvignon-750.png', 
+('Norton', 'blanco', 4800.00, 2700.00, 2023, '750', 'Norton', 'Sauvignon Blanc', 30, '/img/productos/norton-sauvignon-750.png', 
 'Un vino blanco vivaz y refrescante, con claros tonos verdosos. En nariz predominan notas citricas de pomelo, lima y sutiles estallidos herbales. En boca ofrece una acidez equilibrada que aporta vivacidad y un final limpio y persistente.'),
 
 ('Catena Zapata', 'tinto', 22000.00, 13500.00, 2019, '750', 'Catena Zapata', 'Malbec', 12, '/img/productos/catena-malbec-750.png', 
@@ -36,7 +36,7 @@ VALUES
 ('Alamos', 'blanco', 5200.00, 3100.00, 2023, '750', 'Alamos', 'Torrontes', 25, '/img/productos/alamos-torrontes-750.png', 
 'Fragante y sumamente aromatico. Caracterizado por sus clasicas notas florales de azahar y jazmin, combinadas con toques citricos y de frutas blancas de carozos. En boca es fresco, expresivo y con un paso armonico.'),
 
-('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Bodegas Salentein', 'Malbec Rose', 18, '/img/productos/salentein-rose-750.png', 
+('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Salentein', 'Malbec Rose', 18, '/img/productos/salentein-rose-750.png', 
 'Un rose elegante de color piel de cebolla brillante. Nariz delicada con aromas a frutillas, cerezas frescas y notas florales. En boca muestra una excelente acidez natural que le otorga frescura y un perfil vibrante.'),
 
 ('Finca La Linda', 'tinto', 8900.00, 5200.00, 2021, '750', 'Luigi Bosca', 'Syrah', 28, '/img/productos/la-linda-syrah-750.png', 
@@ -54,10 +54,10 @@ VALUES
 ('Alamos', 'tinto', 5800.00, 3300.00, 2022, '750', 'Alamos', 'Malbec', 35, '/img/productos/alamos-malbec-750.png', 
 'Vino estructurado y accesible que refleja la tipicidad del Malbec mendocino. Cuenta con notas de ciruelas maduras, moras y toques de chocolate. En boca tiene taninos redondos y un caracter amable.'),
 
-('Salentein', 'tinto', 9500.00, 5600.00, 2020, '750', 'Bodegas Salentein', 'Cabernet Sauvignon', 16, '/img/productos/salentein-cabernet-750.png', 
+('Salentein', 'tinto', 9500.00, 5600.00, 2020, '750', 'Salentein', 'Cabernet Sauvignon', 16, '/img/productos/salentein-cabernet-750.png', 
 'Con expresion tipica de Valle de Uco, destaca notas de cassis, pimiento morron asado y especias. En boca presenta buen cuerpo, taninos firmes y maduros, con un elegante final especiado.'),
 
-('Norton', 'tinto', 5100.00, 2900.00, 2021, '750', 'Bodega Norton', 'Merlot', 24, '/img/productos/norton-merlot-750.png', 
+('Norton', 'tinto', 5100.00, 2900.00, 2021, '750', 'Norton', 'Merlot', 24, '/img/productos/norton-merlot-750.png', 
 'Un tinto amigable y redondo. Ofrece aromas francos a frutos rojos maduros, ciruelas y sutiles notas de especias dulces. En boca se destaca por su paso amable, taninos suaves y gran versatilidad gastronomica.'),
 
 ('Luigi Bosca', 'blanco', 13900.00, 8100.00, 2022, '750', 'Luigi Bosca', 'Riesling', 9, '/img/productos/luigi-bosca-riesling-750.png', 
