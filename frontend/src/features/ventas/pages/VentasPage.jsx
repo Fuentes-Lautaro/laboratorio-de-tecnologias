@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { getVentas, crearVenta, getVentaPorId } from '../services/ventaService';
 import { getProductos } from '../../productos/services/productosServices';
 import { getEventos } from '../../eventos/services/eventoService';
+import {
+  buscarPersonaPorDni,
+  crearPersona,
+  cambiarEstadoPersona
+} from '../../personas/services/personasServices';
 import { TablaVentas } from '../components/TablaVentas';
 import { Modal } from '../../../shared/components/Modal';
 
@@ -21,16 +26,97 @@ export function VentasPage() {
   const [clienteDni, setClienteDni] = useState('');
   const [metodoPago, setMetodoPago] = useState('Efectivo');
   const [eventoId, setEventoId] = useState('');
-  
+
+  // Estados para búsqueda, reactivación y alta rápida de cliente dentro del modal
+  const [buscandoCliente, setBuscandoCliente] = useState(false);
+  const [clienteEncontrado, setClienteEncontrado] = useState(null);
+  const [clienteInactivo, setClienteInactivo] = useState(null);
+  const [reactivandoCliente, setReactivandoCliente] = useState(false);
+  const [clienteNoExiste, setClienteNoExiste] = useState(false);
+  const [mostrarFormCliente, setMostrarFormCliente] = useState(false);
+  const [guardandoCliente, setGuardandoCliente] = useState(false);
+  const [nuevoCliente, setNuevoCliente] = useState({
+    nombre: '',
+    fechaNac: '',
+    mail: '',
+    telefono: '',
+    direccion: ''
+  });
+
   const [carrito, setCarrito] = useState([]);
   const [productoSeleccionadoId, setProductoSeleccionadoId] = useState('');
   const [cantidad, setCantidad] = useState(1);
 
   const [alerta, setAlerta] = useState(null);
+  const [alertaModal, setAlertaModal] = useState(null);
 
   useEffect(() => {
     cargarLista();
   }, []);
+
+  // Búsqueda automática de cliente cuando el DNI tiene 7 u 8 dígitos
+  useEffect(() => {
+    if (!mostrarModalForm) return;
+
+    const dniLimpio = clienteDni.trim();
+
+    if (!/^\d{7,8}$/.test(dniLimpio)) {
+      setClienteEncontrado(null);
+      setClienteInactivo(null);
+      setClienteNoExiste(false);
+      setMostrarFormCliente(false);
+      setBuscandoCliente(false);
+      return;
+    }
+
+    // Si ya tenemos cargado el cliente activo con ese mismo DNI, no volver a buscar
+    if (clienteEncontrado && String(clienteEncontrado.dni) === dniLimpio) {
+      return;
+    }
+
+    let cancelado = false;
+    setBuscandoCliente(true);
+    setClienteNoExiste(false);
+    setClienteInactivo(null);
+
+    const timer = setTimeout(async () => {
+      try {
+        const persona = await buscarPersonaPorDni(dniLimpio);
+        if (cancelado) return;
+
+        if (persona) {
+          if (persona.activo === false) {
+            setClienteEncontrado(null);
+            setClienteInactivo(persona);
+            setClienteNoExiste(false);
+            setMostrarFormCliente(false);
+          } else {
+            setClienteEncontrado(persona);
+            setClienteInactivo(null);
+            setClienteNoExiste(false);
+            setMostrarFormCliente(false);
+          }
+        } else {
+          setClienteEncontrado(null);
+          setClienteInactivo(null);
+          setClienteNoExiste(true);
+        }
+      } catch (err) {
+        if (!cancelado) {
+          setAlertaModal({ texto: err.message || 'Error al buscar el cliente.', tipo: 'danger' });
+        }
+      } finally {
+        if (!cancelado) {
+          setBuscandoCliente(false);
+        }
+      }
+    }, 350);
+
+    return () => {
+      cancelado = true;
+      clearTimeout(timer);
+    };
+  }, [clienteDni, mostrarModalForm]);
 
   // Filtra eventos activos cuya fecha sea desde ayer en adelante (ayer, hoy y próximos)
   const filtrarEventosVigentes = (listaEventos = []) => {
@@ -82,6 +168,121 @@ export function VentasPage() {
     }, 3500);
   };
 
+  const resetearEstadoClienteModal = () => {
+    setClienteDni('');
+    setClienteEncontrado(null);
+    setClienteInactivo(null);
+    setClienteNoExiste(false);
+    setMostrarFormCliente(false);
+    setBuscandoCliente(false);
+    setReactivandoCliente(false);
+    setNuevoCliente({
+      nombre: '',
+      fechaNac: '',
+      mail: '',
+      telefono: '',
+      direccion: ''
+    });
+  };
+
+  const handleContinuarSinCliente = () => {
+    resetearEstadoClienteModal();
+    setAlertaModal(null);
+  };
+
+  // Estilos y eventos hover para los botones "Continuar sin cliente"
+  const estiloBotonSecundario = {
+    backgroundColor: '#FFFFFF',
+    color: '#495057',
+    border: '1px solid #6c757d',
+    transition: 'all 0.15s ease'
+  };
+
+  const handleHoverEntrarSecundario = (e) => {
+    e.currentTarget.style.backgroundColor = '#5c636a';
+    e.currentTarget.style.borderColor = '#5c636a';
+    e.currentTarget.style.color = '#FFFFFF';
+  };
+
+  const handleHoverSalirSecundario = (e) => {
+    e.currentTarget.style.backgroundColor = '#FFFFFF';
+    e.currentTarget.style.borderColor = '#6c757d';
+    e.currentTarget.style.color = '#495057';
+  };
+
+  // Estilo del panel secundario para acciones de cliente dentro del modal
+  const estiloPanelCliente = {
+    backgroundColor: 'var(--fondo-secundario, #F4EFEA)',
+    border: '1px solid rgba(181, 134, 90, 0.35)',
+    color: 'var(--titulos, #3E100F)'
+  };
+
+  const handleReactivarCliente = async () => {
+    if (!clienteInactivo?.id) return;
+    setAlertaModal(null);
+    setReactivandoCliente(true);
+
+    try {
+      const reactivado = await cambiarEstadoPersona(clienteInactivo.id);
+      setClienteEncontrado(reactivado);
+      setClienteInactivo(null);
+      setAlertaModal({
+        texto: `Cuenta de "${reactivado.nombre}" reactivada y asociada a la venta.`,
+        tipo: 'success'
+      });
+    } catch (err) {
+      setAlertaModal({
+        texto: err.message || 'No se pudo reactivar la cuenta del cliente.',
+        tipo: 'danger'
+      });
+    } finally {
+      setReactivandoCliente(false);
+    }
+  };
+
+  const handleGuardarNuevoCliente = async () => {
+    setAlertaModal(null);
+    const dniLimpio = clienteDni.trim();
+
+    if (!nuevoCliente.nombre.trim() || !nuevoCliente.fechaNac || !nuevoCliente.mail.trim() || !nuevoCliente.telefono.trim()) {
+      setAlertaModal({
+        texto: 'Completá Nombre, Fecha de nacimiento, Mail y Teléfono para registrar el cliente.',
+        tipo: 'danger'
+      });
+      return;
+    }
+
+    setGuardandoCliente(true);
+    try {
+      const creado = await crearPersona({
+        dni: dniLimpio,
+        nombre: nuevoCliente.nombre.trim(),
+        fechaNac: nuevoCliente.fechaNac,
+        mail: nuevoCliente.mail.trim(),
+        telefono: nuevoCliente.telefono.trim(),
+        direccion: nuevoCliente.direccion.trim(),
+        rol: 'cliente'
+      });
+
+      setClienteEncontrado(creado);
+      setClienteInactivo(null);
+      setClienteNoExiste(false);
+      setMostrarFormCliente(false);
+      setNuevoCliente({ nombre: '', fechaNac: '', mail: '', telefono: '', direccion: '' });
+      setAlertaModal({
+        texto: `Cliente "${creado.nombre}" registrado y asociado a la venta.`,
+        tipo: 'success'
+      });
+    } catch (err) {
+      setAlertaModal({
+        texto: err.message || 'No se pudo registrar el cliente.',
+        tipo: 'danger'
+      });
+    } finally {
+      setGuardandoCliente(false);
+    }
+  };
+
   const ventasFiltradas = ventas.filter((v) => {
     const busqueda = terminoBusqueda.toLowerCase();
     const codigoCoincide = v.codigo?.toLowerCase().includes(busqueda);
@@ -105,8 +306,9 @@ export function VentasPage() {
 
   const handleAgregarItem = (e) => {
     e.preventDefault();
+    setAlertaModal(null);
     if (!productoSeleccionadoId) {
-      mostrarNotificacion('Por favor, selecciona un producto.', 'danger');
+      setAlertaModal({ texto: 'Por favor, seleccioná un producto.', tipo: 'danger' });
       return;
     }
 
@@ -119,7 +321,7 @@ export function VentasPage() {
     const cantNum = Number(cantidad) || 1;
 
     if (cantNum > stockDisponible) {
-      mostrarNotificacion(`Stock insuficiente. Solo hay ${stockDisponible} unidades disponibles.`, 'danger');
+      setAlertaModal({ texto: `Stock insuficiente. Solo hay ${stockDisponible} unidades disponibles.`, tipo: 'danger' });
       return;
     }
 
@@ -150,8 +352,20 @@ export function VentasPage() {
 
   const handleSubmitVenta = async (e) => {
     e.preventDefault();
+    setAlertaModal(null);
+
     if (carrito.length === 0) {
-      mostrarNotificacion('Debe agregar al menos un producto al carrito.', 'danger');
+      setAlertaModal({ texto: 'Debe agregar al menos un producto al carrito.', tipo: 'danger' });
+      return;
+    }
+
+    if (clienteDni.trim() !== '' && !clienteEncontrado) {
+      setAlertaModal({
+        texto: clienteInactivo
+          ? 'La cuenta del cliente está inactiva. Reactivala o elegí "Continuar sin cliente".'
+          : 'El DNI ingresado no está registrado. Agregá el cliente o elegí "Continuar sin cliente".',
+        tipo: 'warning'
+      });
       return;
     }
 
@@ -167,7 +381,7 @@ export function VentasPage() {
     const nuevaVenta = {
       codigo: `VTA-${Math.floor(1000 + Math.random() * 9000)}`,
       fecha: fechaTimestampLocal,
-      clienteDni: clienteDni.trim() !== '' ? clienteDni.trim() : null,
+      clienteDni: clienteEncontrado ? String(clienteEncontrado.dni) : null,
       eventoId: eventoId !== '' ? Number(eventoId) : null,
       monto: totalVenta,
       metodoPago,
@@ -181,12 +395,16 @@ export function VentasPage() {
 
       setMostrarModalForm(false);
       setCarrito([]);
-      setClienteDni('');
+      resetearEstadoClienteModal();
       setEventoId('');
+      setAlertaModal(null);
       mostrarNotificacion('¡Venta registrada con éxito!', 'success');
     } catch (err) {
       console.error('Error al guardar la venta:', err);
-      mostrarNotificacion(err.message || 'Error al registrar la venta. Verifique los datos.', 'danger');
+      setAlertaModal({
+        texto: err.message || 'Error al registrar la venta. Verificá los datos.',
+        tipo: 'danger'
+      });
     }
   };
 
@@ -222,8 +440,9 @@ export function VentasPage() {
         <button 
           onClick={() => {
             setCarrito([]);
-            setClienteDni('');
+            resetearEstadoClienteModal();
             setEventoId('');
+            setAlertaModal(null);
             setMostrarModalForm(true);
           }} 
           className="btn text-white" 
@@ -346,17 +565,47 @@ export function VentasPage() {
       {mostrarModalForm && (
         <Modal titulo="Registrar Nueva Venta" onClose={() => setMostrarModalForm(false)}>
           <form onSubmit={handleSubmitVenta}>
+            {/* Alerta visible dentro del modal */}
+            {alertaModal && (
+              <div className={`alert alert-${alertaModal.tipo} alert-dismissible fade show py-2 px-3 small mb-3`} role="alert">
+                <div>{alertaModal.texto}</div>
+                <button
+                  type="button"
+                  className="btn-close btn-sm"
+                  onClick={() => setAlertaModal(null)}
+                  aria-label="Cerrar"
+                ></button>
+              </div>
+            )}
+
             <div className="row g-3 mb-3">
               <div className="col-md-6">
                 <label className="form-label small fw-bold">DNI del Cliente</label>
                 <input 
                   type="text" 
+                  inputMode="numeric"
+                  maxLength={8}
                   className="form-control" 
                   placeholder="Ej: 12345678" 
                   value={clienteDni} 
-                  onChange={(e) => setClienteDni(e.target.value)} 
+                  onChange={(e) => {
+                    const soloNumeros = e.target.value.replace(/\D/g, '');
+                    setClienteDni(soloNumeros);
+                    if (clienteEncontrado && String(clienteEncontrado.dni) !== soloNumeros) {
+                      setClienteEncontrado(null);
+                    }
+                  }} 
                 />
+                {buscandoCliente && (
+                  <small className="text-muted d-block mt-1">Buscando cliente...</small>
+                )}
+                {!buscandoCliente && clienteEncontrado && (
+                  <div className="small text-success fw-semibold mt-1">
+                    ✓ Cliente: {clienteEncontrado.nombre}
+                  </div>
+                )}
               </div>
+
               <div className="col-md-6">
                 <label className="form-label small fw-bold">Método de Pago *</label>
                 <select 
@@ -370,15 +619,184 @@ export function VentasPage() {
                   <option value="Transferencia">Transferencia</option>
                 </select>
               </div>
-              <div className="col-12">
-                  <label className="form-label small fw-bold">Evento Asociado</label>
-                  <select 
-                    className="form-select" 
-                    value={eventoId} 
-                    onChange={(e) => setEventoId(e.target.value)}
+
+              {/* Aviso dentro del modal cuando el cliente existe pero su cuenta está inactiva */}
+              {!buscandoCliente && clienteInactivo && (
+                <div className="col-12">
+                  <div
+                    className="rounded-3 py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2"
+                    style={estiloPanelCliente}
                   >
-                    <option value="">-</option>
-                    {eventosDisponibles.map((ev) => (
+                    <div className="small">
+                      <strong>Cuenta inactiva</strong>
+                    </div>
+                    <div className="d-flex gap-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        className="btn btn-sm text-white"
+                        style={{ backgroundColor: 'var(--titulos, #3E100F)' }}
+                        onClick={handleReactivarCliente}
+                        disabled={reactivandoCliente}
+                      >
+                        {reactivandoCliente ? 'Activando...' : 'Activar cuenta'}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
+                        onClick={handleContinuarSinCliente}
+                        disabled={reactivandoCliente}
+                      >
+                        Continuar sin cliente
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Aviso dentro del modal cuando el DNI no está registrado */}
+              {!buscandoCliente && clienteNoExiste && !mostrarFormCliente && (
+                <div className="col-12">
+                  <div
+                    className="rounded-3 py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2"
+                    style={estiloPanelCliente}
+                  >
+                    <div className="small">
+                      <strong>Cliente no encontrado</strong>
+                    </div>
+                    <div className="d-flex gap-2 flex-shrink-0">
+                      <button
+                        type="button"
+                        className="btn btn-sm text-white"
+                        style={{ backgroundColor: 'var(--titulos, #3E100F)' }}
+                        onClick={() => {
+                          setAlertaModal(null);
+                          setMostrarFormCliente(true);
+                        }}
+                      >
+                        + Agregar cliente
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
+                        onClick={handleContinuarSinCliente}
+                      >
+                        Continuar sin cliente
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Sub-formulario inline para alta rápida de cliente */}
+              {mostrarFormCliente && (
+                <div className="col-12">
+                  <div className="p-3 rounded-3" style={estiloPanelCliente}>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h6 className="fw-bold small mb-0" style={{ color: 'var(--titulos, #3E100F)' }}>
+                        Nuevo Cliente (DNI: {clienteDni})
+                      </h6>
+                      <button
+                        type="button"
+                        className="btn btn-link btn-sm text-muted p-0 text-decoration-none"
+                        onClick={() => setMostrarFormCliente(false)}
+                      >
+                        Cancelar alta
+                      </button>
+                    </div>
+
+                    <div className="row g-2">
+                      <div className="col-12 col-md-6">
+                        <label className="form-label small text-muted mb-1">Nombre completo *</label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          placeholder="Ej: Juan Pérez"
+                          value={nuevoCliente.nombre}
+                          onChange={(e) => setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })}
+                        />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label small text-muted mb-1">Fecha de nacimiento *</label>
+                        <input
+                          type="date"
+                          className="form-control form-control-sm"
+                          value={nuevoCliente.fechaNac}
+                          onChange={(e) => setNuevoCliente({ ...nuevoCliente, fechaNac: e.target.value })}
+                        />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label small text-muted mb-1">Mail *</label>
+                        <input
+                          type="email"
+                          className="form-control form-control-sm"
+                          placeholder="cliente@ejemplo.com"
+                          value={nuevoCliente.mail}
+                          onChange={(e) => setNuevoCliente({ ...nuevoCliente, mail: e.target.value })}
+                        />
+                      </div>
+                      <div className="col-12 col-md-6">
+                        <label className="form-label small text-muted mb-1">Teléfono *</label>
+                        <input
+                          type="tel"
+                          className="form-control form-control-sm"
+                          placeholder="Ej: 2664123456"
+                          value={nuevoCliente.telefono}
+                          onChange={(e) => setNuevoCliente({ ...nuevoCliente, telefono: e.target.value })}
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label small text-muted mb-1">Dirección (opcional)</label>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm"
+                          placeholder="Calle, número, localidad"
+                          value={nuevoCliente.direccion}
+                          onChange={(e) => setNuevoCliente({ ...nuevoCliente, direccion: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="d-flex justify-content-end gap-2 mt-3">
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
+                        onClick={handleContinuarSinCliente}
+                        disabled={guardandoCliente}
+                      >
+                        Continuar sin cliente
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm text-white"
+                        style={{ backgroundColor: 'var(--detalles, #B5865A)' }}
+                        onClick={handleGuardarNuevoCliente}
+                        disabled={guardandoCliente}
+                      >
+                        {guardandoCliente ? 'Guardando...' : 'Guardar y asociar cliente'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="col-12">
+                <label className="form-label small fw-bold">Evento Asociado</label>
+                <select 
+                  className="form-select" 
+                  value={eventoId} 
+                  onChange={(e) => setEventoId(e.target.value)}
+                >
+                  <option value="">-</option>
+                  {eventosDisponibles.map((ev) => (
                     <option key={ev.e_id} value={ev.e_id}>
                       {ev.e_nombre} ({formatearFechaCorta(ev.e_fecha)})
                     </option>

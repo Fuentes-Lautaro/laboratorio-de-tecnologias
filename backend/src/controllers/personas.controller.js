@@ -17,7 +17,7 @@ export const listarPersonas = async (req, res, next) => {
       return res.json(rows);
     }
 
-    //solo el gerente puede consultar empleados
+    // Solo el gerente puede consultar empleados
     const rolUsuario = req.usuario?.rol?.toLowerCase() || '';
     if (rolUsuario !== 'gerente') {
       return res.status(403).json({
@@ -46,16 +46,32 @@ export const listarPersonas = async (req, res, next) => {
   }
 };
 
+// Buscar persona por DNI (para autocompletar en Ventas)
+// Buscar persona por DNI (para autocompletar o reactivar en Ventas)
+export const buscarPorDni = async (req, res, next) => {
+  try {
+    const { dni } = req.params;
+    const { rows } = await pool.query(
+      `SELECT pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo
+       FROM personas
+       WHERE pe_dni = $1`,
+      [String(dni).trim()]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    return res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Crear persona (cliente o empleado según el rol enviado)
 export const crearPersona = async (req, res, next) => {
   try {
     const { dni, nombre, fechaNac, telefono, mail, direccion, password, clave, rol } = req.body;
-    const clavePlana = password || clave;
-
-    if (!dni || !nombre || !mail || !clavePlana) {
-      return res.status(400).json({ error: 'DNI, nombre, mail y contraseña son obligatorios' });
-    }
-
     const rolFinal = rol ? rol.trim().toLowerCase() : 'cliente';
     const rolUsuario = req.usuario?.rol?.toLowerCase() || '';
 
@@ -66,13 +82,33 @@ export const crearPersona = async (req, res, next) => {
       });
     }
 
+    // Si es un alta rápida de cliente desde Ventas y no se envía clave, se usa su DNI como clave inicial
+    const clavePlana = password || clave || (rolFinal === 'cliente' && dni ? String(dni).trim() : null);
+
+    if (!dni || !nombre || !mail || !clavePlana) {
+      return res.status(400).json({ error: 'DNI, nombre, mail y contraseña son obligatorios' });
+    }
+
+    if (rolFinal === 'cliente' && (!fechaNac || !telefono)) {
+      return res.status(400).json({ error: 'Fecha de nacimiento y teléfono son obligatorios para registrar un cliente' });
+    }
+
     const passwordHash = await bcrypt.hash(clavePlana, SALT_ROUNDS);
 
     const { rows } = await pool.query(
       `INSERT INTO personas (pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_password, pe_rol, pe_activo)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)
        RETURNING pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo`,
-      [dni, nombre, fechaNac, telefono, mail, direccion, passwordHash, rolFinal]
+      [
+        String(dni).trim(),
+        nombre.trim(),
+        fechaNac || null,
+        telefono || null,
+        mail.trim(),
+        direccion && direccion.trim() !== '' ? direccion.trim() : null,
+        passwordHash,
+        rolFinal
+      ]
     );
 
     res.status(201).json(rows[0]);
@@ -87,7 +123,7 @@ export const crearPersona = async (req, res, next) => {
 // Obtener detalle de una persona por ID
 export const detallePersona = async (req, res, next) => {
   try {
-    const { id } = req.usuario?.id;
+    const id = req.params.id || req.usuario?.id;
     const { rows } = await pool.query(
       `SELECT pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo
        FROM personas
@@ -110,12 +146,13 @@ export const detallePersona = async (req, res, next) => {
     next(err);
   }
 };
-// Obtener detalle de una persona por ID
+
+// Obtener detalle público del usuario logueado
 export const detallePublicoPersona = async (req, res, next) => {
   try {
-    let  id  = req.usuario?.id;
+    let id = req.usuario?.id;
     const { rows } = await pool.query(
-      `SELECT  pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_activo
+      `SELECT pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_activo
        FROM personas
        WHERE pe_id = $1`,
       [id]
@@ -133,7 +170,7 @@ export const detallePublicoPersona = async (req, res, next) => {
 
 export const actualizarPersona = async (req, res, next) => {
   try {
-    let  id  = req.usuario?.id;
+    let id = req.usuario?.id;
     const { nombre, telefono, direccion, fechaNac, rol, password, mail } = req.body;
     const rolUsuario = req.usuario?.rol?.toLowerCase() || '';
 
@@ -161,7 +198,7 @@ export const actualizarPersona = async (req, res, next) => {
            pe_direccion = COALESCE($3, pe_direccion),
            pe_fechaNac = COALESCE($4, pe_fechaNac),
            pe_rol = COALESCE($5, pe_rol),
-           pe_password = COALESCE($6, pe_password)
+           pe_password = COALESCE($6, pe_password),
            pe_mail = COALESCE($7, pe_mail)
        WHERE pe_id = $8
        RETURNING pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo`,
@@ -205,7 +242,7 @@ export const cambiarEstado = async (req, res, next) => {
   }
 };
 
-//funcion publica para camabiar datos
+// Función pública para cambiar datos
 export const actualizarme = async (req, res, next) => {
   try {
     let id = req.usuario?.id;
@@ -232,5 +269,3 @@ export const actualizarme = async (req, res, next) => {
     next(err);
   }
 };
-
-
