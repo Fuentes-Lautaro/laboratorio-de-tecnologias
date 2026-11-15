@@ -49,7 +49,7 @@ function Navbar({ enlaces, sesion }) {
         navigate('/', { replace: true });
     };
 
-    const nombreUsuario = persona?.nombre ;
+    const nombreUsuario = persona?.nombre;
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark nav-personalizado py-0">
@@ -118,7 +118,8 @@ function Navbar({ enlaces, sesion }) {
                 {/* 2. MENÚ DE NAVEGACIÓN Y CONTENIDO MÓVIL */}
                 <div className="w-100 navbar-sticky-bottom">
                     <div className="collapse navbar-collapse justify-content-center" id="menuPrincipal">
-                        <ul className="navbar-nav align-lg-items-center gap-lg-4 py-3 py-lg-0 text-center text-lg-start w-100">
+                        {/* Se cambia align-lg-items-center por justify-content-lg-center para centrar los enlaces horizontalmente en desktop */}
+                        <ul className="navbar-nav justify-content-lg-center align-items-center gap-lg-4 py-3 py-lg-2 text-center w-100">
                             
                             {/* Enlaces normales del Navbar */}
                             {enlaces.map((enlace) => (
@@ -133,7 +134,6 @@ function Navbar({ enlaces, sesion }) {
                                 </li>
                             ))}
 
-                            {/* EN CELULARES: Opciones de usuario debajo de todo el panel hamburguesa */}
                             {/* EN CELULARES: Opciones de usuario debajo de todo el panel hamburguesa */}
                             <div className="d-lg-none pt-3 mt-2 border-top border-secondary w-100 d-flex flex-column align-items-center gap-2">
                                 {esPersonalGestion && (
@@ -152,7 +152,6 @@ function Navbar({ enlaces, sesion }) {
                                     <div className="w-100 d-flex flex-column align-items-center gap-2">
                                         <span className="text-white fw-semibold mb-1 small">Hola, {nombreUsuario}</span>
                                         
-                                       
                                         <Link 
                                             className="btn btn-light btn-sm text-dark fw-semibold rounded-pill py-1 px-4 shadow-sm text-decoration-none" 
                                             style={{ width: '210px' }}
@@ -178,7 +177,6 @@ function Navbar({ enlaces, sesion }) {
                                             </Link>
                                         )}
 
-                                        {/* Estilo Cerrar Sesión más chico */}
                                         <button 
                                             className="btn btn-sm rounded-pill py-1 px-4 fw-semibold mt-1 shadow-sm" 
                                             style={{ backgroundColor: 'var(--detalles)', color: 'var(--titulos)', width: '210px' }}
