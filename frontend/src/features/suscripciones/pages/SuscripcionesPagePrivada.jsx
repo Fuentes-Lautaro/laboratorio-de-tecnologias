@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getSuscripciones } from '../services/suscripcionesService';
 import { getClientes } from '../../clientes';
 import { getPlanes } from '../services/suscripcionesService';
@@ -10,34 +10,21 @@ export function SuscripcionesPagePrivada() {
   const [clientes, setClientes] = useState([]);
   const [planes, setPlanes] = useState([]);
   const [cargando, setCargando] = useState(true);
-  
   const [terminoBusqueda, setTerminoBusqueda] = useState('');
   
   const [mostrarModalVer, setMostrarModalVer] = useState(false);
   const [suscripcionSeleccionada, setSuscripcionSeleccionada] = useState(null);
 
-  const evaluarEstadoSuscripcion = (suscripcion) => {
-    if (!suscripcion.fecha_pago) return suscripcion.activa;
-
-    const fechaPago = new Date(suscripcion.fecha_pago);
-    const fechaActual = new Date();
-
-    const anioPago = fechaPago.getFullYear();
-    const mesPago = fechaPago.getMonth();
-
-    const anioActual = fechaActual.getFullYear();
-    const mesActual = fechaActual.getMonth();
-
-    const totalMesesPago = anioPago * 12 + mesPago;
-    const totalMesesActual = anioActual * 12 + mesActual;
-
-    const diferenciaMeses = totalMesesActual - totalMesesPago;
-
-    if (diferenciaMeses === 0 || diferenciaMeses === 1) {
-      return true;
-    }
-
-    return false;
+  // Función para formatear mostrando solo la fecha (estilo argentino DD/MM/YYYY)
+  const formatearFecha = (fechaStr) => {
+    if (!fechaStr) return 'Sin fecha';
+    const fecha = new Date(fechaStr);
+    if (isNaN(fecha.getTime())) return fechaStr;
+    return fecha.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
   useEffect(() => {
@@ -49,9 +36,10 @@ export function SuscripcionesPagePrivada() {
           getPlanes()
         ]);
         
+        // Mapeamos directo usando el campo 'activo' (o 's_activo') que viene de la base de datos
         const suscripcionesProcesadas = datosSuscripciones.map(s => ({ 
           ...s, 
-          activa: evaluarEstadoSuscripcion(s) 
+          activa: s.activo ?? s.s_activo ?? false 
         }));
 
         setSuscripciones(suscripcionesProcesadas);
@@ -142,6 +130,7 @@ export function SuscripcionesPagePrivada() {
               suscripciones={suscripcionesFiltradas} 
               obtenerNombreCliente={obtenerNombreCliente} 
               obtenerNombrePlan={obtenerNombrePlan} 
+              formatearFecha={formatearFecha}
               onVer={handleVer} 
             />
           </tbody>
@@ -156,10 +145,10 @@ export function SuscripcionesPagePrivada() {
             <p className="text-muted small mb-2">Plan: <strong>{obtenerNombrePlan(suscripcionSeleccionada.plan_id)}</strong></p>
             <div className="d-flex gap-2 align-items-center mt-2 flex-wrap">
               <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
-                {suscripcionSeleccionada.metodo_pago}
+                {suscripcionSeleccionada.metodo_pago || 'No especificado'}
               </span>
               <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
-                {suscripcionSeleccionada.fecha_pago}
+                {formatearFecha(suscripcionSeleccionada.fecha_pago)}
               </span>
               <span className={`badge bg-${suscripcionSeleccionada.activa ? 'success' : 'secondary'} bg-opacity-25 text-${suscripcionSeleccionada.activa ? 'success' : 'secondary'}`}>
                 {suscripcionSeleccionada.activa ? 'Activa' : 'Inactiva'}

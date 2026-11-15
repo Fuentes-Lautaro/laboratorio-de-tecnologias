@@ -148,8 +148,16 @@ export async function guardarRegistroMes(planId, periodo, productos) {
 // ==========================================
 
 export async function getSuscripciones() {
-  const respuesta = await fetch(`${URL_DATA_SIMULADA}/suscripciones.json`);
+  const sesion = obtenerSesion();
   
+  const respuesta = await fetch(`${API_URL}/api/suscripciones/listar`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    }
+  });
+
   if (!respuesta.ok) {
     throw new Error('No se pudieron obtener las suscripciones');
   }

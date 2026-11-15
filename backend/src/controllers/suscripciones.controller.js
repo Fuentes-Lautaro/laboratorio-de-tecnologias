@@ -16,10 +16,36 @@ export const listarPersonasConSuscripcion = async (req, res, next) => {
     }
 }
 
+export const listarSuscripciones = async (req, res, next) => {
+    try {
+        const query = `
+            SELECT 
+                s.s_id AS id,
+                s.s_fecha_pago AS fecha_pago,
+                s.s_monto_pago AS monto,
+                s.cliente_id,
+                p.pe_dni AS dni_cliente,
+                p.pe_nombre AS nombre_cliente,
+                s.ps_id AS plan_id,
+                pl.ps_nombre AS plan_nombre,
+                s.s_metodo_pago AS metodo_pago,
+                s.activo
+            FROM suscripcion s
+            JOIN personas p ON s.cliente_id = p.pe_id
+            JOIN planes pl ON s.ps_id = pl.ps_id
+        `;
+        const { rows } = await pool.query(query);
+        res.json(rows);
+    } catch (err) {
+        next(err);
+    }
+};
+
 
 export const obtener = async (req, res, next) => {
     try {
-        const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = $1', [req.params.id]);
+        let id = req.params.id;
+        const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = $1', []);
        
         if (rows.length === 0) {
             return res.status(404).json({ error: "Suscripción no encontrada" });

@@ -1,4 +1,16 @@
 export function TablaSuscripciones({ suscripciones, obtenerNombreCliente, obtenerNombrePlan, onVer }) {
+  
+  const formatearFecha = (fechaStr) => {
+    if (!fechaStr) return 'Sin fecha';
+    const fecha = new Date(fechaStr);
+    if (isNaN(fecha.getTime())) return fechaStr;
+    return fecha.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  };
+
   if (suscripciones.length === 0) {
     return (
       <tr>
@@ -16,7 +28,10 @@ export function TablaSuscripciones({ suscripciones, obtenerNombreCliente, obtene
           <td className="fw-semibold">{obtenerNombreCliente(suscripcion.dni_cliente)}</td>
           <td>{obtenerNombrePlan(suscripcion.plan_id)}</td>
           <td>{suscripcion.metodo_pago}</td>
-          <td>{suscripcion.fecha_pago}</td>
+          
+          {/* 📅 AQUÍ SE APLICA EL FORMATO CORREGIDO */}
+          <td>{formatearFecha(suscripcion.fecha_pago)}</td>
+
           <td>${typeof suscripcion.monto === 'number' ? suscripcion.monto.toLocaleString('es-AR') : suscripcion.monto}</td>
           <td>
             <span className={`badge bg-${suscripcion.activa ? 'success' : 'secondary'} bg-opacity-25 text-${suscripcion.activa ? 'success' : 'secondary'}`}>

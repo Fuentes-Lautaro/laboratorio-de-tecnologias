@@ -120,25 +120,26 @@ VALUES
 -- =========================================================
 -- INSERCION DE SUSCRIPCIONES
 -- =========================================================
-INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
-VALUES
+-- =========================================================
+-- INSERCION DE SUSCRIPCIONES
+-- =========================================================
+INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, s_metodo_pago, cliente_id, ps_id, activo)
+VALUES 
 (
-    '2026-10-05',
-    25000.00,
-    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucia Gomez
-    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
+    '2026-10-10', 
+    25000.00, 
+    'MercadoPago', 
+    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucia Gomez (Cliente)
+    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec'), -- Plan Malbec
+    FALSE
 ),
 (
-    '2026-10-10',
-    70000.00,
-    (SELECT pe_id FROM personas WHERE pe_dni = '87654321'), -- Martin Pedernera
-    (SELECT ps_id FROM planes WHERE ps_nombre = 'Reserva Especial')
-),
-(
-    '2026-11-05',
-    25000.00,
-    (SELECT pe_id FROM personas WHERE pe_dni = '12345678'), -- Lucia Gomez (mes siguiente)
-    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec')
+    '2026-10-20', 
+    40000.00, 
+    'MercadoPago', 
+    (SELECT pe_id FROM personas WHERE pe_dni = '87654321'), -- Martin Pedernera (Cliente)
+    (SELECT ps_id FROM planes WHERE ps_nombre = 'Malbec-Rosado'), -- Plan Malbec-Rosado
+    TRUE
 );
 
 -- Plan 1 (Malbec): Productos 1 y 2
