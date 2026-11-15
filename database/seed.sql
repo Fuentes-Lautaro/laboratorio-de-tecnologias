@@ -16,60 +16,60 @@ VALUES
 
 -- INSERCION DE PRODUCTOS
 INSERT INTO productos 
-(p_marca, p_tipo, p_precio, p_costo, p_anio, p_medida, p_bodega, p_varietal, p_stock, p_imagen_url, p_descripcion)
+(p_marca, p_tipo, p_precio, p_costo, p_anio, p_medida, p_bodega, p_varietal, p_stock, p_descripcion)
 VALUES
-('Trapiche', 'tinto', 6500.00, 3800.00, 2021, '750', 'Trapiche', 'Malbec', 0, '/img/productos/trapiche-malbec-750.png', 
+('Trapiche', 'tinto', 6500.00, 3800.00, 2021, '750', 'Trapiche', 'Malbec', 0, 
 'Un vino de color rojo violaceo brillante, con aromas a frutos rojos frescos como ciruelas y cerezas, complementados con sutiles notas avainilladas. En boca es suave, redondo, de taninos amables y final frutal muy agradable.'),
 
-('Rutini', 'tinto', 18500.00, 11000.00, 2020, '750', 'Rutini Wines', 'Cabernet Sauvignon', 20, '/img/productos/rutini-cabernet-750.png', 
+('Rutini', 'tinto', 18500.00, 11000.00, 2020, '750', 'Rutini Wines', 'Cabernet Sauvignon', 20, 
 'Complejo y elegante exponente de Valle de Uco. Despliega aromas a frutas negras maduras, especias como pimienta negra y notas tostadas aportadas por su crianza en roble. Posee una estructura firme, taninos sedosos y excelente potencial de guarda.'),
 
-('Luigi Bosca', 'tinto', 14200.00, 8500.00, 2022, '750', 'Luigi Bosca', 'Pinot Noir', 15, '/img/productos/luigi-bosca-pinot-750.png', 
+('Luigi Bosca', 'tinto', 14200.00, 8500.00, 2022, '750', 'Luigi Bosca', 'Pinot Noir', 15, 
 'De color rojo rubi translucido y brillante. Nariz muy expresiva con notas de cerezas, frambuesas y delicados dejos terrosos y florales. En boca se destaca por su frescura, sutileza, taninos delicados y gran fineza.'),
 
-('Norton', 'blanco', 4800.00, 2700.00, 2023, '750', 'Norton', 'Sauvignon Blanc', 30, '/img/productos/norton-sauvignon-750.png', 
+('Norton', 'blanco', 4800.00, 2700.00, 2023, '750', 'Norton', 'Sauvignon Blanc', 30, 
 'Un vino blanco vivaz y refrescante, con claros tonos verdosos. En nariz predominan notas citricas de pomelo, lima y sutiles estallidos herbales. En boca ofrece una acidez equilibrada que aporta vivacidad y un final limpio y persistente.'),
 
-('Catena Zapata', 'tinto', 22000.00, 13500.00, 2019, '750', 'Catena Zapata', 'Malbec', 12, '/img/productos/catena-malbec-750.png', 
+('Catena Zapata', 'tinto', 22000.00, 13500.00, 2019, '750', 'Catena Zapata', 'Malbec', 12, 
 'Elaborado con uvas de vinedos de altura, ofrece una gran complejidad aromatica de frutos negros maduros, notas de violetas, moca y especias dulces. De gran concentracion en boca, taninos jugosos y una textura untuosa y sofisticada.'),
 
-('Alamos', 'blanco', 5200.00, 3100.00, 2023, '750', 'Alamos', 'Torrontes', 25, '/img/productos/alamos-torrontes-750.png', 
+('Alamos', 'blanco', 5200.00, 3100.00, 2023, '750', 'Alamos', 'Torrontes', 25, 
 'Fragante y sumamente aromatico. Caracterizado por sus clasicas notas florales de azahar y jazmin, combinadas con toques citricos y de frutas blancas de carozos. En boca es fresco, expresivo y con un paso armonico.'),
 
-('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Salentein', 'Malbec Rose', 18, '/img/productos/salentein-rose-750.png', 
+('Salentein', 'rosado', 7800.00, 4500.00, 2022, '750', 'Salentein', 'Malbec Rose', 18, 
 'Un rose elegante de color piel de cebolla brillante. Nariz delicada con aromas a frutillas, cerezas frescas y notas florales. En boca muestra una excelente acidez natural que le otorga frescura y un perfil vibrante.'),
 
-('Finca La Linda', 'tinto', 8900.00, 5200.00, 2021, '750', 'Luigi Bosca', 'Syrah', 28, '/img/productos/la-linda-syrah-750.png', 
+('Finca La Linda', 'tinto', 8900.00, 5200.00, 2021, '750', 'Luigi Bosca', 'Syrah', 28, 
 'De color violaceo profundo e intenso. Presenta aromas especiados muy caracteristicos, con notas de frutos negros, pimienta negra y tonos ahumados. En boca es concentrado, con taninos firmes y de gran personalidad.'),
 
-('Trapiche', 'blanco', 6100.00, 3500.00, 2022, '750', 'Trapiche', 'Chardonnay', 22, '/img/productos/trapiche-chardonnay-750.png', 
+('Trapiche', 'blanco', 6100.00, 3500.00, 2022, '750', 'Trapiche', 'Chardonnay', 22, 
 'Un blanco accesible y fresco, con aromas a manzana verde, pera y sutiles notas tropicales de anana. En boca es untuoso pero equilibrado por una vivaz acidez que realza su perfil frutado.'),
 
-('Rutini', 'blanco', 17000.00, 9800.00, 2022, '750', 'Rutini Wines', 'Chardonnay', 14, '/img/productos/rutini-chardonnay-750.png', 
+('Rutini', 'blanco', 17000.00, 9800.00, 2022, '750', 'Rutini Wines', 'Chardonnay', 14, 
 'De gran complejidad gracias a su paso parcial por barricas de roble. Combina notas de frutas maduras como anana y durazno blanco con matices de vainilla y manteca. En boca es estructurado, elegante y cremoso.'),
 
-('Catena Zapata', 'blanco', 21000.00, 12500.00, 2021, '750', 'Catena Zapata', 'Chardonnay', 10, '/img/productos/catena-chardonnay-750.png', 
+('Catena Zapata', 'blanco', 21000.00, 12500.00, 2021, '750', 'Catena Zapata', 'Chardonnay', 10, 
 'Proveniente de vinedos de altura, ofrece una nariz citrica punzante con notas de pera, manzana verde y notas minerales. Su paso por roble le aporta cuerpo, textura sedosa y un final largo y persistente.'),
 
-('Alamos', 'tinto', 5800.00, 3300.00, 2022, '750', 'Alamos', 'Malbec', 35, '/img/productos/alamos-malbec-750.png', 
+('Alamos', 'tinto', 5800.00, 3300.00, 2022, '750', 'Alamos', 'Malbec', 35, 
 'Vino estructurado y accesible que refleja la tipicidad del Malbec mendocino. Cuenta con notas de ciruelas maduras, moras y toques de chocolate. En boca tiene taninos redondos y un caracter amable.'),
 
-('Salentein', 'tinto', 9500.00, 5600.00, 2020, '750', 'Salentein', 'Cabernet Sauvignon', 16, '/img/productos/salentein-cabernet-750.png', 
+('Salentein', 'tinto', 9500.00, 5600.00, 2020, '750', 'Salentein', 'Cabernet Sauvignon', 16, 
 'Con expresion tipica de Valle de Uco, destaca notas de cassis, pimiento morron asado y especias. En boca presenta buen cuerpo, taninos firmes y maduros, con un elegante final especiado.'),
 
-('Norton', 'tinto', 5100.00, 2900.00, 2021, '750', 'Norton', 'Merlot', 24, '/img/productos/norton-merlot-750.png', 
+('Norton', 'tinto', 5100.00, 2900.00, 2021, '750', 'Norton', 'Merlot', 24, 
 'Un tinto amigable y redondo. Ofrece aromas francos a frutos rojos maduros, ciruelas y sutiles notas de especias dulces. En boca se destaca por su paso amable, taninos suaves y gran versatilidad gastronomica.'),
 
-('Luigi Bosca', 'blanco', 13900.00, 8100.00, 2022, '750', 'Luigi Bosca', 'Riesling', 9, '/img/productos/luigi-bosca-riesling-750.png', 
+('Luigi Bosca', 'blanco', 13900.00, 8100.00, 2022, '750', 'Luigi Bosca', 'Riesling', 9, 
 'Un exponente blanco sofisticado y aromatico, con notas citricas marcadas, toques minerales y sutiles notas florales. En boca muestra una acidez vibrante, excelente tension y un final fresco muy persistente.'),
 
-('Finca La Linda', 'blanco', 8500.00, 4900.00, 2023, '750', 'Luigi Bosca', 'Viognier', 19, '/img/productos/la-linda-viognier-750.png', 
+('Finca La Linda', 'blanco', 8500.00, 4900.00, 2023, '750', 'Luigi Bosca', 'Viognier', 19, 
 'Vino blanco expresivo de color amarillo verdoso brillante. Destacan aromas a duraznos blancos, damascos y sutiles notas florales. En boca es untuoso, fresco, con volumen y un retrogusto sumamente frutal.'),
 
-('Trapiche', 'tinto', 12000.00, 7000.00, 2019, '1500', 'Trapiche', 'Malbec', 5, '/img/productos/trapiche-magnum-1500.png', 
+('Trapiche', 'tinto', 12000.00, 7000.00, 2019, '1500', 'Trapiche', 'Malbec', 5, 
 'Version en formato Magnum de este clasico Malbec mendocino. Concentra aromas a frutos rojos y negros maduros, con toques de roble. En boca es amplio, estructurado, redondo y de gran capacidad para compartir.'),
 
-('Rutini', 'tinto', 24000.00, 14500.00, 2018, '750', 'Rutini Wines', 'Malbec', 8, '/img/productos/rutini-apartado-750.png', 
+('Rutini', 'tinto', 24000.00, 14500.00, 2018, '750', 'Rutini Wines', 'Malbec', 8, 
 'Un vino de alta gama complejo y exclusivo. Despliega una paleta aromatica rica en frutos negros confitados, notas de tabaco, chocolate y especias finas. En boca es voluptuoso, potente, de taninos terciopelados y gran profundidad.');
 
 -- INSERCION DE PLANES
