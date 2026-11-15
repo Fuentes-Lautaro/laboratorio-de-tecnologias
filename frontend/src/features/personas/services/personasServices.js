@@ -58,6 +58,22 @@ export async function getPersonas(params = null) {
   return Array.isArray(datos) ? datos.map(normalizarPersona) : [];
 }
 
+export async function buscarPersonaPorDni(dni) {
+  const sesion = obtenerSesion();
+  const respuesta = await fetch(`${URL_BASE}/personas/dni/${encodeURIComponent(String(dni).trim())}`, {
+    headers: {
+      'Authorization': `Bearer ${sesion?.token}`
+    }
+  });
+
+  if (respuesta.status === 404) {
+    return null;
+  }
+
+  const dato = await procesarRespuesta(respuesta, 'Error al buscar el cliente por DNI');
+  return normalizarPersona(dato);
+}
+
 export async function getPersonaPorId() {
   const sesion = obtenerSesion();
   const respuesta = await fetch(`${URL_BASE}/personas/perfil`, {
@@ -79,7 +95,7 @@ export async function crearPersona(datosPersona) {
     telefono: datosPersona.telefono,
     mail: datosPersona.mail,
     direccion: datosPersona.direccion,
-    password: datosPersona.password || datosPersona.clave,
+    password: datosPersona.password || datosPersona.clave || undefined,
     rol: datosPersona.rol ? datosPersona.rol.toLowerCase() : 'cliente'
   };
 
@@ -132,27 +148,27 @@ export async function cambiarEstadoPersona(id) {
   const actualizado = await procesarRespuesta(respuesta, 'Error al cambiar el estado de la persona');
   return normalizarPersona(actualizado);
 }
-export async function actualizarDatosPersonales(datosActualizados) {
-    const sesion = obtenerSesion();
-    const respuesta = await fetch(`${URL_BASE}/personas/actualizarme`, {
-        method: 'PUT', // 
-        headers: {
-            'Content-Type': 'application/json',
-            ...(sesion?.token && { 'Authorization': `Bearer ${sesion.token}` })
-        },
-        body: JSON.stringify(datosActualizados)
-    });
 
-    if (!respuesta.ok) {
-        throw new Error('Error al actualizar los datos personales');
-    }
-    const actualizado = await procesarRespuesta(respuesta, 'Error al cambiar el estado de la persona');
-    return normalizarPersona(actualizado);
+export async function actualizarDatosPersonales(datosActualizados) {
+  const sesion = obtenerSesion();
+  const respuesta = await fetch(`${URL_BASE}/personas/actualizarme`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(sesion?.token && { 'Authorization': `Bearer ${sesion.token}` })
+    },
+    body: JSON.stringify(datosActualizados)
+  });
+
+  if (!respuesta.ok) {
+    throw new Error('Error al actualizar los datos personales');
+  }
+  const actualizado = await procesarRespuesta(respuesta, 'Error al cambiar el estado de la persona');
+  return normalizarPersona(actualizado);
 }
 
 export async function actualizarPassword(datosPassword) {
   const sesion = obtenerSesion();
-  
 
   const respuesta = await fetch(`${URL_BASE}/auth/cambiarPassword`, { 
     method: 'PUT',
