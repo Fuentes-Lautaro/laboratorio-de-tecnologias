@@ -144,7 +144,7 @@ export async function guardarRegistroMes(planId, periodo, productos) {
 }
 
 // ==========================================
-// SUSCRIPCIONES Y REGISTROS (Aún en JSON)
+// SUSCRIPCIONES Y REGISTROS 
 // ==========================================
 
 export async function getSuscripciones() {
@@ -195,4 +195,22 @@ export async function getSuscripcionActivaPorDni(clienteDni) {
     throw error;
   }
 }
+
+export async function guardarSuscripcion({ data }) {
+   const sesion = obtenerSesion();
+  const respuesta = await fetch(`${API_URL}/api/suscripciones`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${sesion?.token}`
+     },
+    body: JSON.stringify(data)
+  });
+
+  if (!respuesta.ok) {
+    throw new Error('Error al crear la suscripción');
+  }
+  const nuevaSuscripcion = await respuesta.json();
+  return nuevaSuscripcion;
+}  
+
 

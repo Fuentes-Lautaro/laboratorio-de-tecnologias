@@ -11,11 +11,14 @@ export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver,
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //LLAMADO A LA API?
+    
+    
     onConfirmarPago({
-      fechaPago: new Date().toISOString().split('T')[0],
-      metodoPago: 'Mercado Pago',
-      monto: plan?.valor || 0
+      fecha_pago: new Date().toISOString().split('T')[0], // Formato 'YYYY-MM-DD'
+      monto_pago: plan?.valor || 0,
+      cliente_id: cliente?.id || cliente?.pe_id, // El ID numérico del usuario en sesión
+      ps_id: plan?.id || plan?.ps_id,             // El ID numérico del plan
+      metodo_pago: 'MercadoPago'                    // Por si tu tabla lo registra (aunque el controlador actual no lo inserta directo, lo guardamos por si acaso)
     });
   };
 
@@ -30,10 +33,10 @@ export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver,
         <div className="card bg-light p-3 mb-3 border-0">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <span className="text-muted small">Plan Seleccionado</span>
-            <span className="badge bg-secondary">{plan?.Nombre || 'Suscripción'}</span>
+            <span className="badge bg-secondary">{plan?.nombre || plan?.Nombre || 'Suscripción'}</span>
           </div>
-          <h5 className="fw-bold mb-1">{plan?.Nombre}</h5>
-          <p className="text-muted small mb-2">{plan?.Descripcion}</p>
+          <h5 className="fw-bold mb-1">{plan?.nombre || plan?.Nombre}</h5>
+          <p className="text-muted small mb-2">{plan?.descripcion || plan?.Descripcion}</p>
         </div>
 
         {/* Detalles de la Transacción */}
@@ -109,3 +112,5 @@ export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver,
     </div>
   );
 }
+
+export default CardPagarSuscripcion;

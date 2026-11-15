@@ -60,27 +60,30 @@ export const obtener = async (req, res, next) => {
 
 export const crear = async (req, res, next) => {
     try {
-        const { fecha_pago, monto_pago, cliente_id, ps_id } = req.body;
-       
-        // Validación de datos de entrada obligatorios antes de llegar a la base de datos
+        // Recibimos los datos que manda el frontend
+        const { fecha_pago, monto_pago, metodo_pago, ps_id } = req.body;
+        let cliente_id = req.usuario?.id 
+        // Validación estricta de campos obligatorios según tu schema
         if (!fecha_pago || monto_pago === undefined || !cliente_id || !ps_id) {
             return res.status(400).json({ error: "Faltan datos obligatorios (fecha_pago, monto_pago, cliente_id, ps_id)" });
         }
 
+        // Definimos un método de pago por defecto si no llega
+        const metodoPagoFinal = metodo_pago || 'MercadoPago';
 
         const { rows } = await pool.query(
-            `INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, cliente_id, ps_id)
-            VALUES ($1, $2, $3, $4)
+            `INSERT INTO suscripcion (s_fecha_pago, s_monto_pago, s_metodo_pago, cliente_id, ps_id, activo)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *`,
-            [ fecha_pago, monto_pago, cliente_id, ps_id ]
+            [ fecha_pago, monto_pago, metodoPagoFinal, cliente_id, ps_id, true ]
         );
-       
-        res.status(201).json(rows[0]); // 201 Creado
+        
+        res.status(201).json(rows[0]); // 201 Creado con éxito
     } catch(err) {
-        // Si el cliente_id o ps_id no existen, PostgreSQL lanzará un error de Foreign Key (código 23503)
+        
         if (err.code === '23503') {
-            return res.status(400).json({ error: "El cliente o el plan de suscripción no existen" });
+            return res.status(400).json({ error: "El cliente o el plan de PLan de suscripción no existen" });
         }
         next(err);
     }
-}
+};

@@ -12,7 +12,8 @@ import {
 } from '../../auth';
 
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
-import { getSuscripcionActivaPorDni, getPlanPorNombre } from '../services/suscripcionesService';
+
+import { getSuscripcionActivaPorDni, getPlanPorNombre, guardarSuscripcion } from '../services/suscripcionesService';
 
 export function FlujoSuscripcionPage() {
   const { nombre } = useParams();
@@ -125,7 +126,6 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  // PASO 2B: Registro de nuevo usuario
   const handleRegistro = async (datosRegistro) => {
     setCargando(true);
     setErrorBackend('');
@@ -136,7 +136,7 @@ export function FlujoSuscripcionPage() {
         mail: email
       };
 
-      const nuevoCliente = await registrarCliente(payloadRegistro);
+      await registrarCliente(payloadRegistro);
       
       const sesion = await iniciarSesion(email, datosRegistro.password);
       setClienteLogueado(sesion);
@@ -151,22 +151,36 @@ export function FlujoSuscripcionPage() {
     }
   };
 
+  
   const handleConfirmarPago = async () => {
     setCargando(true);
     setErrorBackend('');
 
-    setTimeout(() => {
-      setCargando(false);
+    try {
+      
+      const payload = {
+        fecha_pago: new Date().toISOString().split('T')[0], // Formato 'YYYY-MM-DD'
+        monto_pago: planSeleccionado?.valor || 0,
+        cliente_id: clienteLogueado?.id || clienteLogueado?.pe_id, // ID numérico de la persona
+        ps_id: planSeleccionado?.id || planSeleccionado?.ps_id       // ID numérico del plan
+      };
+
+      
+      await guardarSuscripcion({ data: payload });
 
       alert(
-        `¡Pago procesado con éxito!\n\n` +
+        `¡Suscripción creada con éxito en la base de datos!\n\n` +
         `Plan: ${planSeleccionado?.nombre || 'Suscripción'}\n` +
         `Monto: $${planSeleccionado?.valor?.toLocaleString('es-AR')}\n` +
         `Titular: ${clienteLogueado?.nombre || email}`
       );
 
-      navigate('/');
-    }, 1500);
+      navigate('/mi-suscripcion', { replace: true });
+    } catch (error) {
+      setErrorBackend(error.message || 'Error al registrar la suscripción en la base de datos.');
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
