@@ -190,6 +190,33 @@ export function VentasPage() {
     setAlertaModal(null);
   };
 
+  // Estilos y eventos hover para los botones "Continuar sin cliente"
+  const estiloBotonSecundario = {
+    backgroundColor: '#FFFFFF',
+    color: '#495057',
+    border: '1px solid #6c757d',
+    transition: 'all 0.15s ease'
+  };
+
+  const handleHoverEntrarSecundario = (e) => {
+    e.currentTarget.style.backgroundColor = '#5c636a';
+    e.currentTarget.style.borderColor = '#5c636a';
+    e.currentTarget.style.color = '#FFFFFF';
+  };
+
+  const handleHoverSalirSecundario = (e) => {
+    e.currentTarget.style.backgroundColor = '#FFFFFF';
+    e.currentTarget.style.borderColor = '#6c757d';
+    e.currentTarget.style.color = '#495057';
+  };
+
+  // Estilo del panel secundario para acciones de cliente dentro del modal
+  const estiloPanelCliente = {
+    backgroundColor: 'var(--fondo-secundario, #F4EFEA)',
+    border: '1px solid rgba(181, 134, 90, 0.35)',
+    color: 'var(--titulos, #3E100F)'
+  };
+
   const handleReactivarCliente = async () => {
     if (!clienteInactivo?.id) return;
     setAlertaModal(null);
@@ -596,9 +623,12 @@ export function VentasPage() {
               {/* Aviso dentro del modal cuando el cliente existe pero su cuenta está inactiva */}
               {!buscandoCliente && clienteInactivo && (
                 <div className="col-12">
-                  <div className="alert alert-warning py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+                  <div
+                    className="rounded-3 py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2"
+                    style={estiloPanelCliente}
+                  >
                     <div className="small">
-                      <strong>Cuenta inactiva:</strong> El cliente <strong>{clienteInactivo.nombre}</strong> (DNI {clienteInactivo.dni}) está dado de baja.
+                      <strong>Cuenta inactiva</strong>
                     </div>
                     <div className="d-flex gap-2 flex-shrink-0">
                       <button
@@ -612,7 +642,10 @@ export function VentasPage() {
                       </button>
                       <button
                         type="button"
-                        className="btn btn-sm btn-outline-secondary bg-white"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
                         onClick={handleContinuarSinCliente}
                         disabled={reactivandoCliente}
                       >
@@ -626,9 +659,12 @@ export function VentasPage() {
               {/* Aviso dentro del modal cuando el DNI no está registrado */}
               {!buscandoCliente && clienteNoExiste && !mostrarFormCliente && (
                 <div className="col-12">
-                  <div className="alert alert-warning py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
+                  <div
+                    className="rounded-3 py-2 px-3 mb-0 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2"
+                    style={estiloPanelCliente}
+                  >
                     <div className="small">
-                      <strong>Cliente no encontrado:</strong> No existe un cliente con DNI <strong>{clienteDni}</strong>.
+                      <strong>Cliente no encontrado</strong>
                     </div>
                     <div className="d-flex gap-2 flex-shrink-0">
                       <button
@@ -644,7 +680,10 @@ export function VentasPage() {
                       </button>
                       <button
                         type="button"
-                        className="btn btn-sm btn-outline-secondary bg-white"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
                         onClick={handleContinuarSinCliente}
                       >
                         Continuar sin cliente
@@ -657,7 +696,7 @@ export function VentasPage() {
               {/* Sub-formulario inline para alta rápida de cliente */}
               {mostrarFormCliente && (
                 <div className="col-12">
-                  <div className="p-3 rounded border bg-light">
+                  <div className="p-3 rounded-3" style={estiloPanelCliente}>
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <h6 className="fw-bold small mb-0" style={{ color: 'var(--titulos, #3E100F)' }}>
                         Nuevo Cliente (DNI: {clienteDni})
@@ -726,7 +765,10 @@ export function VentasPage() {
                     <div className="d-flex justify-content-end gap-2 mt-3">
                       <button
                         type="button"
-                        className="btn btn-sm btn-outline-secondary bg-white"
+                        className="btn btn-sm"
+                        style={estiloBotonSecundario}
+                        onMouseEnter={handleHoverEntrarSecundario}
+                        onMouseLeave={handleHoverSalirSecundario}
                         onClick={handleContinuarSinCliente}
                         disabled={guardandoCliente}
                       >
