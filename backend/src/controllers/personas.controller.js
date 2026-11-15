@@ -87,7 +87,7 @@ export const crearPersona = async (req, res, next) => {
 // Obtener detalle de una persona por ID
 export const detallePersona = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.usuario?.id;
     const { rows } = await pool.query(
       `SELECT pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo
        FROM personas
@@ -110,12 +110,31 @@ export const detallePersona = async (req, res, next) => {
     next(err);
   }
 };
+// Obtener detalle de una persona por ID
+export const detallePublicoPersona = async (req, res, next) => {
+  try {
+    let  id  = req.usuario?.id;
+    const { rows } = await pool.query(
+      `SELECT  pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_activo
+       FROM personas
+       WHERE pe_id = $1`,
+      [id]
+    );
 
-// Actualizar datos de una persona
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const actualizarPersona = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { nombre, telefono, direccion, fechaNac, rol, password, clave } = req.body;
+    let  id  = req.usuario?.id;
+    const { nombre, telefono, direccion, fechaNac, rol, password, mail } = req.body;
     const rolUsuario = req.usuario?.rol?.toLowerCase() || '';
 
     const actual = await pool.query('SELECT pe_rol FROM personas WHERE pe_id = $1', [id]);
@@ -132,7 +151,7 @@ export const actualizarPersona = async (req, res, next) => {
       });
     }
 
-    const clavePlana = password || clave;
+    const clavePlana = password;
     const passwordHash = clavePlana ? await bcrypt.hash(clavePlana, SALT_ROUNDS) : null;
 
     const { rows } = await pool.query(
@@ -143,9 +162,10 @@ export const actualizarPersona = async (req, res, next) => {
            pe_fechaNac = COALESCE($4, pe_fechaNac),
            pe_rol = COALESCE($5, pe_rol),
            pe_password = COALESCE($6, pe_password)
-       WHERE pe_id = $7
+           pe_mail = COALESCE($7, pe_mail)
+       WHERE pe_id = $8
        RETURNING pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo`,
-      [nombre, telefono, direccion, fechaNac, rolNuevo, passwordHash, id]
+      [nombre, telefono, direccion, fechaNac, rolNuevo, passwordHash, mail, id]
     );
 
     res.json(rows[0]);
@@ -184,3 +204,33 @@ export const cambiarEstado = async (req, res, next) => {
     next(err);
   }
 };
+
+//funcion publica para camabiar datos
+export const actualizarme = async (req, res, next) => {
+  try {
+    let id = req.usuario?.id;
+    const { nombre, telefono, direccion, fechaNac, password, mail } = req.body;
+
+    const clavePlana = password;
+    const passwordHash = clavePlana ? await bcrypt.hash(clavePlana, SALT_ROUNDS) : null;
+
+    const { rows } = await pool.query(
+      `UPDATE personas
+       SET pe_nombre = COALESCE($1, pe_nombre),
+           pe_telefono = COALESCE($2, pe_telefono),
+           pe_direccion = COALESCE($3, pe_direccion),
+           pe_fechaNac = COALESCE($4, pe_fechaNac),
+           pe_password = COALESCE($5, pe_password),
+           pe_mail = COALESCE($6, pe_mail)
+       WHERE pe_id = $7
+       RETURNING pe_id, pe_dni, pe_nombre, pe_fechaNac, pe_telefono, pe_mail, pe_direccion, pe_rol, pe_activo`,
+      [nombre, telefono, direccion, fechaNac, passwordHash, mail, id]
+    );
+
+    res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
+
+

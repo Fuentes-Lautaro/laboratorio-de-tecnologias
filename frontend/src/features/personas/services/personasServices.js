@@ -58,9 +58,9 @@ export async function getPersonas(params = null) {
   return Array.isArray(datos) ? datos.map(normalizarPersona) : [];
 }
 
-export async function getPersonaPorId(id) {
+export async function getPersonaPorId() {
   const sesion = obtenerSesion();
-  const respuesta = await fetch(`${URL_BASE}/personas/${id}`, {
+  const respuesta = await fetch(`${URL_BASE}/personas/perfil`, {
     headers: {
       'Authorization': `Bearer ${sesion?.token}`
     }
@@ -96,7 +96,7 @@ export async function crearPersona(datosPersona) {
   return normalizarPersona(creado);
 }
 
-export async function actualizarPersona(id, datosPersona) {
+export async function actualizarPersona(datosPersona) {
   const sesion = obtenerSesion();
   const payload = {
     nombre: datosPersona.nombre,
@@ -107,7 +107,7 @@ export async function actualizarPersona(id, datosPersona) {
     password: datosPersona.password || datosPersona.clave || undefined
   };
 
-  const respuesta = await fetch(`${URL_BASE}/personas/${id}`, {
+  const respuesta = await fetch(`${URL_BASE}/personas/actualizarme`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -131,4 +131,47 @@ export async function cambiarEstadoPersona(id) {
 
   const actualizado = await procesarRespuesta(respuesta, 'Error al cambiar el estado de la persona');
   return normalizarPersona(actualizado);
+}
+export async function actualizarDatosPersonales(datosActualizados) {
+    const sesion = obtenerSesion();
+    const respuesta = await fetch(`${URL_BASE}/personas/actualizarme`, {
+        method: 'PUT', // 
+        headers: {
+            'Content-Type': 'application/json',
+            ...(sesion?.token && { 'Authorization': `Bearer ${sesion.token}` })
+        },
+        body: JSON.stringify(datosActualizados)
+    });
+
+    if (!respuesta.ok) {
+        throw new Error('Error al actualizar los datos personales');
+    }
+    const actualizado = await procesarRespuesta(respuesta, 'Error al cambiar el estado de la persona');
+    return normalizarPersona(actualizado);
+}
+
+export async function actualizarPassword(datosPassword) {
+  const sesion = obtenerSesion();
+  
+
+  const respuesta = await fetch(`${URL_BASE}/auth/cambiarPassword`, { 
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
+    body: JSON.stringify({
+      password: datosPassword.passwordActual,     
+      nuevaPassword: datosPassword.nuevaPassword   
+    })
+  });
+
+  if (!respuesta.ok) {
+    const errorData = await respuesta.json().catch(() => ({}));
+    throw new Error(
+      errorData.error || errorData.mensaje || 'No se pudo cambiar la contraseña.'
+    );
+  }
+
+  return await respuesta.json();
 }
