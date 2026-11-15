@@ -53,7 +53,10 @@ function FiltroDesplegable({ titulo, opciones = [], seleccionados = [], onCambio
         <ul
           className="dropdown-menu show p-2 mt-1 shadow border-0 rounded-3"
           style={{
+            left: 0,
+            right: 'auto',
             minWidth: '210px',
+            maxWidth: '90vw',
             maxHeight: '250px',
             overflowY: 'auto',
             zIndex: 1050,

@@ -3,6 +3,18 @@ import { Link } from 'react-router-dom';
 
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
+const obtenerImagenMarca = (marca) => {
+  if (!marca) return FALLBACK_IMAGEN;
+  const slug = String(marca)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-');
+
+  return slug ? `/img/productos/${slug}.png` : FALLBACK_IMAGEN;
+};
+
 export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onEliminar }) {
   const [hoverBotonEstado, setHoverBotonEstado] = useState(false);
 
@@ -18,8 +30,9 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
   const medida = producto.p_medida ?? producto.medida ?? '';
   const varietal = producto.p_varietal ?? producto.varietal ?? '';
   const bodega = producto.p_bodega ?? producto.bodega ?? '';
-  const img = producto.p_imagen_url ?? producto.p_img ?? producto.img ?? '';
   const stock = producto.p_stock ?? producto.stock ?? 0;
+
+  const img = obtenerImagenMarca(marca);
 
   // Evaluación del estado activo / inactivo (por defecto true)
   const estaActivo = producto.p_activo ?? producto.activo ?? true;
@@ -41,11 +54,11 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
       <div className="row g-0 h-100">
         
         {/* Columna de la Imagen */}
-        <div className="col-4 d-flex justify-content-center align-items-center p-0" style={{ backgroundColor: '#F3EFEA', overflow: 'hidden', height: '100%' }}>
+        <div className="col-4 d-flex justify-content-center align-items-center p-0" style={{ border:'1px solid #F3EFEA', overflow: 'hidden', height: '100%' }}>
           {!esGestion ? (
             <Link to={rutaDetalle} className="w-100 h-100 d-block">
               <img
-                src={img || FALLBACK_IMAGEN}
+                src={img}
                 alt={marca || tipo || 'Producto'}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={handleImageError}
@@ -53,7 +66,7 @@ export function ProductoCard({ producto, esGestion = false, onVer, onEditar, onE
             </Link>
           ) : (
             <img
-              src={img || FALLBACK_IMAGEN}
+              src={img}
               alt={marca || tipo || 'Producto'}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               onError={handleImageError}
