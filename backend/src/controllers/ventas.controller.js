@@ -85,6 +85,7 @@ export const detalle = async (req, res, next) => {
 };
 
 //CREAR UNA NUEVA VENTA 
+// CREAR UNA NUEVA VENTA 
 export const crear = async (req, res, next) => {
     const client = await pool.connect();
     try {
@@ -92,24 +93,29 @@ export const crear = async (req, res, next) => {
 
         await client.query('BEGIN'); // Iniciar transacción
 
-        //  Validar y buscar Cliente por DNI (si se escribió uno)
+        // Validar y buscar Cliente activo por DNI (si se escribió uno)
         let clienteId = null;
         if (clienteDni) {
-            const resCli = await client.query('SELECT pe_id FROM personas WHERE pe_dni = $1', [clienteDni]);
+            const resCli = await client.query(
+                'SELECT pe_id FROM personas WHERE pe_dni = \$1 AND pe_activo = TRUE',
+                [String(clienteDni).trim()]
+            );
             if (resCli.rows.length === 0) {
                 await client.query('ROLLBACK');
-                return res.status(404).json({ error: `El DNI de cliente "${clienteDni}" no se encuentra registrado en el sistema.` });
+                return res.status(404).json({
+                    error: `El DNI de cliente "${clienteDni}" no se encuentra registrado o está inactivo.`
+                });
             }
             clienteId = resCli.rows[0].pe_id;
         }
 
-       let  personalId = req.usuario?.id; // ID del empleado que realiza la venta (viene del token JWT)
+        const personalId = req.usuario?.id; // ID del empleado que realiza la venta (viene del token JWT)
 
-        //  Generar un código si no se envió desde el frontend
+        // Generar un código si no se envió desde el frontend
         const codigoVenta = codigo || `VTA-${Date.now().toString().slice(-6)}`;
         const fechaVenta = fecha || new Date();
 
-        // Insertar la cabecera en la tabla 'venta'
+        // Insertar la cabecera en la tabla 'ventas'
         const insertVentaQuery = `
             INSERT INTO ventas (v_codigo, v_fecha, cliente_id, personal_id, evento_id, v_total, v_metodo_pago)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
