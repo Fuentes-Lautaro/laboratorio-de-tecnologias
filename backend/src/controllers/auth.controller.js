@@ -90,10 +90,55 @@ export const verificar = async (req, res, next) => {
   }
 };
 
+
 export const listar = async (req, res, next) => {
   try {
     const { rows } = await pool.query(`SELECT * FROM personas`);
     res.json(rows);
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+export const cambiarPassword = async (req, res, next) => {
+  try {
+    // Recibimos la contraseña actual (o 'password' para verificar) y la nueva contraseña del body
+    const { password, nuevaPassword, passwordNueva } = req.body;
+    const claveNueva = nuevaPassword || passwordNueva;
+
+    if (!password || !claveNueva) {
+      return res.status(400).json({ error: 'La contraseña actual y la nueva son obligatorias' });
+    }
+
+    let id = req.usuario?.id;
+    if (!id) {
+      return res.status(401).json({ error: 'No se pudo identificar al usuario.' });
+    }
+
+    // Buscamos al usuario en la base de datos
+    const { rows } = await pool.query('SELECT * FROM personas WHERE pe_id = $1 AND pe_activo', [id]);
+    const persona = rows[0];
+
+    // Verificamos que la contraseña actual ingresada sea correcta
+    const passwordOk = persona && (await bcrypt.compare(password, persona.pe_password));
+    if (!passwordOk) {
+      return res.status(401).json({ error: 'La contraseña actual es incorrecta' });
+    }
+
+    // Encriptamos la nueva contraseña
+    const passwordHash = await bcrypt.hash(claveNueva, SALT_ROUNDS);
+
+    // Actualizamos la contraseña en la base de datos
+    await pool.query(
+      `UPDATE personas 
+       SET pe_password = $1 
+       WHERE pe_id = $2`,
+      [passwordHash, id]
+    );
+
+    return res.json({ mensaje: '¡Contraseña actualizada correctamente!' });
+
   } catch (err) {
     next(err);
   }

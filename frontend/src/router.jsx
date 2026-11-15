@@ -17,7 +17,7 @@ import { VerSuscripcionPage } from './features/suscripciones/pages/VerSuscripcio
 import { ContactoPage } from './features/contacto';
 import { EventosPage, EventosPagePrivada } from './features/eventos';
 import { LoginPage, protegerRuta, redirigirSiHaySesion, obtenerSesion } from './features/auth';
-import { ClientesPagePrivada, EmpleadosPagePrivada, PerfilPage } from './features/personas';
+import { ClientesPagePrivada, EmpleadosPagePrivada, PerfilPage ,PerfilPasswordPage} from './features/personas';
 import { VentasPage } from './features/ventas';
 import { EstadisticasPage } from './features/estadisticas';
 
@@ -48,6 +48,7 @@ export const router = createBrowserRouter([
       { path: 'eventos', element: <EventosPage /> },
       { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
       { path: 'perfil', element: <PerfilPage /> },
+      { path: 'perfilPassword', element: <PerfilPasswordPage />},
       { path: '*', element: <NoEncontradaPage /> },
     ],
   },

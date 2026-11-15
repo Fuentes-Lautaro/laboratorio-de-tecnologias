@@ -1,87 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { obtenerSesion } from '../../auth'; 
+import { getPersonaPorId, actualizarDatosPersonales } from '../services/personasServices'; 
 
 export function PerfilPage() {
-    const [sesion, setSesion] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [mensajeExito, setMensajeExito] = useState('');
     const [error, setError] = useState('');
 
-    // Estados para los datos editables del formulario de perfil
+    // Estado del formulario con los campos pedidos
     const [formData, setFormData] = useState({
         nombre: '',
-        email: '',
+        mail: '',
         telefono: '',
         direccion: '',
-        fechaNacimiento: '',
+        fechaNac: '',
+        dni: ''
     });
 
-    // Estados para el cambio de contraseña separado por seguridad
-    const [passData, setPassData] = useState({
-        passwordActual: '',
-        passwordNueva: '',
-        confirmarPassword: '',
+    // Estados para controlar qué campos se pueden editar individualmente con el botoncito ✏️ / ✔️
+    const [editando, setEditando] = useState({
+        nombre: false,
+        mail: false,
+        telefono: false,
+        direccion: false,
+        fechaNac: false
     });
 
     useEffect(() => {
-        const usuarioSesion = obtenerSesion();
-        if (usuarioSesion) {
-            setSesion(usuarioSesion);
-            setFormData({
-                nombre: usuarioSesion.nombre || '',
-                email: usuarioSesion.email || '',
-                telefono: usuarioSesion.telefono || '',
-                direccion: usuarioSesion.direccion || '',
-                fechaNacimiento: usuarioSesion.fechaNac || '',
-            });
-        }
-        setCargando(false);
+        const cargarDatos = async () => {
+            try {
+                // Llamamos a tu servicio pasando el ID de la persona logueada
+                const data = await getPersonaPorId();
+             
+                setFormData({
+                    nombre: data.pe_nombre || data.nombre || '',
+                    mail: data.pe_mail || data.mail || '',
+                    telefono: data.pe_telefono || data.telefono || '',
+                    direccion: data.pe_direccion || data.direccion || '',
+                    fechaNac: data.pe_fechaNac ? data.pe_fechaNac.split('T')[0] : (data.fechaNac || ''),
+                    dni: data.pe_dni || data.dni || ''                  
+                });
+               
+            } catch (err) {
+                setError('No se pudo cargar la información del perfil.');
+            } finally {
+                setCargando(false);
+            }
+        };
+
+        cargarDatos();
     }, []);
 
-    //Se activa cuando hay un cambio
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-
-    const handlePassChange = (e) => {
-        const { name, value } = e.target;
-        setPassData((prev) => ({ ...prev, [name]: value }));
+    // Función para alternar la edición individual de un campo al hacer clic en el botoncito
+    const toggleEdicion = (campo) => {
+        setEditando(prev => ({ ...prev, [campo]: !prev[campo] }));
     };
 
-    const handleSubmitPerfil = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setMensajeExito('');
 
         try {
-            setMensajeExito('¡Tus datos personales se han actualizado correctamente!');
+            await actualizarDatosPersonales(formData);
+            setMensajeExito('¡Datos personales actualizados correctamente!');
+            
+            // Volvemos a bloquear todos los campos tras guardar con éxito
+            setEditando({
+                nombre: false,
+                mail: false,
+                telefono: false,
+                direccion: false,
+                fechaNac: false
+            });
         } catch (err) {
-            setError('No se pudieron guardar los cambios. Intentá nuevamente.');
-        }
-    };
-
-    const handleSubmitPassword = (e) => {
-        e.preventDefault();
-        setError('');
-        setMensajeExito('');
-
-        if (passData.passwordNueva !== passData.confirmarPassword) {
-            setError('Las nuevas contraseñas no coinciden.');
-            return;
-        }
-
-        if (passData.passwordNueva.length < 6) {
-            setError('La nueva contraseña debe tener al menos 6 caracteres.');
-            return;
-        }
-
-        try {
-            setMensajeExito('¡Tu contraseña se ha modificado con éxito!');
-            setPassData({ passwordActual: '', passwordNueva: '', confirmarPassword: '' });
-        } catch (err) {
-            setError('La contraseña actual es incorrecta o hubo un error.');
+            setError(err.message || 'Error al actualizar los datos. Intentá nuevamente.');
         }
     };
 
@@ -95,158 +92,161 @@ export function PerfilPage() {
         );
     }
 
-    if (!sesion) {
-        return (
-            <div className="container py-5 text-center">
-                <div className="card shadow-sm border-0 rounded-4 p-5 bg-white mx-auto" style={{ maxWidth: '600px' }}>
-                    <h3 className="fw-bold mb-3" style={{ color: 'var(--titulos, #581845)' }}>
-                        Iniciá sesión para ver tu perfil
-                    </h3>
-                    <p className="text-muted mb-4">Necesitamos verificar tu identidad para mostrarte tu información personal.</p>
-                    <a href="/login" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
-                        Iniciar sesión
-                    </a>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="container py-5">
             <div className="text-center mb-5">
                 <h2 className="fw-bold fs-1 mb-2" style={{ color: 'var(--titulos, #581845)' }}>
-                    Mi Información Personal
+                    📋 Mi Perfil
                 </h2>
-                <p className="text-muted fs-5">Actualizá tus datos de contacto y la seguridad de tu cuenta.</p>
+                <p className="text-muted fs-5">Modificá tus datos personales.</p>
             </div>
 
             {mensajeExito && <div className="alert alert-success text-center rounded-4 mb-4">{mensajeExito}</div>}
             {error && <div className="alert alert-danger text-center rounded-4 mb-4">{error}</div>}
 
-            <div className="row justify-content-center g-4">
-                {/* Formulario de Datos Personales */}
+            <div className="row justify-content-center">
                 <div className="col-12 col-lg-8">
-                    <div className="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white mb-4">
-                        <h4 className="fw-bold mb-4" style={{ color: 'var(--titulos, #581845)' }}>
-                            📋 Datos de la Cuenta
-                        </h4>
-                        <form onSubmit={handleSubmitPerfil}>
+                    <div className="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+                        <form onSubmit={handleSubmit}>
                             <div className="row g-3">
+                                
+                                {/* Campo: Nombre */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-semibold text-muted small">Nombre y Apellido</label>
-                                    <input
-                                        type="text"
-                                        className="form-control rounded-pill px-3"
-                                        name="nombre"
-                                        value={formData.nombre}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-control rounded-start-pill px-3"
+                                            name="nombre"
+                                            value={formData.nombre}
+                                            onChange={handleInputChange}
+                                            disabled={!editando.nombre}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`btn ${editando.nombre ? 'btn-success' : 'btn-outline-secondary'} rounded-end-pill px-3`}
+                                            onClick={() => toggleEdicion('nombre')}
+                                            title={editando.nombre ? 'Bloquear campo' : 'Modificar campo'}
+                                        >
+                                            {editando.nombre ? '✔' : '✏️'}
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Campo: Correo Electrónico */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-semibold text-muted small">Correo Electrónico</label>
-                                    <input
-                                        type="email"
-                                        className="form-control rounded-pill px-3"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        required
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type="email"
+                                            className="form-control rounded-start-pill px-3"
+                                            name="mail"
+                                            value={formData.mail}
+                                            onChange={handleInputChange}
+                                            disabled={!editando.mail}
+                                            required
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`btn ${editando.mail ? 'btn-success' : 'btn-outline-secondary'} rounded-end-pill px-3`}
+                                            onClick={() => toggleEdicion('mail')}
+                                            title={editando.mail ? 'Bloquear campo' : 'Modificar campo'}
+                                        >
+                                            {editando.mail ? '✔' : '✏️'}
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Campo: Teléfono */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-semibold text-muted small">Teléfono</label>
-                                    <input
-                                        type="tel"
-                                        className="form-control rounded-pill px-3"
-                                        name="telefono"
-                                        value={formData.telefono}
-                                        onChange={handleInputChange}
-                                        placeholder="Ej: 2664123456"
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type="tel"
+                                            className="form-control rounded-start-pill px-3"
+                                            name="telefono"
+                                            value={formData.telefono}
+                                            onChange={handleInputChange}
+                                            disabled={!editando.telefono}
+                                            placeholder="Ej: 2664123456"
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`btn ${editando.telefono ? 'btn-success' : 'btn-outline-secondary'} rounded-end-pill px-3`}
+                                            onClick={() => toggleEdicion('telefono')}
+                                            title={editando.telefono ? 'Bloquear campo' : 'Modificar campo'}
+                                        >
+                                            {editando.telefono ? '✔' : '✏️'}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="col-12">
-                                    <label className="form-label fw-semibold text-muted small">Dirección de Entrega</label>
-                                    <input
-                                        type="text"
-                                        className="form-control rounded-pill px-3"
-                                        name="direccion"
-                                        value={formData.direccion}
-                                        onChange={handleInputChange}
-                                        placeholder="Calle, Número, Piso, Ciudad"
-                                    />
+
+                                {/* Campo: Dirección */}
+                                <div className="col-md-6">
+                                    <label className="form-label fw-semibold text-muted small">Dirección</label>
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-control rounded-start-pill px-3"
+                                            name="direccion"
+                                            value={formData.direccion}
+                                            onChange={handleInputChange}
+                                            disabled={!editando.direccion}
+                                            placeholder="Calle, Número, Ciudad"
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`btn ${editando.direccion ? 'btn-success' : 'btn-outline-secondary'} rounded-end-pill px-3`}
+                                            onClick={() => toggleEdicion('direccion')}
+                                            title={editando.direccion ? 'Bloquear campo' : 'Modificar campo'}
+                                        >
+                                            {editando.direccion ? '✔' : '✏️'}
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Campo: Fecha de Nacimiento */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-semibold text-muted small">Fecha de Nacimiento</label>
-                                    <input
-                                        type="date"
-                                        className="form-control rounded-pill px-3"
-                                        name="fechaNacimiento"
-                                        value={formData.fechaNacimiento}
-                                        onChange={handleInputChange}
-                                    />
+                                    <div className="input-group">
+                                        <input
+                                            type="date"
+                                            className="form-control rounded-start-pill px-3"
+                                            name="fechaNac"
+                                            value={formData.fechaNac}
+                                            onChange={handleInputChange}
+                                            disabled={!editando.fechaNac}
+                                        />
+                                        <button
+                                            type="button"
+                                            className={`btn ${editando.fechaNac ? 'btn-success' : 'btn-outline-secondary'} rounded-end-pill px-3`}
+                                            onClick={() => toggleEdicion('fechaNac')}
+                                            title={editando.fechaNac ? 'Bloquear campo' : 'Modificar campo'}
+                                        >
+                                            {editando.fechaNac ? '✔' : '✏️'}
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* Campo: DNI (No modificable) */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-semibold text-muted small">DNI (No modificable)</label>
                                     <input
                                         type="text"
                                         className="form-control rounded-pill px-3 bg-light"
-                                        value={sesion.dni}
+                                        value={formData.dni}
                                         disabled
                                     />
                                 </div>
-                                <div className="col-12 text-end mt-4">
-                                    <button type="submit" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
-                                        Guardar Cambios
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
 
-                    {/* Formulario de Cambio de Contrasenia */}
-                    <div className="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
-                        <h4 className="fw-bold mb-4" style={{ color: 'var(--titulos, #581845)' }}>
-                            🔒 Cambiar Contraseña
-                        </h4>
-                        <form onSubmit={handleSubmitPassword}>
-                            <div className="row g-3">
-                                <div className="col-12">
-                                    <label className="form-label fw-semibold text-muted small">Contraseña Actual</label>
-                                    <input
-                                        type="password"
-                                        className="form-control rounded-pill px-3"
-                                        name="passwordActual"
-                                        value={passData.passwordActual}
-                                        onChange={handlePassChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-semibold text-muted small">Nueva Contraseña</label>
-                                    <input
-                                        type="password"
-                                        className="form-control rounded-pill px-3"
-                                        name="passwordNueva"
-                                        value={passData.passwordNueva}
-                                        onChange={handlePassChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-semibold text-muted small">Confirmar Nueva Contraseña</label>
-                                    <input
-                                        type="password"
-                                        className="form-control rounded-pill px-3"
-                                        name="confirmarPassword"
-                                        value={passData.confirmarPassword}
-                                        onChange={handlePassChange}
-                                        required
-                                    />
-                                </div>
                                 <div className="col-12 text-end mt-4">
-                                    <button type="submit" className="btn btn-outline-dark rounded-pill px-4 py-2 fw-semibold">
-                                        Actualizar Contraseña
+                                    <button 
+                                        type="submit" 
+                                        className="btn text-white rounded-pill px-4 py-2 fw-semibold" 
+                                        style={{ backgroundColor: 'var(--titulos, #581845)' }}
+                                    >
+                                        Guardar Cambios
                                     </button>
                                 </div>
                             </div>

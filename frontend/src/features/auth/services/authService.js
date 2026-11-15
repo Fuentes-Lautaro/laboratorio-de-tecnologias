@@ -42,7 +42,8 @@ export async function iniciarSesion(email, password) {
   const sesion = {
     token: data.token,
     rol: data.rol,
-    email: email
+    email: email,
+    nombre: data.nombre,
   };
 
   sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
@@ -108,3 +109,4 @@ export async function registrarCliente(datosRegistro) {
   // Retorna el objeto del usuario creado (pe_id, pe_dni, pe_nombre, pe_mail, etc.)
   return await respuesta.json();
 }
+

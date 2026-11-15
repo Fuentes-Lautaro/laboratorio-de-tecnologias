@@ -9,6 +9,7 @@ router.post('/registro', controller.registro);
 router.post('/login', controller.login);
 router.post('/verificar-mail', controller.verificar);
 router.get('/todos', controller.listar);
+router.put('/cambiarPassword', verificarToken, controller.cambiarPassword);
 
 //RUTAS PROTEGIDAS
 //router.get('/perfil', verificarToken, controller.perfil);
