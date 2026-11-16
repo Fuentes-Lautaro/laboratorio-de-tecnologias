@@ -89,8 +89,7 @@ export const listar = async (req, res, next) => {
                             'id', pr.p_id,
                             'marca', pr.p_marca,
                             'varietal', pr.p_varietal,
-                            'medida', pr.p_medida,
-                            'imagen_url', pr.p_imagen_url
+                            'medida', pr.p_medida
                         )
                     ) FILTER (WHERE pr.p_id IS NOT NULL), 
                     '[]'

@@ -11,6 +11,10 @@ export const env = {
 
   JWT_SECRET: process.env.JWT_SECRET,
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '1000h',
+
+  MP_ACCESS_TOKEN: process.env.MP_ACCESS_TOKEN,
+  FRONTEND_URL: process.env.FRONTEND_URL ?? 'http://localhost:5173',
+  BACKEND_URL: process.env.BACKEND_URL
 };
 
 // Si falta el secreto, el servidor no arranca (mejor fallar ahora que firmar tokens inseguros)
