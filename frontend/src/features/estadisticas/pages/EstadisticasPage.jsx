@@ -97,6 +97,13 @@ export function EstadisticasPage() {
     setFechaSeleccionada((prev) => desplazarFechaISO(prev, 1));
   };
 
+  const handleCambioCalendario = (e) => {
+    const nuevaFecha = e.target.value;
+    if (!nuevaFecha) return;
+    // Evita fechas futuras incluso si se escriben manualmente por teclado
+    setFechaSeleccionada(nuevaFecha > hoyISO ? hoyISO : nuevaFecha);
+  };
+
   if (cargando) {
     return (
       <div className="text-center py-5">
@@ -147,6 +154,9 @@ export function EstadisticasPage() {
             <div className="card-body">
               <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">Suscripciones activas</p>
               <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>{resumen?.suscripcionesActivas || 0}</p>
+              <p className="small text-body-secondary mb-0">
+                Total histórico: <strong>{resumen?.suscripcionesHistoricas || 0}</strong>
+              </p>
             </div>
           </div>
         </div>
@@ -177,13 +187,25 @@ export function EstadisticasPage() {
         <div className="card-header bg-white py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
           <div>
             <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>
-              Estadísticas de Ventas
+              Estadísticas Diarias de Ventas
             </h5>
-            <small className="text-muted">Ventas del día</small>
+            <small className="text-muted">Ventas del día por método de pago (sin contar suscripciones)</small>
           </div>
 
-          {/* Selector de Fecha con Flechas */}
-          <div className="d-flex align-items-center gap-2">
+          {/* Selector de Fecha con Flechas + Calendario */}
+          <div className="d-flex align-items-center gap-2 flex-wrap">
+            {!esHoy && (
+              <button
+                type="button"
+                className="btn btn-sm fw-semibold px-2.5"
+                style={{ backgroundColor: '#F1EFEA', color: '#3E100F', border: '1px solid #B5865A' }}
+                onClick={() => setFechaSeleccionada(hoyISO)}
+                disabled={cargandoDiario}
+              >
+                Hoy
+              </button>
+            )}
+
             <button
               type="button"
               className="btn btn-sm btn-outline-secondary fw-bold px-2"
@@ -193,12 +215,24 @@ export function EstadisticasPage() {
             >
               &larr;
             </button>
-            <span
-              className="badge rounded-pill px-3 py-2 fw-semibold"
-              style={{ backgroundColor: '#F1EFEA', color: '#3E100F', fontSize: '0.85rem', minWidth: '130px' }}
-            >
-              {formatearFecha(fechaSeleccionada)} {esHoy ? '(Hoy)' : ''}
-            </span>
+
+            <input
+              type="date"
+              className="form-control form-control-sm fw-semibold text-center"
+              value={fechaSeleccionada}
+              max={hoyISO}
+              onChange={handleCambioCalendario}
+              disabled={cargandoDiario}
+              aria-label="Seleccionar fecha de ventas"
+              style={{
+                width: '150px',
+                backgroundColor: '#F1EFEA',
+                color: '#3E100F',
+                borderColor: '#B5865A',
+                cursor: 'pointer'
+              }}
+            />
+
             <button
               type="button"
               className="btn btn-sm btn-outline-secondary fw-bold px-2"
@@ -217,7 +251,7 @@ export function EstadisticasPage() {
             <div className="col-12 col-md-4">
               <div className="p-3 rounded-3 bg-light border-start border-4" style={{ borderLeftColor: '#B5865A !important' }}>
                 <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">
-                  Total de Ventas
+                  Total Diario de Ventas
                 </p>
                 <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>
                   {formatearPrecio(diarias.totalDiario || 0)}
@@ -267,7 +301,7 @@ export function EstadisticasPage() {
                 </div>
               ) : (
                 <div className="text-center text-muted small py-3">
-                  No se registraron ventas en la fecha seleccionada.
+                  No se registraron ventas en la fecha seleccionada ({formatearFecha(fechaSeleccionada)}).
                 </div>
               )}
             </div>

@@ -1,114 +1,159 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export function CardPagarSuscripcion({ plan, cliente, onConfirmarPago, onVolver, cargando }) {
-  const [metodoPago, setMetodoPago] = useState('mercadopago');
+export function CardPagarSuscripcion({
+  plan,
+  cliente,
+  onConfirmarPago,
+  onVolver,
+  cargando = false,
+}) {
+  const nombrePlan = plan?.nombre || plan?.ps_nombre || 'Plan de Suscripción';
+  const descripcionPlan = plan?.descripcion || plan?.ps_descripcion || '';
+  const valorPlan = Number(plan?.valor ?? plan?.ps_valor ?? 0);
+  const beneficios = Array.isArray(plan?.beneficios) ? plan.beneficios : [];
 
-  const fechaHoy = new Date().toLocaleDateString('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    
-    onConfirmarPago({
-      fecha_pago: new Date().toISOString().split('T')[0], // Formato 'YYYY-MM-DD'
-      monto_pago: plan?.valor || 0,
-      cliente_id: cliente?.id || cliente?.pe_id, // El ID numérico del usuario en sesión
-      ps_id: plan?.id || plan?.ps_id,             // El ID numérico del plan
-      metodo_pago: 'MercadoPago'                    // Por si tu tabla lo registra (aunque el controlador actual no lo inserta directo, lo guardamos por si acaso)
-    });
-  };
+  const nombreCliente = cliente?.nombre || 'Cliente';
+  const emailCliente = cliente?.email || cliente?.mail || '';
+  const dniCliente = cliente?.dni || '';
 
   return (
-    <div className="card shadow-sm border-0 p-4">
-      <h3 className="text-center mb-4" style={{ color: 'var(--titulos, #4a1525)' }}>
-        Confirmar y Pagar
-      </h3>
-
-      <form onSubmit={handleSubmit}>
-        {/* Detalle del Plan */}
-        <div className="card bg-light p-3 mb-3 border-0">
-          <div className="d-flex justify-content-between align-items-center mb-1">
-            <span className="text-muted small">Plan Seleccionado</span>
-            <span className="badge bg-secondary">{plan?.nombre || plan?.Nombre || 'Suscripción'}</span>
-          </div>
-          <h5 className="fw-bold mb-1">{plan?.nombre || plan?.Nombre}</h5>
-          <p className="text-muted small mb-2">{plan?.descripcion || plan?.Descripcion}</p>
+    <div className="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+      {/* Encabezado */}
+      <div
+        className="px-4 py-3 text-white d-flex justify-content-between align-items-center"
+        style={{ backgroundColor: '#3E100F' }}
+      >
+        <div>
+          <span
+            className="text-uppercase d-block"
+            style={{ fontSize: '0.7rem', letterSpacing: '1px', color: '#E5C5A5' }}
+          >
+            Confirmación de suscripción
+          </span>
+          <h5 className="mb-0 fw-bold">{nombrePlan}</h5>
         </div>
+        <span
+          className="badge rounded-pill px-3 py-2 fw-semibold"
+          style={{ backgroundColor: '#B5865A', color: '#FFFFFF', fontSize: '0.75rem' }}
+        >
+          Mensual
+        </span>
+      </div>
 
-        {/* Detalles de la Transacción */}
-        <div className="mb-3">
-          <h6 className="fw-bold border-bottom pb-2 mb-2">Detalles de la transacción</h6>
-          <div className="d-flex justify-content-between py-1">
-            <span className="text-muted small">Fecha de suscripción:</span>
-            <span className="fw-semibold small">{fechaHoy}</span>
+      <div className="card-body p-4">
+        {/* Descripción / Beneficios del plan */}
+        {descripcionPlan && (
+          <p className="text-muted small mb-3">{descripcionPlan}</p>
+        )}
+
+        {beneficios.length > 0 && (
+          <ul className="list-unstyled small mb-3 d-flex flex-column gap-1">
+            {beneficios.map((item, idx) => (
+              <li key={idx} className="d-flex align-items-start gap-2 text-dark">
+                <span style={{ color: '#B5865A', fontWeight: 'bold' }}>✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Resumen de Monto */}
+        <div
+          className="rounded-3 p-3 mb-3 d-flex justify-content-between align-items-center"
+          style={{ backgroundColor: '#F1EFEA', border: '1px solid rgba(181, 134, 90, 0.25)' }}
+        >
+          <div>
+            <span className="d-block small text-muted">Total a abonar hoy</span>
+            <span className="small fw-medium" style={{ color: '#513B2A' }}>
+              Abono mensual · ARS
+            </span>
           </div>
-          <div className="d-flex justify-content-between py-1">
-            <span className="text-muted small">Titular:</span>
-            <span className="fw-semibold small">{cliente?.nombre || cliente?.email}</span>
-          </div>
-          <div className="d-flex justify-content-between py-2 border-top mt-2">
-            <span className="fw-bold">Monto Total:</span>
-            <span className="fw-bold fs-5 text-success">
-              ${plan?.valor?.toLocaleString('es-AR') || '0'} / mes
+          <div className="text-end">
+            <span className="h4 fw-bold mb-0" style={{ color: '#3E100F' }}>
+              ${valorPlan.toLocaleString('es-AR')}
             </span>
           </div>
         </div>
 
-        {/* Método de Pago */}
-        <div className="mb-4">
-          <label className="form-label fw-bold small">Método de Pago</label>
-          <div className="form-check border rounded p-3 bg-white d-flex align-items-center justify-content-between">
-            <div>
-              <input
-                className="form-check-input me-2"
-                type="radio"
-                name="metodoPago"
-                id="mp"
-                checked={metodoPago === 'mercadopago'}
-                onChange={() => setMetodoPago('mercadopago')}
-              />
-              <label className="form-check-label fw-semibold" htmlFor="mp">
-                Mercado Pago
-              </label>
+        {/* Datos del Titular */}
+        <div className="border rounded-3 p-3 mb-3 bg-light bg-opacity-50 small">
+          <div
+            className="text-uppercase fw-bold mb-2"
+            style={{ fontSize: '0.7rem', letterSpacing: '0.8px', color: '#513B2A' }}
+          >
+            Titular de la membresía
+          </div>
+          <div className="d-flex justify-content-between mb-1">
+            <span className="text-muted">Nombre:</span>
+            <span className="fw-semibold text-dark">{nombreCliente}</span>
+          </div>
+          {emailCliente && (
+            <div className="d-flex justify-content-between mb-1">
+              <span className="text-muted">Correo:</span>
+              <span className="fw-medium text-dark text-truncate ms-2">{emailCliente}</span>
             </div>
-            <span className="badge bg-info text-dark">Simulación</span>
+          )}
+          {dniCliente && (
+            <div className="d-flex justify-content-between">
+              <span className="text-muted">DNI:</span>
+              <span className="fw-medium text-dark">{dniCliente}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Bloque informativo de Mercado Pago Checkout Pro */}
+        <div
+          className="rounded-3 p-3 mb-4 d-flex align-items-center gap-3"
+          style={{
+            backgroundColor: 'rgba(0, 158, 227, 0.07)',
+            border: '1px solid rgba(0, 158, 227, 0.28)',
+          }}
+        >
+          <div
+            className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-bold text-white"
+            style={{ width: '38px', height: '38px', backgroundColor: '#009EE3', fontSize: '0.85rem' }}
+          >
+            MP
+          </div>
+          <div className="small lh-sm">
+            <div className="fw-bold text-dark mb-1">Pago seguro con Mercado Pago</div>
+            <div className="text-muted" style={{ fontSize: '0.78rem' }}>
+              Te redirigiremos a Mercado Pago para abonar con tarjeta de débito, crédito o dinero en cuenta.
+            </div>
           </div>
         </div>
 
-        {/* Botón Pagar */}
+        {/* Acciones */}
         <div className="d-grid gap-2">
           <button
-            type="submit"
-            className="btn btn-dark btn-lg fw-bold"
-            disabled={cargando}
-            style={{ backgroundColor: 'var(--titulos, #4a1525)', borderColor: 'var(--titulos, #4a1525)' }}
+            type="button"
+            className="btn fw-semibold py-2.5 text-white d-flex align-items-center justify-content-center gap-2 shadow-sm"
+            style={{ backgroundColor: '#009EE3', borderColor: '#009EE3', borderRadius: '0.65rem' }}
+            onClick={onConfirmarPago}
+            disabled={cargando || !plan}
           >
             {cargando ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" />
-                Procesando pago...
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                <span>Conectando con Mercado Pago...</span>
               </>
             ) : (
-              `Pagar $${plan?.valor?.toLocaleString('es-AR') || ''}`
+              <span>Continuar a Mercado Pago</span>
             )}
           </button>
 
           {onVolver && (
             <button
               type="button"
-              className="btn btn-outline-secondary btn-sm"
+              className="btn btn-link btn-sm text-decoration-none text-muted mt-1"
               onClick={onVolver}
               disabled={cargando}
             >
-              Atrás
+              &larr; Cambiar de plan
             </button>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 }
