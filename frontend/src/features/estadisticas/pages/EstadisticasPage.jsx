@@ -147,9 +147,6 @@ export function EstadisticasPage() {
             <div className="card-body">
               <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">Suscripciones activas</p>
               <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>{resumen?.suscripcionesActivas || 0}</p>
-              <p className="small text-body-secondary mb-0">
-                Total histórico: <strong>{resumen?.suscripcionesHistoricas || 0}</strong>
-              </p>
             </div>
           </div>
         </div>
@@ -180,9 +177,9 @@ export function EstadisticasPage() {
         <div className="card-header bg-white py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
           <div>
             <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>
-              Estadísticas Diarias de Ventas
+              Estadísticas de Ventas
             </h5>
-            <small className="text-muted">Ventas del día por método de pago (sin contar suscripciones)</small>
+            <small className="text-muted">Ventas del día</small>
           </div>
 
           {/* Selector de Fecha con Flechas */}
@@ -220,7 +217,7 @@ export function EstadisticasPage() {
             <div className="col-12 col-md-4">
               <div className="p-3 rounded-3 bg-light border-start border-4" style={{ borderLeftColor: '#B5865A !important' }}>
                 <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">
-                  Total Diario de Ventas
+                  Total de Ventas
                 </p>
                 <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>
                   {formatearPrecio(diarias.totalDiario || 0)}
@@ -291,7 +288,7 @@ export function EstadisticasPage() {
                   <th scope="col" className="ps-4">Plan</th>
                   <th scope="col" className="text-center">Activas</th>
                   <th scope="col" className="text-center">Total Histórico</th>
-                  <th scope="col" className="text-end pe-4">Ingresos Históricos</th>
+                  <th scope="col" className="text-end pe-4">Ingresos del Mes</th>
                 </tr>
               </thead>
               <tbody>

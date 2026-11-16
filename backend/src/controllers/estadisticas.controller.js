@@ -40,6 +40,7 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
         const resClientes = await pool.query(queryClientes);
 
         // Distribución por plan (activas bajo criterio administrador + total histórico + ingresos)
+        // Distribución por plan (activas bajo criterio administrador + total histórico + ingresos del mes corriente)
         const queryDistribucion = `
             SELECT 
                 p.ps_id AS "planId",
@@ -53,7 +54,12 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
                     END
                 ) AS "cantidadActivas",
                 COUNT(s.s_id) AS "cantidadSuscripciones",
-                COALESCE(SUM(s.s_monto_pago), 0) AS ingresos
+                COALESCE(
+                    SUM(s.s_monto_pago) FILTER (
+                        WHERE DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)
+                    ), 
+                    0
+                ) AS ingresos
             FROM planes p
             LEFT JOIN suscripcion s ON p.ps_id = s.ps_id
             GROUP BY p.ps_id, p.ps_nombre
