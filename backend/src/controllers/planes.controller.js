@@ -139,3 +139,31 @@ export const guardarRegistroMes = async (req, res, next) => {
         client.release();
     }
 };
+
+export const obtenerRegistroMesPorPlanYPeriodo = async (req, res, next) => {
+    try {
+        const { id } = req.params; // planId
+        const { periodo } = req.body; // YYYY-MM
+
+        if (!periodo) {
+            return res.status(400).json({ error: "El campo 'periodo' (YYYY-MM) es obligatorio en el body" });
+        }
+
+        const query = `
+            SELECT 
+                pr.p_id as id,
+                pr.p_marca as marca,
+                pr.p_varietal as varietal,
+                pr.p_medida as medida,
+                pr.p_imagen_url as imagen_url
+            FROM registrosMes rm
+            JOIN productos pr ON rm.p_id = pr.p_id
+            WHERE rm.ps_id = $1 AND rm.rm_periodo = $2
+        `;
+
+        const { rows } = await pool.query(query, [id, periodo]);
+        res.json(rows);
+    } catch (err) {
+        next(err);
+    }
+};

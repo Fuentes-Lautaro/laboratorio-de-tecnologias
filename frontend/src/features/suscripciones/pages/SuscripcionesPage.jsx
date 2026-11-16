@@ -29,6 +29,21 @@ export function SuscripcionesPage({ className = "" }) {
   // Filtramos para mostrar únicamente los planes que estén activos
   const planesActivos = planes.filter(plan => plan.activo !== false);
 
+  // Lógica para calcular el mes de la próxima entrega basado en el día 10
+  const obtenerProximaEntrega = () => {
+    const hoy = new Date();
+    const diaActual = hoy.getDate();
+    let fechaTarget = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      fechaTarget.setMonth(fechaTarget.getMonth() + 1);
+
+    const opcionesMes = { month: 'long', year: 'numeric' };
+    const mesAnio = fechaTarget.toLocaleDateString('es-ES', opcionesMes);
+    // Capitalizamos la primera letra del mes (ej: "enero de 2026" -> "Enero de 2026")
+    return mesAnio.charAt(0).toUpperCase() + mesAnio.slice(1);
+  };
+
+  const proximaEntregaTexto = obtenerProximaEntrega();
+
   return (
     <section className={`container-fluid py-5 text-center ${className}`}>
       <div className="container">
@@ -42,8 +57,12 @@ export function SuscripcionesPage({ className = "" }) {
           <h1 className="display-5 fw-bold mb-3" style={{ color: '#3E100F' }}>
             Planes Mensuales
           </h1>
-          <p className="text-secondary lead fs-6">
+          <p className="text-secondary lead fs-6 mb-2">
             Descubrí nuestros planes y obtené beneficios exclusivos.
+          </p>
+          {/* Mensaje dinámico de la próxima entrega */}
+          <p className="text-muted  fw-semibold" style={{ color: '#B5865A' }}>
+            Próxima entrega: {proximaEntregaTexto}
           </p>
         </div>
 
@@ -106,7 +125,7 @@ export function SuscripcionesPage({ className = "" }) {
               </div>
               <h3 className="h6 fw-bold" style={{ color: '#3E100F' }}>Recibilo todos los meses</h3>
               <p className="small text-secondary mb-0">
-                Preparamos y enviamos tu selección mensual directamente a tu domicilio sin complicaciones.
+                Preparamos y enviamos tu selección mensual directamente a tu domicilio sin complicaciones. <strong>Las entregas se realizan del 1 al 10 del mes.</strong>
               </p>
             </div>
 

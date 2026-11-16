@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getPlanes, getProductosParaPlanes, crearPlan, modificarPlan, alternarEstadoPlan, guardarRegistroMes } from '../services/suscripcionesService';
+import { getPlanes, getProductosParaPlanes, crearPlan, modificarPlan, alternarEstadoPlan, guardarRegistroMes, getProductosPorPlanYPeriodo } from '../services/suscripcionesService';
 import TablaPlanes from '../components/TablaPlanesPrivada';
 import Modal from '../../../shared/components/Modal';
 
@@ -30,7 +30,7 @@ export function PlanesPagePrivada() {
 
   const [formData, setFormData] = useState(estadoInicialForm);
 
-  // Carga inicial usando el servicio
+  // Carga inicial
   useEffect(() => {
     Promise.all([
       getPlanes(), 
@@ -69,16 +69,24 @@ export function PlanesPagePrivada() {
     setMostrarModalForm(true);
   };
 
-  const handleEditar = (plan) => {
+  const handleEditar = async (plan) => {
     setPlanSeleccionado(plan);
     setErrorForm('');
     setTerminoBusquedaVino('');
     
-    const productosPrecargados = plan.productos_proximo_mes ? plan.productos_proximo_mes.map(p => p.id || p.p_id) : [];
-
     const hoy = new Date();
     const proximoMesDate = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
     const periodoPorDefecto = `${proximoMesDate.getFullYear()}-${String(proximoMesDate.getMonth() + 1).padStart(2, '0')}`;
+
+    let productosPrecargados = [];
+    try {
+      productosPrecargados = await getProductosPorPlanYPeriodo(plan.id, periodoPorDefecto);
+      if (productosPrecargados.length === 0 && plan.productos_proximo_mes) {
+        productosPrecargados = plan.productos_proximo_mes.map(p => p.id || p.p_id);
+      }
+    } catch (e) {
+      productosPrecargados = plan.productos_proximo_mes ? plan.productos_proximo_mes.map(p => p.id || p.p_id) : [];
+    }
 
     setFormData({
       ...plan,
@@ -102,7 +110,6 @@ export function PlanesPagePrivada() {
     }
   };
 
-  // Función para agregar un producto desde la tabla amplia
   const handleAgregarVinoModal = (idProd) => {
     const cantidadRequerida = Number(formData.cantidad_vinos) || 1;
     
@@ -119,7 +126,6 @@ export function PlanesPagePrivada() {
     });
   };
 
-  // Función para quitar una unidad de un producto específico desde la tabla amplia
   const handleQuitarVinoModal = (idProd) => {
     setErrorForm('');
     const prodIdNum = Number(idProd);
@@ -185,9 +191,26 @@ export function PlanesPagePrivada() {
     }
   };
 
-  const handleChange = (e) => {
+  // Manejo de cambios y consulta dinámica al backend al cambiar el período
+  const handleChange = async (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({ ...prev, [name]: value }));
+
+    if (name === 'nuevo_periodo' && planSeleccionado) {
+      try {
+        const productosDelMes = await getProductosPorPlanYPeriodo(planSeleccionado.id, value);
+        setFormData(prev => ({
+          ...prev,
+          productos_seleccionados: productosDelMes
+        }));
+      } catch (err) {
+        console.error("Error al obtener productos para el período:", err);
+        setFormData(prev => ({
+          ...prev,
+          productos_seleccionados: []
+        }));
+      }
+    }
   };
 
   if (cargando) return <p className="text-center py-5">Cargando planes de suscripción...</p>;
@@ -309,7 +332,7 @@ export function PlanesPagePrivada() {
                 style={{ backgroundColor: '#B5865A' }}
                 onClick={() => setMostrarModalSeleccionVinos(true)}
               >
-                Abrir Catalogo
+                Abrir Catálogo
               </button>
             </div>
 
@@ -337,7 +360,7 @@ export function PlanesPagePrivada() {
                     );
                   })
                 ) : (
-                  <li className="text-muted small text-center py-1">Ningún producto seleccionado todavía. Hacé clic en "Abrir Catalogo ".</li>
+                  <li className="text-muted small text-center py-1">Ningún producto seleccionado todavía para este período. Hacé clic en "Abrir Catálogo".</li>
                 )}
               </ul>
             </div>
@@ -350,7 +373,7 @@ export function PlanesPagePrivada() {
         </Modal>
       )}
 
-      {/* 🗔 VENTANA EMERGENTE AMPLIA PARA SELECCIONAR PRODUCTOS */}
+      {/* VENTANA EMERGENTE AMPLIA PARA SELECCIONAR PRODUCTOS */}
       {mostrarModalSeleccionVinos && (
         <div 
           className="modal fade show d-block" 
@@ -360,7 +383,7 @@ export function PlanesPagePrivada() {
           <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
             <div className="modal-content shadow-lg border-0">
               <div className="modal-header bg-white text-dark border-bottom px-4 py-3">
-                <h5 className="modal-title fw-bold" style={{ color: '#3E100F' }}>Catalogo de Vinos</h5>
+                <h5 className="modal-title fw-bold" style={{ color: '#3E100F' }}>Catálogo de Vinos</h5>
                 <button 
                   type="button" 
                   className="btn-close shadow-none" 
@@ -410,7 +433,6 @@ export function PlanesPagePrivada() {
                           const detalleVarietal = prod.varietal || prod.p_varietal || '-';
                           const detalleMedida = prod.medida || prod.p_medida || '-';
                           
-                          // Contar cuántas veces está agregado este producto en el plan actual
                           const cantidadAsignada = formData.productos_seleccionados.filter(id => Number(id) === Number(idProd)).length;
                           const cupoAlcanzado = formData.productos_seleccionados.length >= Number(formData.cantidad_vinos);
 
@@ -498,7 +520,7 @@ export function PlanesPagePrivada() {
               <ul className="list-group list-group-flush border rounded p-2 bg-light" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {planSeleccionado.productos_proximo_mes.map((vino, idx) => (
                   <li key={idx} className="list-group-item bg-transparent border-bottom py-2 text-dark small">
-                    <strong>{vino.marca || vino.nombre}</strong> - {vino.varietal} ({vino.medida})
+                    <strong>{vino.marca || vino.nombre}</strong> {vino.varietal} ({vino.medida})
                   </li>
                 ))}
               </ul>

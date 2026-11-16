@@ -13,8 +13,11 @@ router.get('/', controller.listar);
 
 router.post('/', verificarToken,verificarRol(['gerente']), controller.crear);
 router.post('/registroMes/:id',verificarToken, verificarRol(['gerente']), controller.guardarRegistroMes);
+router.post('/obtenerRegistro/:id', verificarToken, verificarRol(['gerente']), controller.obtenerRegistroMesPorPlanYPeriodo);
 router.put('/:id', verificarToken,verificarRol(['gerente']), controller.modificar);
 router.patch('/:id', verificarToken, verificarRol(['gerente']), controller.alternar);
+
+
 //SOLO PARA PRUEBAS, NO SE DEBE USAR EN PRODUCCION
 router.delete('/:id', verificarToken, verificarRol(['gerente']), controller.eliminar);
 

@@ -143,6 +143,29 @@ export async function guardarRegistroMes(planId, periodo, productos) {
   return await respuesta.json();
 }
 
+export async function getProductosPorPlanYPeriodo(planId, periodo) {
+  try {
+    const sesion = obtenerSesion();
+    const respuesta = await fetch(`${API_URL}/api/planes/obtenerRegistro/${planId}`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sesion?.token}`
+      },
+      body: JSON.stringify({ periodo })
+    });
+
+    if (!respuesta.ok) {
+      throw new Error('No se pudo obtener el registro mensual para este plan');
+    }
+    const productos = await respuesta.json();
+    return productos.map(p => p.id || p.p_id);
+  } catch (error) {
+    console.error('Error al consultar productos por período:', error);
+    return [];
+  }
+}
+
 // ==========================================
 // SUSCRIPCIONES Y REGISTROS 
 // ==========================================
@@ -212,5 +235,7 @@ export async function guardarSuscripcion({ data }) {
   const nuevaSuscripcion = await respuesta.json();
   return nuevaSuscripcion;
 }  
+
+
 
 
