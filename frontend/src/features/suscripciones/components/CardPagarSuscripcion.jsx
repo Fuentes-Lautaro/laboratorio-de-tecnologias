@@ -55,10 +55,6 @@ export function CardPagarSuscripcion({
         {/* Resumen de Monto */}
         <div
           className="rounded-3 p-3 mb-3 d-flex justify-content-between align-items-center"
-          style={{
-            backgroundColor: 'var(--fondo-secundario, #F4EFEA)',
-            border: '1px solid rgba(181, 134, 90, 0.3)',
-          }}
         >
           <div>
             <span className="d-block small text-muted">Total a abonar</span>

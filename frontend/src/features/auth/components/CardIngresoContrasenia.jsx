@@ -21,9 +21,6 @@ export function CardIngresoContrasenia({ email, onLogin, onVolver, cargando }) {
 
       <form onSubmit={handleSubmit} className="mt-3">
         <div className="mb-4">
-          <label htmlFor="clave" className="form-label fw-semibold small text-secondary">
-            Contraseña
-          </label>
           <input
             type="password"
             id="clave"

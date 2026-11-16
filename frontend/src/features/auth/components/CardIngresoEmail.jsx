@@ -14,16 +14,13 @@ export function CardIngresoEmail({ onVerificarEmail, cargando }) {
     <div className="card-auth-flujo">
       <div className="text-center mb-4">
         <h3 className="titulo-auth mb-1">¡Te damos la bienvenida!</h3>
-        <p className="text-muted small">
+        <p className="small" style={{ color: 'var(--titulos, #4a1525)' }}>
           Ingresá tu correo electrónico para continuar.
         </p>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="email" className="form-label fw-semibold small text-secondary">
-            Correo Electrónico
-          </label>
           <input
             type="email"
             id="email"
