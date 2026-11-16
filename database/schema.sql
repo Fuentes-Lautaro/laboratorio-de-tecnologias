@@ -87,6 +87,7 @@ CREATE TABLE suscripcion (
     cliente_id INT NOT NULL,
     ps_id INT NOT NULL,
     activo BOOLEAN NOT NULL DEFAULT TRUE,
+    s_mp_payment_id VARCHAR(100) UNIQUE,
     CONSTRAINT fk_cliente FOREIGN KEY (cliente_id) REFERENCES personas(pe_id),
     CONSTRAINT fk_plan_suscripcion FOREIGN KEY (ps_id) REFERENCES planes(ps_id)
 );

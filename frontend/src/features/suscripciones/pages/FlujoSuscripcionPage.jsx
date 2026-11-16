@@ -13,7 +13,11 @@ import {
 
 import { CardPagarSuscripcion } from '../components/CardPagarSuscripcion';
 
-import { getSuscripcionActivaPorDni, getPlanPorNombre, guardarSuscripcion } from '../services/suscripcionesService';
+import { 
+  getSuscripcionActivaPorDni, 
+  getPlanPorNombre, 
+  crearPreferenciaSuscripcion 
+} from '../services/suscripcionesService';
 
 export function FlujoSuscripcionPage() {
   const { nombre } = useParams();
@@ -157,28 +161,17 @@ export function FlujoSuscripcionPage() {
     setErrorBackend('');
 
     try {
-      
-      const payload = {
-        fecha_pago: new Date().toISOString().split('T')[0], // Formato 'YYYY-MM-DD'
-        monto_pago: planSeleccionado?.valor || 0,
-        cliente_id: clienteLogueado?.id || clienteLogueado?.pe_id, // ID numérico de la persona
-        ps_id: planSeleccionado?.id || planSeleccionado?.ps_id       // ID numérico del plan
-      };
+      const planId = planSeleccionado?.id || planSeleccionado?.ps_id;
+      const { init_point } = await crearPreferenciaSuscripcion(planId);
 
-      
-      await guardarSuscripcion({ data: payload });
+      if (!init_point) {
+        throw new Error('Mercado Pago no devolvió una URL de pago válida.');
+      }
 
-      alert(
-        `¡Suscripción creada con éxito en la base de datos!\n\n` +
-        `Plan: ${planSeleccionado?.nombre || 'Suscripción'}\n` +
-        `Monto: $${planSeleccionado?.valor?.toLocaleString('es-AR')}\n` +
-        `Titular: ${clienteLogueado?.nombre || email}`
-      );
-
-      navigate('/mi-suscripcion', { replace: true });
+      // Redirigimos al Checkout Pro oficial de Mercado Pago
+      window.location.href = init_point;
     } catch (error) {
-      setErrorBackend(error.message || 'Error al registrar la suscripción en la base de datos.');
-    } finally {
+      setErrorBackend(error.message || 'Error al iniciar el pago con Mercado Pago.');
       setCargando(false);
     }
   };

@@ -213,4 +213,75 @@ export async function guardarSuscripcion({ data }) {
   return nuevaSuscripcion;
 }  
 
+export async function getSuscripcionActivaPorDni(identificador) {
+  try {
+    const sesion = obtenerSesion();
+    if (!sesion?.token) return null;
 
+    const respuesta = await fetch(`${API_URL}/api/suscripciones/listar`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sesion.token}`
+      }
+    });
+
+    if (!respuesta.ok) return null;
+
+    const suscripciones = await respuesta.json();
+    const suscripcionActiva = suscripciones.find((sub) => {
+      const coincideDni = sub.dni_cliente && String(sub.dni_cliente).trim() === String(identificador).trim();
+      const coincideId = sesion.id && Number(sub.cliente_id) === Number(sesion.id);
+      return (coincideDni || coincideId) && sub.activo === true;
+    });
+
+    if (!suscripcionActiva) return null;
+
+    return {
+      ...suscripcionActiva,
+      planId: suscripcionActiva.plan_nombre || suscripcionActiva.plan_id,
+      estado: 'Activa',
+      fechaPago: suscripcionActiva.fecha_pago?.split('T')[0] || ''
+    };
+  } catch (error) {
+    console.error('Error al obtener la suscripción activa:', error);
+    return null;
+  }
+}
+
+export async function crearPreferenciaSuscripcion(ps_id) {
+  const sesion = obtenerSesion();
+  const respuesta = await fetch(`${API_URL}/api/suscripciones/preferencia`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
+    body: JSON.stringify({ ps_id })
+  });
+
+  const data = await respuesta.json().catch(() => ({}));
+  if (!respuesta.ok) {
+    throw new Error(data.error || 'No se pudo iniciar el pago con Mercado Pago');
+  }
+
+  return data; // { id, init_point }
+}
+
+export async function verificarPagoSuscripcion(payment_id) {
+  const sesion = obtenerSesion();
+  const respuesta = await fetch(`${API_URL}/api/suscripciones/verificar-pago`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
+    body: JSON.stringify({ payment_id })
+  });
+
+  const data = await respuesta.json().catch(() => ({}));
+  if (!respuesta.ok) {
+    throw new Error(data.error || 'No se pudo verificar el pago');
+  }
+
+  return data;
+}

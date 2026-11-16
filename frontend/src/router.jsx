@@ -12,6 +12,7 @@ import {
   FlujoSuscripcionPage,
   PlanesPagePrivada,
   SuscripcionesPagePrivada,
+  ResultadoPagoPage
 } from './features/suscripciones';
 import { VerSuscripcionPage } from './features/suscripciones/pages/VerSuscripcionPage';
 import { ContactoPage } from './features/contacto';
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
       { path: 'nosotros', element: <NosotrosPage /> },
       { path: 'contacto', element: <ContactoPage /> },
       { path: 'suscripciones', element: <SuscripcionesPage /> },
+      { path: 'suscripciones/pago/resultado', element: <ResultadoPagoPage /> },
       { path: 'suscripciones/:nombre', element: <FlujoSuscripcionPage /> },
       { path: 'eventos', element: <EventosPage /> },
       { path: 'mi-suscripcion', element: <VerSuscripcionPage /> },
