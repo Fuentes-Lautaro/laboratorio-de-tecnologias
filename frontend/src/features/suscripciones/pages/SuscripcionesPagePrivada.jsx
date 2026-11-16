@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getSuscripciones } from '../services/suscripcionesService';
+import { getSuscripciones, getPlanes } from '../services/suscripcionesService';
 import { getClientes } from '../../clientes';
-import { getPlanes } from '../services/suscripcionesService';
 import TablaSuscripciones from '../components/TablaSuscripcionesPrivada';
 import Modal from '../../../shared/components/Modal';
 
@@ -18,6 +17,12 @@ export function SuscripcionesPagePrivada() {
   // Función para formatear mostrando solo la fecha (estilo argentino DD/MM/YYYY)
   const formatearFecha = (fechaStr) => {
     if (!fechaStr) return 'Sin fecha';
+    const fechaLimpia = String(fechaStr).split('T')[0];
+    const partes = fechaLimpia.split('-');
+    if (partes.length === 3) {
+      const [anio, mes, dia] = partes;
+      return `${dia}/${mes}/${anio}`;
+    }
     const fecha = new Date(fechaStr);
     if (isNaN(fecha.getTime())) return fechaStr;
     return fecha.toLocaleDateString('es-AR', {
@@ -32,8 +37,8 @@ export function SuscripcionesPagePrivada() {
       try {
         const [datosSuscripciones, datosClientes, datosPlanes] = await Promise.all([
           getSuscripciones(),
-          getClientes(),
-          getPlanes()
+          getClientes().catch(() => []),
+          getPlanes().catch(() => [])
         ]);
         
         // Mapeamos directo usando el campo 'activo' (o 's_activo') que viene de la base de datos
@@ -54,21 +59,27 @@ export function SuscripcionesPagePrivada() {
     cargarDatos();
   }, []);
 
-  const obtenerNombreCliente = (dni) => {
-    const cliente = clientes.find(c => c.dni === dni);
-    return cliente ? cliente.nombre : 'Cliente desconocido';
+  const obtenerNombreCliente = (dni, suscripcionObj = null) => {
+    if (suscripcionObj?.nombre_cliente) return suscripcionObj.nombre_cliente;
+    const cliente = clientes.find(c => String(c.dni).trim() === String(dni).trim());
+    if (cliente) return cliente.nombre;
+    const subConDni = suscripciones.find(s => String(s.dni_cliente).trim() === String(dni).trim() && s.nombre_cliente);
+    return subConDni ? subConDni.nombre_cliente : 'Cliente desconocido';
   };
 
-  const obtenerNombrePlan = (planId) => {
-    const plan = planes.find(p => p.id === Number(planId));
-    return plan ? plan.nombre : 'Plan desconocido';
+  const obtenerNombrePlan = (planId, suscripcionObj = null) => {
+    if (suscripcionObj?.plan_nombre) return suscripcionObj.plan_nombre;
+    const plan = planes.find(p => Number(p.id) === Number(planId));
+    if (plan) return plan.nombre;
+    const subConPlan = suscripciones.find(s => Number(s.plan_id) === Number(planId) && s.plan_nombre);
+    return subConPlan ? subConPlan.plan_nombre : 'Plan desconocido';
   };
 
   const suscripcionesFiltradas = suscripciones
     .filter((suscripcion) => {
       const busquedaMinuscula = terminoBusqueda.toLowerCase();
-      const nombreCliente = obtenerNombreCliente(suscripcion.dni_cliente).toLowerCase();
-      const nombrePlan = obtenerNombrePlan(suscripcion.plan_id).toLowerCase();
+      const nombreCliente = obtenerNombreCliente(suscripcion.dni_cliente, suscripcion).toLowerCase();
+      const nombrePlan = obtenerNombrePlan(suscripcion.plan_id, suscripcion).toLowerCase();
       const metodoPago = (suscripcion.metodo_pago || '').toLowerCase();
 
       return (
@@ -141,8 +152,12 @@ export function SuscripcionesPagePrivada() {
       {mostrarModalVer && suscripcionSeleccionada && (
         <Modal titulo="Detalle de la Suscripción" onClose={() => setMostrarModalVer(false)}>
           <div className="mb-3">
-            <h4 className="fw-bold text-dark mb-1">{obtenerNombreCliente(suscripcionSeleccionada.dni_cliente)}</h4>
-            <p className="text-muted small mb-2">Plan: <strong>{obtenerNombrePlan(suscripcionSeleccionada.plan_id)}</strong></p>
+            <h4 className="fw-bold text-dark mb-1">
+              {obtenerNombreCliente(suscripcionSeleccionada.dni_cliente, suscripcionSeleccionada)}
+            </h4>
+            <p className="text-muted small mb-2">
+              Plan: <strong>{obtenerNombrePlan(suscripcionSeleccionada.plan_id, suscripcionSeleccionada)}</strong>
+            </p>
             <div className="d-flex gap-2 align-items-center mt-2 flex-wrap">
               <span className="badge bg-secondary bg-opacity-25 text-dark fw-semibold">
                 {suscripcionSeleccionada.metodo_pago || 'No especificado'}
