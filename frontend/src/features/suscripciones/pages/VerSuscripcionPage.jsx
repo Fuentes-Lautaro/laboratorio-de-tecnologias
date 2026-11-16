@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getSuscripcionActivaPorDni, getPlanes } from '../services/suscripcionesService';
+import { getSuscripcionActivaPorDni, getPlanes, getProductosPorPlanYPeriodo } from '../services/suscripcionesService';
 import { getProductos } from '../../productos';
 import { obtenerSesion } from '../../auth';
 
@@ -8,7 +8,7 @@ export function VerSuscripcionPage() {
     const [suscripcionesActivas, setSuscripcionesActivas] = useState([]);
     const [suscripcionesInactivas, setSuscripcionesInactivas] = useState([]);
     const [planes, setPlanes] = useState([]);
-    const [productos, setProductos] = useState([]);
+    const [productosPorSub, setProductosPorSub] = useState({});
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
@@ -23,6 +23,25 @@ export function VerSuscripcionPage() {
         return `${dia}/${mes}/${anio}`;
     };
 
+    // Función auxiliar para calcular el mes siguiente en formato estricto YYYY-MM
+    const obtenerPeriodoMesSiguiente = (fechaStr) => {
+        if (!fechaStr) return null;
+        const fechaLimpia = String(fechaStr).split('T')[0];
+        const partes = fechaLimpia.split('-');
+        
+        if (partes.length === 3) {
+            let [anio, mes] = partes.map(Number);
+            mes += 1; // Sumamos un mes
+            if (mes > 12) {
+                mes = 1;
+                anio += 1;
+            }
+            const mesStr = String(mes).padStart(2, '0');
+            return `${anio}-${mesStr}`; // Formato exacto YYYY-MM
+        }
+        return null;
+    };
+
     useEffect(() => {
         async function cargarDatos() {
             try {
@@ -35,18 +54,42 @@ export function VerSuscripcionPage() {
                 }
 
                 const [misSuscripciones, listaPlanes, todosLosProductos] = await Promise.all([
-                    getSuscripcionActivaPorDni(),
+                    getSuscripcionActivaPorDni(sesion?.dni),
                     getPlanes().catch(() => []),
                     getProductos().catch(() => [])
                 ]);
 
-                const activas = misSuscripciones.filter((s) => s.activo === true);
-                const inactivas = misSuscripciones.filter((s) => s.activo !== true);
+                const subsArray = Array.isArray(misSuscripciones) ? misSuscripciones : (misSuscripciones ? [misSuscripciones] : []);
+
+                const activas = subsArray.filter((s) => s.activo === true);
+                const inactivas = subsArray.filter((s) => s.activo !== true);
 
                 setSuscripcionesActivas(activas);
                 setSuscripcionesInactivas(inactivas);
                 setPlanes(listaPlanes || []);
-                setProductos(todosLosProductos || []);
+
+                // Cargar los productos específicos para cada suscripción activa usando el período YYYY-MM
+                const mapaProductos = {};
+                for (const sub of activas) {
+                    if (sub.plan_id) {
+                        try {
+                            const periodoSiguiente = obtenerPeriodoMesSiguiente(sub.fecha_pago);
+                            const idsProductos = await getProductosPorPlanYPeriodo(sub.plan_id, periodoSiguiente);
+                            
+                            const filtrados = todosLosProductos.length > 0 && idsProductos?.length > 0
+                                ? todosLosProductos.filter((p) => 
+                                    idsProductos.some(idProd => Number(idProd) === Number(p.id))
+                                )
+                                : [];
+                            
+                            mapaProductos[sub.id || sub.plan_id] = filtrados;
+                        } catch (err) {
+                            console.warn(`No se pudo obtener el registro mensual para el plan ${sub.plan_id}.`);
+                            mapaProductos[sub.id || sub.plan_id] = [];
+                        }
+                    }
+                }
+                setProductosPorSub(mapaProductos);
 
             } catch (err) {
                 console.error('Error al cargar la suscripción personal:', err);
@@ -57,12 +100,12 @@ export function VerSuscripcionPage() {
         }
 
         cargarDatos();
-    }, [sesion?.token]);
+    }, [sesion?.token, sesion?.dni]);
 
     if (cargando) {
         return (
-            <div className="container py-5 text-center st">
-                <div className="spinner-border text-primary" role="status">
+            <div className="container py-5 text-center">
+                <div className="spinner-border text-primary" role="status" style={{ color: '#3E100F' }}>
                     <span className="visually-hidden">Cargando...</span>
                 </div>
             </div>
@@ -95,12 +138,6 @@ export function VerSuscripcionPage() {
         );
     }
 
-    const nombreTitular =
-        suscripcionesActivas[0]?.nombre_cliente ||
-        suscripcionesInactivas[0]?.nombre_cliente ||
-        sesion.nombre ||
-        'Cliente';
-
     return (
         <div className="container py-5">
             <div className="text-center mb-5">
@@ -116,7 +153,7 @@ export function VerSuscripcionPage() {
             {suscripcionesActivas.length === 0 ? (
                 <div className="card shadow-sm border-0 rounded-4 p-5 bg-white mx-auto text-center mb-5" style={{ maxWidth: '650px' }}>
                     <h3 className="fw-bold mb-3" style={{ color: 'var(--titulos, #581845)' }}>
-                        ¡Hola, {nombreTitular}! No tenés planes activos este mes
+                        ¡Hola! No tenés planes activos este mes
                     </h3>
                     <p className="text-muted mb-4">
                         Actualmente no registramos ninguna suscripción de vinos vigente para el período actual. ¡Sumate o renová tu plan para recibir etiquetas exclusivas entre el 1 y el 10 del próximo mes!
@@ -129,67 +166,57 @@ export function VerSuscripcionPage() {
                 </div>
             ) : (
                 <div className="row justify-content-center g-4 mb-5">
-                    {suscripcionesActivas.map((sub) => {
-                    // 1. Búsqueda flexible de los detalles del plan (por ID o por nombre normalizado)
-                    const planDetalle = planes.find(
-                        (p) =>
-                            Number(p.id) === Number(sub.plan_id) ||
-                            (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
-                    );
+                    {suscripcionesActivas.map((sub, idx) => {
+                        const planDetalle = planes.find(
+                            (p) =>
+                                Number(p.id) === Number(sub.plan_id) ||
+                                (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
+                        );
 
-                    // 2. Extracción segura de los IDs de productos del próximo mes (soporta si vienen como objetos o IDs sueltos)
-                    const idsProductosPlan = planDetalle?.productos_proximo_mes
-                        ? planDetalle.productos_proximo_mes.map(prod => typeof prod === 'object' ? prod.id : prod)
-                        : [];
+                        const productosDelMes = productosPorSub[sub.id || sub.plan_id] || [];
 
-                    // 3. Filtrado seguro convirtiendo ambos a Number para evitar problemas de tipos
-                    const productosDelMes = idsProductosPlan.length > 0 && productos.length > 0
-                        ? productos.filter((p) => 
-                            idsProductosPlan.some(idProd => Number(idProd) === Number(p.id))
-                        )
-                        : [];
+                        return (
+                            <div key={sub.id || idx} className="col-12 col-lg-8">
+                                <div className="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                                    
+                                    {/* Cabecera */}
+                                    <div className="p-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
+                                        <h4 className="mb-0 fw-bold">
+                                            PLAN {(sub.plan_nombre || planDetalle?.nombre || 'Especial').toUpperCase()}
+                                        </h4>
+                                        <span className="badge bg-success px-3 py-2 rounded-pill fs-6">
+                                            Estado: Activa
+                                        </span>
+                                    </div>
 
-                    return (
-                        <div key={sub.id || sub.plan_id} className="col-12 col-lg-8">
-                            <div className="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
-                                
-                                {/* Cabecera */}
-                                <div className="p-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
-                                    <h4 className="mb-0 fw-bold">
-                                        PLAN {(sub.plan_nombre || planDetalle?.nombre || 'Especial').toUpperCase()}
-                                    </h4>
-                                    <span className="badge bg-success px-3 py-2 rounded-pill fs-6">
-                                        Estado: Activa
-                                    </span>
-                                </div>
-
-                                {/* Contenido */}
-                                <div className="p-4 p-md-5">
-                                    {/* Resto de tu código de fechas y titular... */}
-
-                                    {planDetalle && (
-                                        <div className="p-3 bg-light rounded-3 mt-3">
-                                            <strong className="d-block mb-2 text-dark">Vinos asignados para tu próxima caja:</strong>
-                                            <ul className="mb-0 ps-3 text-muted small">
-                                                {productosDelMes.length > 0 ? (
-                                                    productosDelMes.map((prod) => (
-                                                        <li key={prod.id} className="mb-1">
-                                                            <span className="fw-semibold text-dark">{prod.marca}</span> 
-                                                            <span className="ms-1">{prod.varietal}</span> 
-                                                            {prod.medida && <span className="text-muted"> ({prod.medida})</span>}
-                                                        </li>
-                                                    ))
-                                                ) : (
-                                                    <li className="fst-italic">La selección se actualizará en los próximos días.</li>
-                                                )}
-                                            </ul>
+                                    {/* Contenido */}
+                                    <div className="p-4 p-md-5">
+                                        <div className="row mb-4">
+                                            <div className="col-md-6 mb-3 mb-md-0">
+                                                <span className="text-muted small d-block">Titular de la suscripción</span>
+                                                <strong className="fs-6 text-dark">{sub.nombre_cliente || sesion.nombre}</strong>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <span className="text-muted small d-block">Fecha de contratación / pago</span>
+                                                <strong className="fs-6 text-dark">{formatearFecha(sub.fecha_pago)}</strong>
+                                            </div>
                                         </div>
-                                    )}
+
+                                        <div className="row mb-4">
+                                            <div className="col-md-6 mb-3 mb-md-0">
+                                                <span className="text-muted small d-block">Método de pago</span>
+                                                <strong className="fs-6 text-dark">{sub.metodo_pago || 'No especificado'}</strong>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <span className="text-muted small d-block">Monto abonado</span>
+                                                <strong className="fs-6 text-success">${Number(sub.monto || planDetalle?.precio || 0).toLocaleString('es-AR')}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
                 </div>
             )}
 
@@ -217,7 +244,7 @@ export function VerSuscripcionPage() {
                                     </thead>
                                     <tbody>
                                         {suscripcionesInactivas.length > 0 ? (
-                                            suscripcionesInactivas.map((sub) => {
+                                            suscripcionesInactivas.map((sub, idx) => {
                                                 const planAsociado = planes.find(
                                                     (p) =>
                                                         Number(p.id) === Number(sub.plan_id) ||
@@ -235,7 +262,7 @@ export function VerSuscripcionPage() {
                                                 const puedeRenovar = !yaTienePlanActivo && planDisponible && Boolean(nombrePlanRuta);
 
                                                 return (
-                                                    <tr key={sub.id}>
+                                                    <tr key={sub.id || idx}>
                                                         <td className="ps-4 fw-semibold text-dark">
                                                             {nombrePlanRuta || `Plan #${sub.plan_id}`}
                                                         </td>
