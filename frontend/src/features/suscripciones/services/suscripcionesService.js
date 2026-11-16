@@ -165,37 +165,6 @@ export async function getSuscripciones() {
   return respuesta.json();
 }
 
-export async function getSuscripcionActivaPorDni(clienteDni) {
-  try {
-    const respuesta = await fetch(`${URL_DATA_SIMULADA}/suscripciones.json`);
-    
-    if (!respuesta.ok) {
-      throw new Error('Error al conectar con la base de suscripciones.');
-    }
-
-    const suscripciones = await respuesta.json();
-
-    const suscripcionActiva = suscripciones.find((sub) => {
-      return String(sub.dni_cliente).trim() === String(clienteDni).trim() && 
-             sub.activa === true;
-    });
-
-    if (!suscripcionActiva) return null;
-
-    const planes = await getPlanes();
-    const planEncontrado = planes.find(p => p.id === suscripcionActiva.plan_id);
-
-    return {
-      ...suscripcionActiva,
-      planNombre: planEncontrado ? planEncontrado.nombre : 'Especial'
-    };
-
-  } catch (error) {
-    console.error('Error al obtener la suscripción activa:', error);
-    throw error;
-  }
-}
-
 export async function guardarSuscripcion({ data }) {
    const sesion = obtenerSesion();
   const respuesta = await fetch(`${API_URL}/api/suscripciones`, {
