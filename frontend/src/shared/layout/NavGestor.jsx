@@ -1,8 +1,29 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { cerrarSesion } from '../../features/auth/services/authService';
+import { getPersonaPorId } from '../../features/personas/services/personasServices';
 
 export function NavGestor({ sesion }) {
   const navigate = useNavigate();
+  const [persona, setPersona] = useState(null);
+
+  useEffect(() => {
+    async function verificarDatosUsuario() {
+      if (sesion) {
+        try {
+          const data = await getPersonaPorId();
+          setPersona(data);
+        } catch (error) {
+          console.error('Error al obtener datos del perfil:', error);
+          setPersona(null);
+        }
+      } else {
+        setPersona(null);
+      }
+    }
+
+    verificarDatosUsuario();
+  }, [sesion]);
 
   const handleCerrarSesion = () => {
     cerrarSesion();
@@ -20,6 +41,7 @@ export function NavGestor({ sesion }) {
 
   const rolUsuario = sesion?.rol?.toLowerCase() || '';
   const esGerente = rolUsuario === 'gerente';
+  const nombreUsuario = persona?.nombre || sesion?.nombre || 'Usuario';
 
   return (
     <aside 
@@ -35,7 +57,7 @@ export function NavGestor({ sesion }) {
           Panel Gestión
         </h5>
         <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.875rem' }}>
-          {sesion?.nombre || 'Usuario'} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'rol'})</span>
+          {nombreUsuario} <span style={{ color: 'var(--detalles, #B5865A)' }}>({sesion?.rol || 'rol'})</span>
         </div>
       </div>
 
@@ -61,7 +83,7 @@ export function NavGestor({ sesion }) {
         <NavLink to="/gestion/suscripciones" style={getNavLinkStyle} className="nav-link d-flex align-items-center gap-3 px-3 py-2.5 rounded-1">
           <span>Suscripciones</span>
         </NavLink>
-        
+
         {/* Sección de Administración */}
         {esGerente && (
           <>
@@ -89,7 +111,7 @@ export function NavGestor({ sesion }) {
 
       {/* Pie con Accesos Directos y Cerrar Sesión */}
       <div className="pt-3 mt-auto border-top d-flex flex-column gap-2" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
-        
+
         {/* Botón Ir a la Tienda */}
         <Link
           to="/"

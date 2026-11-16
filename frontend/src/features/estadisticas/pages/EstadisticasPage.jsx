@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router';
 import { obtenerResumen } from '../services/estadisticasService';
+import { getPersonaPorId } from '../../personas/services/personasServices'; // Ajusta la ruta relativa según dónde esté ubicado tu archivo
 import { formatearPrecio } from '../../../shared/utils/formato';
 
 const formatearFecha = (fechaStr) => {
@@ -15,21 +16,36 @@ const formatearFecha = (fechaStr) => {
 export function EstadisticasPage() {
   const { usuario } = useOutletContext() || { usuario: { nombre: 'Usuario' } };
   const [resumen, setResumen] = useState(null);
+  const [persona, setPersona] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
-    obtenerResumen()
-      .then((data) => {
+
+    async function cargarDatos() {
+      try {
+        // Cargar datos de la persona/perfil
+        const datosPersona = await getPersonaPorId();
+        if (isMounted) setPersona(datosPersona);
+      } catch (err) {
+        console.error('Error al obtener datos del perfil:', err);
+        if (isMounted) setPersona(null);
+      }
+
+      try {
+        // Cargar resumen de estadísticas
+        const data = await obtenerResumen();
         if (isMounted) setResumen(data);
-      })
-      .catch((err) => {
+      } catch (err) {
         if (isMounted) setError(err.message);
-      })
-      .finally(() => {
+      } finally {
         if (isMounted) setCargando(false);
-      });
+      }
+    }
+
+    cargarDatos();
+
     return () => {
       isMounted = false;
     };
@@ -53,11 +69,13 @@ export function EstadisticasPage() {
     );
   }
 
+  const nombreUsuario = persona?.nombre || usuario?.nombre || 'Usuario';
+
   return (
     <div className="container-fluid py-3">
       {/* Encabezado */}
       <header className="mb-4">
-        <h1 className="h3 mb-1 fw-bold" style={{ color: '#3E100F' }}>Hola, {usuario.nombre}</h1>
+        <h1 className="h3 mb-1 fw-bold" style={{ color: '#3E100F' }}>Hola, {nombreUsuario}</h1>
         <p className="text-body-secondary mb-0">Estadísticas y reportes generales del negocio</p>
       </header>
 
