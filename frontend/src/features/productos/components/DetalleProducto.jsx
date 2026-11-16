@@ -4,11 +4,22 @@ import { formatearPrecio } from '../../../shared/utils/formato';
 
 const FALLBACK_IMAGEN = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='300' viewBox='0 0 600 300'><rect width='100%' height='100%' fill='%23F3EFEA'/><text x='50%' y='50%' fill='%23B5865A' font-family='sans-serif' font-size='18' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>Sin Imagen</text></svg>";
 
+const obtenerImagenMarca = (marca) => {
+    if (!marca) return FALLBACK_IMAGEN;
+    const slug = String(marca)
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '-');
+
+    return slug ? `/img/productos/${slug}.png` : FALLBACK_IMAGEN;
+};
+
 function DetalleProducto({ producto, onAgregar }) {
     if (!producto) return null;
 
     // Sincronización de atributos de PostgreSQL (p_) con props simples
-    const id = producto.p_id ?? producto.id;
     const marca = producto.p_marca ?? producto.marca ?? '';
     const tipo = producto.p_tipo ?? producto.tipo ?? '';
     const precio = producto.p_precio ?? producto.precio ?? 0;
@@ -17,7 +28,7 @@ function DetalleProducto({ producto, onAgregar }) {
     const varietal = producto.p_varietal ?? producto.varietal ?? '';
     const bodega = producto.p_bodega ?? producto.bodega ?? '';
     const descripcion = producto.p_descripcion ?? producto.descripcion ?? '';
-    const img = producto.p_imagen_url ?? producto.p_img ?? producto.img ?? FALLBACK_IMAGEN;
+    const img = obtenerImagenMarca(marca);
 
     const handleImageError = (e) => {
         e.target.onerror = null;
@@ -28,11 +39,14 @@ function DetalleProducto({ producto, onAgregar }) {
         <div className="row g-4 g-lg-5">
             <div className="col-md-6">
                 <img 
-                    src={img || FALLBACK_IMAGEN} 
+                    src={img} 
                     className="imagen-detalle w-100 rounded-3 shadow-sm" 
                     alt={marca || 'Producto'} 
                     onError={handleImageError}
-                    style={{border: '2px solid var(--detalles, #B5865A)'}}
+                    style={{ 
+                        border: '2px solid var(--detalles, #B5865A)',
+                        objectFit: 'cover'
+                    }}
                 />
             </div>
 
@@ -76,16 +90,6 @@ function DetalleProducto({ producto, onAgregar }) {
                         <h5 className="fw-bold mb-2" style={{ color: '#3E100F' }}>Descripción</h5>
                         <p className="text-muted">{descripcion}</p>
                     </div>
-                )}
-
-                {onAgregar && (
-                    <button 
-                        onClick={() => onAgregar(producto)} 
-                        className="btn text-white fw-semibold px-4 py-2 rounded-2"
-                        style={{ backgroundColor: 'var(--detalles, #B5865A)' }}
-                    >
-                        🛒 Agregar al Carrito
-                    </button>
                 )}
             </div>
         </div>
