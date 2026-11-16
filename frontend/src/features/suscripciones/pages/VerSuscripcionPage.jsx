@@ -130,66 +130,66 @@ export function VerSuscripcionPage() {
             ) : (
                 <div className="row justify-content-center g-4 mb-5">
                     {suscripcionesActivas.map((sub) => {
-                        // 1. Búsqueda flexible de los detalles del plan (por ID o por nombre normalizado)
-                        const planDetalle = planes.find(
-                            (p) =>
-                                Number(p.id) === Number(sub.plan_id) ||
-                                (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
-                        );
+                    // 1. Búsqueda flexible de los detalles del plan (por ID o por nombre normalizado)
+                    const planDetalle = planes.find(
+                        (p) =>
+                            Number(p.id) === Number(sub.plan_id) ||
+                            (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
+                    );
 
-                        // 2. Extracción segura de los IDs de productos del próximo mes (soporta si vienen como objetos o IDs sueltos)
-                        const idsProductosPlan = planDetalle?.productos_proximo_mes
-                            ? planDetalle.productos_proximo_mes.map(prod => typeof prod === 'object' ? prod.id : prod)
-                            : [];
+                    // 2. Extracción segura de los IDs de productos del próximo mes (soporta si vienen como objetos o IDs sueltos)
+                    const idsProductosPlan = planDetalle?.productos_proximo_mes
+                        ? planDetalle.productos_proximo_mes.map(prod => typeof prod === 'object' ? prod.id : prod)
+                        : [];
 
-                        // 3. Filtrado seguro convirtiendo ambos a Number para evitar problemas de tipos
-                        const productosDelMes = idsProductosPlan.length > 0 && productos.length > 0
-                            ? productos.filter((p) => 
-                                idsProductosPlan.some(idProd => Number(idProd) === Number(p.id))
-                            )
-                            : [];
+                    // 3. Filtrado seguro convirtiendo ambos a Number para evitar problemas de tipos
+                    const productosDelMes = idsProductosPlan.length > 0 && productos.length > 0
+                        ? productos.filter((p) => 
+                            idsProductosPlan.some(idProd => Number(idProd) === Number(p.id))
+                        )
+                        : [];
 
-                        return (
-                            <div key={sub.id || sub.plan_id} className="col-12 col-lg-8">
-                                <div className="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
-                                    
-                                    {/* Cabecera */}
-                                    <div className="p-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
-                                        <h4 className="mb-0 fw-bold">
-                                            PLAN {(sub.plan_nombre || planDetalle?.nombre || 'Especial').toUpperCase()}
-                                        </h4>
-                                        <span className="badge bg-success px-3 py-2 rounded-pill fs-6">
-                                            Estado: Activa
-                                        </span>
-                                    </div>
+                    return (
+                        <div key={sub.id || sub.plan_id} className="col-12 col-lg-8">
+                            <div className="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                                
+                                {/* Cabecera */}
+                                <div className="p-4 text-white d-flex justify-content-between align-items-center flex-wrap gap-2" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
+                                    <h4 className="mb-0 fw-bold">
+                                        PLAN {(sub.plan_nombre || planDetalle?.nombre || 'Especial').toUpperCase()}
+                                    </h4>
+                                    <span className="badge bg-success px-3 py-2 rounded-pill fs-6">
+                                        Estado: Activa
+                                    </span>
+                                </div>
 
-                                    {/* Contenido */}
-                                    <div className="p-4 p-md-5">
-                                        {/* Resto de tu código de fechas y titular... */}
+                                {/* Contenido */}
+                                <div className="p-4 p-md-5">
+                                    {/* Resto de tu código de fechas y titular... */}
 
-                                        {planDetalle && (
-                                            <div className="p-3 bg-light rounded-3 mt-3">
-                                                <strong className="d-block mb-2 text-dark">Vinos asignados para tu próxima caja:</strong>
-                                                <ul className="mb-0 ps-3 text-muted small">
-                                                    {productosDelMes.length > 0 ? (
-                                                        productosDelMes.map((prod) => (
-                                                            <li key={prod.id} className="mb-1">
-                                                                <span className="fw-semibold text-dark">{prod.marca}</span> 
-                                                                <span className="ms-1">{prod.varietal}</span> 
-                                                                {prod.medida && <span className="text-muted"> ({prod.medida})</span>}
-                                                            </li>
-                                                        ))
-                                                    ) : (
-                                                        <li className="fst-italic">La selección se actualizará en los próximos días.</li>
-                                                    )}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
+                                    {planDetalle && (
+                                        <div className="p-3 bg-light rounded-3 mt-3">
+                                            <strong className="d-block mb-2 text-dark">Vinos asignados para tu próxima caja:</strong>
+                                            <ul className="mb-0 ps-3 text-muted small">
+                                                {productosDelMes.length > 0 ? (
+                                                    productosDelMes.map((prod) => (
+                                                        <li key={prod.id} className="mb-1">
+                                                            <span className="fw-semibold text-dark">{prod.marca}</span> 
+                                                            <span className="ms-1">{prod.varietal}</span> 
+                                                            {prod.medida && <span className="text-muted"> ({prod.medida})</span>}
+                                                        </li>
+                                                    ))
+                                                ) : (
+                                                    <li className="fst-italic">La selección se actualizará en los próximos días.</li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                        );
-                    })}
+                        </div>
+                    );
+                })}
                 </div>
             )}
 
