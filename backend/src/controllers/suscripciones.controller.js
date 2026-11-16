@@ -27,14 +27,14 @@ async function registrarSuscripcionDesdePagoMP(paymentId) {
 
   // 1. Si este payment_id ya fue registrado (por el webhook o por el retorno), lo devolvemos
   const existente = await pool.query(
-    'SELECT * FROM suscripcion WHERE s_mp_payment_id = \$1',
+    'SELECT * FROM suscripcion WHERE s_mp_payment_id = $1',
     [String(paymentId)]
   );
   if (existente.rows.length > 0) {
     return { aprobado: true, status: 'approved', suscripcion: existente.rows[0] };
   }
 
-  // 2. Insertamos la suscripción en PostgreSQL (ON CONFLICT evita duplicados concurrentes)
+  // 2. Insertamos una nueva instancia en PostgreSQL (ON CONFLICT evita duplicados concurrentes)
   const fechaPago = new Date().toISOString().split('T')[0];
   const montoPago = Number(payment.transaction_amount);
 
@@ -49,7 +49,7 @@ async function registrarSuscripcionDesdePagoMP(paymentId) {
   // Si hubo conflicto concurrente justo en ese milisegundo, consultamos el registro guardado
   if (rows.length === 0) {
     const { rows: yaGuardada } = await pool.query(
-      'SELECT * FROM suscripcion WHERE s_mp_payment_id = \$1',
+      'SELECT * FROM suscripcion WHERE s_mp_payment_id = $1',
       [String(paymentId)]
     );
     return { aprobado: true, status: 'approved', suscripcion: yaGuardada[0] };
@@ -70,7 +70,7 @@ export const crearPreferenciaMP = async (req, res, next) => {
 
     // 1. Buscamos el plan en PostgreSQL para asegurar el precio real
     const { rows: planesRows } = await pool.query(
-      'SELECT ps_id, ps_nombre, ps_descripcion, ps_valor, ps_activo FROM planes WHERE ps_id = \$1',
+      'SELECT ps_id, ps_nombre, ps_descripcion, ps_valor, ps_activo FROM planes WHERE ps_id = $1',
       [ps_id]
     );
 
@@ -80,19 +80,22 @@ export const crearPreferenciaMP = async (req, res, next) => {
 
     const plan = planesRows[0];
 
-    // 2. Verificamos que el cliente no tenga ya activo ESTE MISMO plan (permite tener otros planes distintos)
+    // 2. Verificamos que el cliente no haya pagado ya ESTE MISMO plan en el mes calendario actual
     const { rows: subActiva } = await pool.query(
-      'SELECT s_id FROM suscripcion WHERE cliente_id = \$1 AND ps_id = \$2 AND activo = TRUE',
+      `SELECT s_id FROM suscripcion 
+       WHERE cliente_id = $1 
+         AND ps_id = $2 
+         AND DATE_TRUNC('month', s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)`,
       [cliente_id, ps_id]
     );
 
     if (subActiva.length > 0) {
-      return res.status(409).json({ error: 'Ya poseés una suscripción activa para este plan.' });
+      return res.status(409).json({ error: 'Ya poseés una suscripción activa para este plan en el mes actual.' });
     }
 
     // 3. Creamos la preferencia en Mercado Pago
-    const frontendUrl = env.FRONTEND_URL.replace(/\/\$/, '');
-    const backendUrl = env.BACKEND_URL.replace(/\/\$/, '');
+    const frontendUrl = env.FRONTEND_URL.replace(/\/$/, '');
+    const backendUrl = env.BACKEND_URL.replace(/\/$/, '');
     const urlRetorno = `${frontendUrl}/suscripciones/pago/resultado`;
 
     const preference = new Preference(mpClient);
@@ -175,7 +178,8 @@ export const verificarPagoMP = async (req, res, next) => {
   }
 };
 
-// GET /api/suscripciones/mis-suscripciones (Protegida con JWT - Historial completo del cliente)
+// GET /api/suscripciones/mis-suscripciones (Protegida con JWT - Vista del Cliente)
+// Activa = pagada dentro del mes calendario actual; meses anteriores pasan a Inactiva
 export const obtenerMisSuscripciones = async (req, res, next) => {
   try {
     const clienteId = req.usuario?.id;
@@ -195,12 +199,15 @@ export const obtenerMisSuscripciones = async (req, res, next) => {
         s.ps_id AS plan_id,
         pl.ps_nombre AS plan_nombre,
         s.s_metodo_pago AS metodo_pago,
-        s.activo
+        (DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)) AS activo
       FROM suscripcion s
       JOIN personas p ON s.cliente_id = p.pe_id
       JOIN planes pl ON s.ps_id = pl.ps_id
       WHERE s.cliente_id = $1
-      ORDER BY s.activo DESC, s.s_fecha_pago DESC, s.s_id DESC
+      ORDER BY 
+        (DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)) DESC,
+        s.s_fecha_pago DESC,
+        s.s_id DESC
     `;
 
     const { rows } = await pool.query(query, [clienteId]);
@@ -224,6 +231,9 @@ export const listarPersonasConSuscripcion = async (req, res, next) => {
   }
 };
 
+// GET /api/suscripciones/listar (Protegida con JWT - Vista de Administración)
+// Del 1 al 10 del mes: Activas = pagadas el mes anterior (cajas a armar/entregar).
+// Del 11 en adelante: Activas = pagadas el mes actual (próxima entrega).
 export const listarSuscripciones = async (req, res, next) => {
   try {
     const query = `
@@ -237,10 +247,16 @@ export const listarSuscripciones = async (req, res, next) => {
         s.ps_id AS plan_id,
         pl.ps_nombre AS plan_nombre,
         s.s_metodo_pago AS metodo_pago,
-        s.activo
+        CASE
+          WHEN EXTRACT(DAY FROM CURRENT_DATE) <= 10 THEN
+            DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+          ELSE
+            DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)
+        END AS activo
       FROM suscripcion s
       JOIN personas p ON s.cliente_id = p.pe_id
       JOIN planes pl ON s.ps_id = pl.ps_id
+      ORDER BY activo DESC, s.s_fecha_pago DESC, s.s_id DESC
     `;
     const { rows } = await pool.query(query);
     res.json(rows);
@@ -252,7 +268,7 @@ export const listarSuscripciones = async (req, res, next) => {
 export const obtener = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = \$1', [id]);
+    const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = $1', [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Suscripción no encontrada' });
