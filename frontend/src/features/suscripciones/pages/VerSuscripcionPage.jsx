@@ -113,10 +113,10 @@ export function VerSuscripcionPage() {
             {suscripcionesActivas.length === 0 ? (
                 <div className="card shadow-sm border-0 rounded-4 p-5 bg-white mx-auto text-center mb-5" style={{ maxWidth: '650px' }}>
                     <h3 className="fw-bold mb-3" style={{ color: 'var(--titulos, #581845)' }}>
-                        ¡Hola, {nombreTitular}! No tenés planes activos
+                        No tenés planes activos
                     </h3>
                     <p className="text-muted mb-4">
-                        Actualmente no registramos ninguna suscripción de vinos vigente a tu nombre. ¡Sumate a nuestros planes y recibí etiquetas exclusivas todos los meses!
+                        Actualmente no registramos ninguna suscripción vigente a tu nombre. ¡Sumate a nuestros planes y recibí productos exclusivos todos los meses!
                     </p>
                     <div>
                         <a href="/suscripciones" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
@@ -177,7 +177,7 @@ export function VerSuscripcionPage() {
                                                     </h5>
                                                     <p className="text-muted mb-2">{planDetalle.descripcion}</p>
                                                     <div className="fw-semibold text-dark">
-                                                        🍷 Selección mensual: {planDetalle.cantidad_vinos} botellas
+                                                        Selección mensual: {planDetalle.cantidad_vinos} botellas
                                                     </div>
                                                 </div>
 
