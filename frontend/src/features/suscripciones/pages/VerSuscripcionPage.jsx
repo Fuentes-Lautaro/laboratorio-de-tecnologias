@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getSuscripcionActivaPorDni, getPlanes } from '../services/suscripcionesService';
 import { getProductos } from '../../productos';
 import { obtenerSesion } from '../../auth';
@@ -26,16 +27,16 @@ export function VerSuscripcionPage() {
         async function cargarDatos() {
             try {
                 setCargando(true);
+                setError(null);
 
                 if (!sesion?.token) {
                     setCargando(false);
                     return;
                 }
 
-                const [misSuscripciones, listaPlanes, todosLosProductos] = await Promise.all([
+                const [misSuscripciones, listaPlanes] = await Promise.all([
                     getSuscripcionActivaPorDni(),
-                    getPlanes(),
-                    getProductos()
+                    getPlanes().catch(() => [])
                 ]);
 
                 const activas = misSuscripciones.filter((s) => s.activo === true);
@@ -44,11 +45,15 @@ export function VerSuscripcionPage() {
                 setSuscripcionesActivas(activas);
                 setSuscripcionesInactivas(inactivas);
                 setPlanes(listaPlanes || []);
-                setProductos(todosLosProductos || []);
-                setCargando(false);
+
+                if (activas.length > 0) {
+                    const todosLosProductos = await getProductos().catch(() => []);
+                    setProductos(todosLosProductos || []);
+                }
             } catch (err) {
                 console.error('Error al cargar la suscripción personal:', err);
                 setError('Ocurrió un error al obtener los datos de tu suscripción.');
+            } finally {
                 setCargando(false);
             }
         }
@@ -84,9 +89,9 @@ export function VerSuscripcionPage() {
                     <p className="text-muted mb-4">
                         Necesitamos verificar tus datos personales para mostrarte el estado de tus beneficios y envíos de vinos.
                     </p>
-                    <a href="/login" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
+                    <Link to="/login" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
                         Iniciar sesión
-                    </a>
+                    </Link>
                 </div>
             </div>
         );
@@ -113,15 +118,15 @@ export function VerSuscripcionPage() {
             {suscripcionesActivas.length === 0 ? (
                 <div className="card shadow-sm border-0 rounded-4 p-5 bg-white mx-auto text-center mb-5" style={{ maxWidth: '650px' }}>
                     <h3 className="fw-bold mb-3" style={{ color: 'var(--titulos, #581845)' }}>
-                        No tenés planes activos
+                        ¡Hola, {nombreTitular}! No tenés planes activos este mes
                     </h3>
                     <p className="text-muted mb-4">
-                        Actualmente no registramos ninguna suscripción vigente a tu nombre. ¡Sumate a nuestros planes y recibí productos exclusivos todos los meses!
+                        Actualmente no registramos ninguna suscripción de vinos vigente para el período actual. ¡Sumate o renová tu plan para recibir etiquetas exclusivas entre el 1 y el 10 del próximo mes!
                     </p>
                     <div>
-                        <a href="/suscripciones" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
+                        <Link to="/suscripciones" className="btn text-white rounded-pill px-4 py-2 fw-semibold" style={{ backgroundColor: 'var(--titulos, #581845)' }}>
                             Conocer los planes
-                        </a>
+                        </Link>
                     </div>
                 </div>
             ) : (
@@ -162,10 +167,8 @@ export function VerSuscripcionPage() {
                                                 <strong className="fs-6">{formatearFecha(sub.fecha_pago)}</strong>
                                             </div>
                                             <div className="col-12 col-md-4">
-                                                <span className="text-muted d-block small">Valor Mensual</span>
-                                                <strong className="fs-6">
-                                                    ${Number(sub.monto || planDetalle?.valor || 0).toLocaleString('es-AR')}
-                                                </strong>
+                                                <span className="text-muted d-block small">Entrega Estimada</span>
+                                                <strong className="fs-6">Del 1 al 10 del próximo mes</strong>
                                             </div>
                                         </div>
 
@@ -177,7 +180,7 @@ export function VerSuscripcionPage() {
                                                     </h5>
                                                     <p className="text-muted mb-2">{planDetalle.descripcion}</p>
                                                     <div className="fw-semibold text-dark">
-                                                        Selección mensual: {planDetalle.cantidad_vinos} botellas
+                                                        🍷 Selección mensual: {planDetalle.cantidad_vinos} botellas
                                                     </div>
                                                 </div>
 
@@ -205,7 +208,7 @@ export function VerSuscripcionPage() {
                 </div>
             )}
 
-            {/* SECCIÓN INFERIOR: Historial de Suscripciones Inactivas */}
+            {/* SECCIÓN INFERIOR: Historial de Suscripciones Anteriores */}
             <div className="row justify-content-center">
                 <div className="col-12 col-lg-8">
                     <div className="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
@@ -223,31 +226,64 @@ export function VerSuscripcionPage() {
                                             <th>Fecha de Pago</th>
                                             <th>Método</th>
                                             <th className="text-end">Monto</th>
-                                            <th className="text-center pe-4">Estado</th>
+                                            <th className="text-center">Estado</th>
+                                            <th className="text-end pe-4">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {suscripcionesInactivas.length > 0 ? (
-                                            suscripcionesInactivas.map((sub) => (
-                                                <tr key={sub.id}>
-                                                    <td className="ps-4 fw-semibold text-dark">
-                                                        {sub.plan_nombre || `Plan #${sub.plan_id}`}
-                                                    </td>
-                                                    <td>{formatearFecha(sub.fecha_pago)}</td>
-                                                    <td>{sub.metodo_pago || '-'}</td>
-                                                    <td className="text-end fw-semibold">
-                                                        ${Number(sub.monto || 0).toLocaleString('es-AR')}
-                                                    </td>
-                                                    <td className="text-center pe-4">
-                                                        <span className="badge bg-secondary bg-opacity-25 text-secondary">
-                                                            Inactiva
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))
+                                            suscripcionesInactivas.map((sub) => {
+                                                const planAsociado = planes.find(
+                                                    (p) =>
+                                                        Number(p.id) === Number(sub.plan_id) ||
+                                                        (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
+                                                );
+
+                                                const nombrePlanRuta = sub.plan_nombre || planAsociado?.nombre || '';
+
+                                                // Ocultar "Renovar" si ya tiene activo este mismo plan en el mes actual o si el plan fue desactivado
+                                                const yaTienePlanActivo = suscripcionesActivas.some(
+                                                    (act) =>
+                                                        Number(act.plan_id) === Number(sub.plan_id) ||
+                                                        (act.plan_nombre && sub.plan_nombre && act.plan_nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
+                                                );
+                                                const planDisponible = planAsociado ? planAsociado.activo !== false : Boolean(nombrePlanRuta);
+                                                const puedeRenovar = !yaTienePlanActivo && planDisponible && Boolean(nombrePlanRuta);
+
+                                                return (
+                                                    <tr key={sub.id}>
+                                                        <td className="ps-4 fw-semibold text-dark">
+                                                            {nombrePlanRuta || `Plan #${sub.plan_id}`}
+                                                        </td>
+                                                        <td>{formatearFecha(sub.fecha_pago)}</td>
+                                                        <td>{sub.metodo_pago || '-'}</td>
+                                                        <td className="text-end fw-semibold">
+                                                            ${Number(sub.monto || 0).toLocaleString('es-AR')}
+                                                        </td>
+                                                        <td className="text-center">
+                                                            <span className="badge bg-secondary bg-opacity-25 text-secondary">
+                                                                Inactiva
+                                                            </span>
+                                                        </td>
+                                                        <td className="text-end pe-4">
+                                                            {puedeRenovar ? (
+                                                                <Link
+                                                                    to={`/suscripciones/${encodeURIComponent(nombrePlanRuta)}`}
+                                                                    className="btn btn-sm text-white rounded-pill px-3 fw-semibold"
+                                                                    style={{ backgroundColor: 'var(--titulos, #581845)' }}
+                                                                >
+                                                                    Renovar
+                                                                </Link>
+                                                            ) : (
+                                                                <span className="text-muted small">-</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
                                         ) : (
                                             <tr>
-                                                <td colSpan="5" className="text-center py-4 text-muted small">
+                                                <td colSpan="6" className="text-center py-4 text-muted small">
                                                     No hay suscripciones inactivas en tu historial.
                                                 </td>
                                             </tr>
