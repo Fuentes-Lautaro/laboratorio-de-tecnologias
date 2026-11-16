@@ -25,6 +25,53 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
     e.preventDefault();
     setErrorLocal('');
 
+    // 1. Validar Nombre: sin números, al menos una separación de espacio (Nombre + Apellido)
+    const regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    if (!regexNombre.test(formData.nombre.trim())) {
+      setErrorLocal('El nombre completo no debe contener números ni caracteres especiales.');
+      return;
+    }
+    const partesNombre = formData.nombre.trim().split(/\s+/);
+    if (partesNombre.length < 2 || partesNombre.some(p => p.length < 2)) {
+      setErrorLocal('Por favor ingresá al menos un nombre y un apellido válidos.');
+      return;
+    }
+
+    // 2. Validar DNI: exactamente 8 dígitos numéricos
+    const regexDni = /^\d{8}$/;
+    if (!regexDni.test(formData.dni.trim())) {
+      setErrorLocal('El DNI debe contener exactamente 8 números.');
+      return;
+    }
+
+    // 3. Validar Fecha de Nacimiento (Años desde 1926 y mayor de 18 años)
+    if (!formData.fechaNac) {
+      setErrorLocal('Ingresá tu fecha de nacimiento.');
+      return;
+    }
+
+    const fechaNacimiento = new Date(formData.fechaNac);
+    const anioNacimiento = fechaNacimiento.getFullYear();
+
+    if (anioNacimiento < 1926) {
+      setErrorLocal('El año de nacimiento no puede ser anterior a 1926.');
+      return;
+    }
+
+    // Calcular la edad exacta
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+      edad--;
+    }
+
+    if (edad < 18) {
+      setErrorLocal('Debes ser mayor de 18 años para registrarte.');
+      return;
+    }
+
+    // 4. Validar Coincidencia de Contraseñas
     if (formData.clave !== formData.confirmarClave) {
       setErrorLocal('Las contraseñas no coinciden.');
       return;
@@ -35,12 +82,13 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
       return;
     }
 
+    // Si todo sale bien, enviamos los datos
     onRegistro({
-      nombre: formData.nombre,
-      dni: formData.dni,
-      telefono: formData.telefono,
+      nombre: formData.nombre.trim(),
+      dni: formData.dni.trim(),
+      telefono: formData.telefono.trim(),
       fechaNac: formData.fechaNac,
-      direccion: formData.direccion,
+      direccion: formData.direccion.trim(),
       password: formData.clave,
       mail: email,
       rol: 'cliente'
@@ -48,9 +96,9 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
   };
 
   return (
-    <div className="card-auth-flujo" style={{backgroundColor:'var(--titulos, #4a1525)'}}>
+    <div className="card-auth-flujo">
       <div className="text-center mb-3">
-        <h3 className="titulo-auth mb-1" style={{color:'var(--detalles, #B5865A)'}}>Creá tu cuenta</h3>
+        <h3 className="titulo-auth mb-1">Creá tu cuenta</h3>
         <p className="text-muted small mb-1">
           Completá tus datos personales para suscribirte
         </p>
@@ -83,10 +131,11 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
           </div>
 
           <div className="col-6">
-            <label className="form-label fw-semibold small text-secondary mb-1">DNI / CUIT</label>
+            <label className="form-label fw-semibold small text-secondary mb-1">DNI</label>
             <input
               type="text"
               name="dni"
+              maxLength="8"
               autoComplete="off"
               className="form-control form-control-sm"
               placeholder="12345678"
@@ -117,6 +166,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
             <input
               type="date"
               name="fechaNac"
+              min="1926-01-01"
               autoComplete="off"
               className="form-control form-control-sm"
               value={formData.fechaNac}
@@ -176,7 +226,6 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
           <button
             type="submit"
             className="btn btn-auth-submit w-100"
-            backgroundColor='var(--detalles, B5865A)'
             disabled={cargando}
           >
             {cargando ? (

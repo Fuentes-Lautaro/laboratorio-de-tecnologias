@@ -34,9 +34,10 @@ export function VerSuscripcionPage() {
                     return;
                 }
 
-                const [misSuscripciones, listaPlanes] = await Promise.all([
+                const [misSuscripciones, listaPlanes, todosLosProductos] = await Promise.all([
                     getSuscripcionActivaPorDni(),
-                    getPlanes().catch(() => [])
+                    getPlanes().catch(() => []),
+                    getProductos().catch(() => [])
                 ]);
 
                 const activas = misSuscripciones.filter((s) => s.activo === true);
@@ -45,11 +46,8 @@ export function VerSuscripcionPage() {
                 setSuscripcionesActivas(activas);
                 setSuscripcionesInactivas(inactivas);
                 setPlanes(listaPlanes || []);
+                setProductos(todosLosProductos || []);
 
-                if (activas.length > 0) {
-                    const todosLosProductos = await getProductos().catch(() => []);
-                    setProductos(todosLosProductos || []);
-                }
             } catch (err) {
                 console.error('Error al cargar la suscripción personal:', err);
                 setError('Ocurrió un error al obtener los datos de tu suscripción.');
@@ -138,8 +136,11 @@ export function VerSuscripcionPage() {
                                 (p.nombre && sub.plan_nombre && p.nombre.toLowerCase().trim() === sub.plan_nombre.toLowerCase().trim())
                         );
 
+                        // CORRECCIÓN CLAVE: Aseguramos comparar convirtiendo ambos a String o Number para evitar errores de tipo
                         const productosDelMes = planDetalle?.productos_proximo_mes?.length > 0
-                            ? productos.filter((p) => planDetalle.productos_proximo_mes.includes(p.id))
+                            ? productos.filter((p) => 
+                                planDetalle.productos_proximo_mes.some(idProd => Number(idProd) === Number(p.id))
+                              )
                             : [];
 
                         return (
@@ -180,7 +181,7 @@ export function VerSuscripcionPage() {
                                                     </h5>
                                                     <p className="text-muted mb-2">{planDetalle.descripcion}</p>
                                                     <div className="fw-semibold text-dark">
-                                                        🍷 Selección mensual: {planDetalle.cantidad_vinos} botellas
+                                                         Selección mensual: {planDetalle.cantidad_vinos} botellas
                                                     </div>
                                                 </div>
 
@@ -190,7 +191,7 @@ export function VerSuscripcionPage() {
                                                         {productosDelMes.length > 0 ? (
                                                             productosDelMes.map((prod) => (
                                                                 <li key={prod.id} className="mb-1">
-                                                                    {prod.marca} - {prod.varietal} ({prod.medida})
+                                                                    {prod.marca} {prod.varietal} ({prod.medida})
                                                                 </li>
                                                             ))
                                                         ) : (
@@ -241,7 +242,6 @@ export function VerSuscripcionPage() {
 
                                                 const nombrePlanRuta = sub.plan_nombre || planAsociado?.nombre || '';
 
-                                                // Ocultar "Renovar" si ya tiene activo este mismo plan en el mes actual o si el plan fue desactivado
                                                 const yaTienePlanActivo = suscripcionesActivas.some(
                                                     (act) =>
                                                         Number(act.plan_id) === Number(sub.plan_id) ||
