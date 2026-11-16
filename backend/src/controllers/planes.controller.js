@@ -153,8 +153,7 @@ export const obtenerRegistroMesPorPlanYPeriodo = async (req, res, next) => {
                 pr.p_id as id,
                 pr.p_marca as marca,
                 pr.p_varietal as varietal,
-                pr.p_medida as medida,
-                pr.p_imagen_url as imagen_url
+                pr.p_medida as medida
             FROM registrosMes rm
             JOIN productos pr ON rm.p_id = pr.p_id
             WHERE rm.ps_id = $1 AND rm.rm_periodo = $2
