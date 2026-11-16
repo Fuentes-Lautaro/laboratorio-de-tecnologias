@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router';
 import { obtenerResumen } from '../services/estadisticasService';
-import { getPersonaPorId } from '../../personas/services/personasServices'; // Ajusta la ruta relativa según dónde esté ubicado tu archivo
+import { getPersonaPorId } from '../../personas/services/personasServices';
 import { formatearPrecio } from '../../../shared/utils/formato';
 
 const formatearFecha = (fechaStr) => {
@@ -13,43 +13,89 @@ const formatearFecha = (fechaStr) => {
   return `${dia}/${mes}/${anio}`;
 };
 
+const obtenerFechaHoyISO = () => {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+  const dia = String(hoy.getDate()).padStart(2, '0');
+  return `${anio}-${mes}-${dia}`;
+};
+
+const desplazarFechaISO = (fechaISO, dias) => {
+  const [anio, mes, dia] = fechaISO.split('-').map(Number);
+  const fecha = new Date(anio, mes - 1, dia);
+  fecha.setDate(fecha.getDate() + dias);
+  const a = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, '0');
+  const d = String(fecha.getDate()).padStart(2, '0');
+  return `${a}-${m}-${d}`;
+};
+
 export function EstadisticasPage() {
   const { usuario } = useOutletContext() || { usuario: { nombre: 'Usuario' } };
   const [resumen, setResumen] = useState(null);
   const [persona, setPersona] = useState(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(obtenerFechaHoyISO);
   const [cargando, setCargando] = useState(true);
+  const [cargandoDiario, setCargandoDiario] = useState(false);
   const [error, setError] = useState(null);
 
+  const hoyISO = obtenerFechaHoyISO();
+  const esHoy = fechaSeleccionada >= hoyISO;
+
+  // Cargar datos del perfil una sola vez
   useEffect(() => {
     let isMounted = true;
-
-    async function cargarDatos() {
-      try {
-        // Cargar datos de la persona/perfil
-        const datosPersona = await getPersonaPorId();
+    getPersonaPorId()
+      .then((datosPersona) => {
         if (isMounted) setPersona(datosPersona);
-      } catch (err) {
+      })
+      .catch((err) => {
         console.error('Error al obtener datos del perfil:', err);
         if (isMounted) setPersona(null);
-      }
-
-      try {
-        // Cargar resumen de estadísticas
-        const data = await obtenerResumen();
-        if (isMounted) setResumen(data);
-      } catch (err) {
-        if (isMounted) setError(err.message);
-      } finally {
-        if (isMounted) setCargando(false);
-      }
-    }
-
-    cargarDatos();
-
+      });
     return () => {
       isMounted = false;
     };
   }, []);
+
+  // Cargar resumen general + estadísticas diarias de la fecha seleccionada
+  useEffect(() => {
+    let isMounted = true;
+
+    async function cargarEstadisticas() {
+      setCargandoDiario(true);
+      try {
+        const data = await obtenerResumen(fechaSeleccionada);
+        if (isMounted) {
+          setResumen(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted) setError(err.message);
+      } finally {
+        if (isMounted) {
+          setCargando(false);
+          setCargandoDiario(false);
+        }
+      }
+    }
+
+    cargarEstadisticas();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fechaSeleccionada]);
+
+  const handleDiaAnterior = () => {
+    setFechaSeleccionada((prev) => desplazarFechaISO(prev, -1));
+  };
+
+  const handleDiaSiguiente = () => {
+    if (esHoy) return;
+    setFechaSeleccionada((prev) => desplazarFechaISO(prev, 1));
+  };
 
   if (cargando) {
     return (
@@ -70,6 +116,12 @@ export function EstadisticasPage() {
   }
 
   const nombreUsuario = persona?.nombre || usuario?.nombre || 'Usuario';
+  const diarias = resumen?.estadisticasDiarias || {
+    fecha: fechaSeleccionada,
+    totalDiario: 0,
+    cantidadVentas: 0,
+    porMetodoPago: []
+  };
 
   return (
     <div className="container-fluid py-3">
@@ -95,6 +147,9 @@ export function EstadisticasPage() {
             <div className="card-body">
               <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">Suscripciones activas</p>
               <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>{resumen?.suscripcionesActivas || 0}</p>
+              <p className="small text-body-secondary mb-0">
+                Total histórico: <strong>{resumen?.suscripcionesHistoricas || 0}</strong>
+              </p>
             </div>
           </div>
         </div>
@@ -120,6 +175,109 @@ export function EstadisticasPage() {
         </div>
       </div>
 
+      {/* Nueva Sección: Estadísticas Diarias de Ventas (sin suscripciones) */}
+      <div className="card shadow-sm border-0 mb-4 rounded-3 overflow-hidden">
+        <div className="card-header bg-white py-3 border-bottom d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+          <div>
+            <h5 className="mb-0 fw-bold fs-6" style={{ color: '#3E100F' }}>
+              Estadísticas Diarias de Ventas
+            </h5>
+            <small className="text-muted">Ventas del día por método de pago (sin contar suscripciones)</small>
+          </div>
+
+          {/* Selector de Fecha con Flechas */}
+          <div className="d-flex align-items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary fw-bold px-2"
+              onClick={handleDiaAnterior}
+              disabled={cargandoDiario}
+              title="Día anterior"
+            >
+              &larr;
+            </button>
+            <span
+              className="badge rounded-pill px-3 py-2 fw-semibold"
+              style={{ backgroundColor: '#F1EFEA', color: '#3E100F', fontSize: '0.85rem', minWidth: '130px' }}
+            >
+              {formatearFecha(fechaSeleccionada)} {esHoy ? '(Hoy)' : ''}
+            </span>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary fw-bold px-2"
+              onClick={handleDiaSiguiente}
+              disabled={esHoy || cargandoDiario}
+              title="Día siguiente"
+            >
+              &rarr;
+            </button>
+          </div>
+        </div>
+
+        <div className="card-body p-4" style={{ opacity: cargandoDiario ? 0.6 : 1 }}>
+          <div className="row g-4 align-items-center">
+            {/* Total Diario */}
+            <div className="col-12 col-md-4">
+              <div className="p-3 rounded-3 bg-light border-start border-4" style={{ borderLeftColor: '#B5865A !important' }}>
+                <p className="text-uppercase small text-body-secondary mb-1 fw-semibold">
+                  Total Diario de Ventas
+                </p>
+                <p className="h3 fw-bold mb-1" style={{ color: '#3E100F' }}>
+                  {formatearPrecio(diarias.totalDiario || 0)}
+                </p>
+                <small className="text-muted">
+                  {diarias.cantidadVentas} {diarias.cantidadVentas === 1 ? 'venta registrada' : 'ventas registradas'}
+                </small>
+              </div>
+            </div>
+
+            {/* Desglose por Método de Pago */}
+            <div className="col-12 col-md-8">
+              {diarias.porMetodoPago?.length > 0 ? (
+                <div className="d-flex flex-column gap-3">
+                  {diarias.porMetodoPago.map((item, idx) => {
+                    const porcentaje = diarias.totalDiario > 0
+                      ? Math.round((item.total / diarias.totalDiario) * 100)
+                      : 0;
+
+                    return (
+                      <div key={idx}>
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <span className="fw-semibold text-dark">
+                            {item.metodo}{' '}
+                            <small className="text-muted fw-normal">
+                              ({item.cantidad} {item.cantidad === 1 ? 'venta' : 'ventas'})
+                            </small>
+                          </span>
+                          <span className="fw-bold" style={{ color: '#3E100F' }}>
+                            {formatearPrecio(item.total)}{' '}
+                            <small className="text-muted fw-normal">({porcentaje}%)</small>
+                          </span>
+                        </div>
+                        <div className="progress" style={{ height: '8px', backgroundColor: '#F1EFEA' }}>
+                          <div
+                            className="progress-bar rounded-pill"
+                            role="progressbar"
+                            style={{ width: `${porcentaje}%`, backgroundColor: '#B5865A' }}
+                            aria-valuenow={porcentaje}
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center text-muted small py-3">
+                  No se registraron ventas en la fecha seleccionada.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Tabla Distribución por Plan */}
       <div className="card shadow-sm border-0 mb-4 rounded-3 overflow-hidden">
         <div className="card-header bg-white py-3 border-bottom">
@@ -131,8 +289,9 @@ export function EstadisticasPage() {
               <thead className="table-light">
                 <tr>
                   <th scope="col" className="ps-4">Plan</th>
-                  <th scope="col" className="text-center">Suscripciones</th>
-                  <th scope="col" className="text-end pe-4">Ingresos</th>
+                  <th scope="col" className="text-center">Activas</th>
+                  <th scope="col" className="text-center">Total Histórico</th>
+                  <th scope="col" className="text-end pe-4">Ingresos Históricos</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,6 +302,11 @@ export function EstadisticasPage() {
                     </td>
                     <td className="text-center">
                       <span className="badge rounded-pill px-3 py-2 fw-bold" style={{ backgroundColor: '#B5865A', color: '#FFFFFF', fontSize: '0.85rem' }}>
+                        {plan.cantidadActivas}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      <span className="badge bg-light text-dark border px-3 py-2 fw-semibold">
                         {plan.cantidadSuscripciones}
                       </span>
                     </td>

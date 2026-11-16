@@ -18,9 +18,10 @@ async function procesarRespuesta(respuesta, mensajeError) {
   return respuesta.json();
 }
 
-export async function obtenerResumen() {
+export async function obtenerResumen(fecha = null) {
   const sesion = obtenerSesion();
-  const respuesta = await fetch(`${URL_BASE}/estadisticas`, {
+  const query = fecha ? `?fecha=${encodeURIComponent(fecha)}` : '';
+  const respuesta = await fetch(`${URL_BASE}/estadisticas${query}`, {
     headers: {
       'Authorization': `Bearer ${sesion?.token}`
     }
