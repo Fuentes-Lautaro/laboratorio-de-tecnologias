@@ -1,7 +1,6 @@
 import { obtenerSesion } from '../../auth';
 
 const API_URL = import.meta.env.VITE_API_URL;
-const URL_DATA_SIMULADA = '/backend/data'; 
 
 const mapearPlanDesdeDB = (planDB) => ({
   id: planDB.ps_id,

@@ -2,6 +2,11 @@ import { pool } from '../config/db.js';
 
 export const obtenerResumenEstadisticas = async (req, res, next) => {
     try {
+        // Fecha solicitada para estadísticas diarias (YYYY-MM-DD), por defecto hoy en horario de Argentina
+        const fechaParam = req.query.fecha && /^\d{4}-\d{2}-\d{2}\$/.test(String(req.query.fecha))
+            ? String(req.query.fecha)
+            : new Date().toLocaleDateString('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' });
+
         // Total de ingresos mensuales (mes actual)
         const queryIngresos = `
             SELECT COALESCE(SUM(v_total), 0) AS "totalIngresosMensuales" 
@@ -10,9 +15,18 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
         `;
         const resIngresos = await pool.query(queryIngresos);
 
-        // Suscripciones activas
+        // Suscripciones activas (criterio administrador: día 1..10 = mes anterior, día 11+ = mes actual) e histórico
         const querySuscripciones = `
-            SELECT COUNT(*) AS "suscripcionesActivas" 
+            SELECT 
+                COUNT(*) FILTER (
+                    WHERE CASE
+                        WHEN EXTRACT(DAY FROM CURRENT_DATE) <= 10 THEN
+                            DATE_TRUNC('month', s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                        ELSE
+                            DATE_TRUNC('month', s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)
+                    END
+                ) AS "suscripcionesActivas",
+                COUNT(*) AS "suscripcionesHistoricas"
             FROM suscripcion;
         `;
         const resSuscripciones = await pool.query(querySuscripciones);
@@ -25,13 +39,27 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
         `;
         const resClientes = await pool.query(queryClientes);
 
-        // Distribución por plan e ingresos asociados
+        // Distribución por plan (activas bajo criterio administrador + total histórico + ingresos)
+        // Distribución por plan (activas bajo criterio administrador + total histórico + ingresos del mes corriente)
         const queryDistribucion = `
             SELECT 
                 p.ps_id AS "planId",
                 p.ps_nombre AS nombre,
+                COUNT(s.s_id) FILTER (
+                    WHERE CASE
+                        WHEN EXTRACT(DAY FROM CURRENT_DATE) <= 10 THEN
+                            DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month')
+                        ELSE
+                            DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)
+                    END
+                ) AS "cantidadActivas",
                 COUNT(s.s_id) AS "cantidadSuscripciones",
-                COALESCE(SUM(s.s_monto_pago), 0) AS ingresos
+                COALESCE(
+                    SUM(s.s_monto_pago) FILTER (
+                        WHERE DATE_TRUNC('month', s.s_fecha_pago) = DATE_TRUNC('month', CURRENT_DATE)
+                    ), 
+                    0
+                ) AS ingresos
             FROM planes p
             LEFT JOIN suscripcion s ON p.ps_id = s.ps_id
             GROUP BY p.ps_id, p.ps_nombre
@@ -39,9 +67,9 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
         `;
         const resDistribucion = await pool.query(queryDistribucion);
 
-        // Determinamos el plan más vendido/con más suscripciones
+        // Determinamos el plan más vendido (según total histórico de suscripciones)
         let planMasVendido = 'Ninguno';
-        let maxSuscripciones = -1;
+        let maxSuscripciones = 0;
         resDistribucion.rows.forEach(row => {
             const cant = Number(row.cantidadSuscripciones);
             if (cant > maxSuscripciones) {
@@ -49,6 +77,28 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
                 planMasVendido = row.nombre;
             }
         });
+
+        // Estadísticas diarias de ventas (solo tabla ventas, sin suscripciones)
+        const queryVentasDiarias = `
+            SELECT 
+                COALESCE(SUM(v_total), 0) AS "totalDiario",
+                COUNT(v_codigo) AS "cantidadVentas"
+            FROM ventas
+            WHERE DATE(v_fecha) = $1::date;
+        `;
+        const resVentasDiarias = await pool.query(queryVentasDiarias, [fechaParam]);
+
+        const queryMetodosDiarios = `
+            SELECT 
+                COALESCE(v_metodo_pago, 'Sin especificar') AS metodo,
+                COUNT(v_codigo) AS cantidad,
+                COALESCE(SUM(v_total), 0) AS total
+            FROM ventas
+            WHERE DATE(v_fecha) = $1::date
+            GROUP BY v_metodo_pago
+            ORDER BY total DESC, cantidad DESC, metodo ASC;
+        `;
+        const resMetodosDiarios = await pool.query(queryMetodosDiarios, [fechaParam]);
 
         // Top 3 métodos de pago más usados (general, con % sobre el total de ventas)
         const queryMetodosPago = `
@@ -203,11 +253,23 @@ export const obtenerResumenEstadisticas = async (req, res, next) => {
         const resumen = {
             totalIngresosMensuales: Number(resIngresos.rows[0].totalIngresosMensuales),
             suscripcionesActivas: Number(resSuscripciones.rows[0].suscripcionesActivas),
+            suscripcionesHistoricas: Number(resSuscripciones.rows[0].suscripcionesHistoricas),
             clientesRegistrados: Number(resClientes.rows[0].clientesRegistrados),
             planMasVendido,
+            estadisticasDiarias: {
+                fecha: fechaParam,
+                totalDiario: Number(resVentasDiarias.rows[0].totalDiario),
+                cantidadVentas: Number(resVentasDiarias.rows[0].cantidadVentas),
+                porMetodoPago: resMetodosDiarios.rows.map(m => ({
+                    metodo: m.metodo,
+                    cantidad: Number(m.cantidad),
+                    total: Number(m.total)
+                }))
+            },
             distribucionPorPlan: resDistribucion.rows.map(r => ({
                 planId: Number(r.planId),
                 nombre: r.nombre,
+                cantidadActivas: Number(r.cantidadActivas),
                 cantidadSuscripciones: Number(r.cantidadSuscripciones),
                 ingresos: Number(r.ingresos)
             })),
