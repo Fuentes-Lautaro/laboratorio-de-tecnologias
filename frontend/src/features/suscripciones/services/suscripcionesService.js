@@ -1,6 +1,5 @@
 import { obtenerSesion } from '../../auth';
 
-
 const API_URL = import.meta.env.VITE_API_URL;
 const URL_DATA_SIMULADA = '/backend/data'; 
 
@@ -45,12 +44,13 @@ export const getPlanPorNombre = async (nombre) => {
 };
 
 export async function crearPlan({ nombre, descripcion, cantidadVinos, valor }) {
-   const sesion = obtenerSesion();
+  const sesion = obtenerSesion();
   const respuesta = await fetch(`${API_URL}/api/planes`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sesion?.token}`
-     },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
     body: JSON.stringify({ nombre, descripcion, cantidadVinos, valor })
   });
 
@@ -65,9 +65,10 @@ export async function modificarPlan(id, { nombre, descripcion, cantidadVinos, va
   const sesion = obtenerSesion();
   const respuesta = await fetch(`${API_URL}/api/planes/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sesion?.token}`
-     },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
     body: JSON.stringify({ nombre, descripcion, cantidadVinos, valor })
   });
 
@@ -131,9 +132,10 @@ export async function guardarRegistroMes(planId, periodo, productos) {
   const sesion = obtenerSesion();
   const respuesta = await fetch(`${API_URL}/api/planes/registroMes/${planId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sesion?.token}`
-     },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
     body: JSON.stringify({ planId, periodo, productos })
   });
 
@@ -166,12 +168,13 @@ export async function getSuscripciones() {
 }
 
 export async function guardarSuscripcion({ data }) {
-   const sesion = obtenerSesion();
+  const sesion = obtenerSesion();
   const respuesta = await fetch(`${API_URL}/api/suscripciones`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sesion?.token}`
-     },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sesion?.token}`
+    },
     body: JSON.stringify(data)
   });
 
@@ -182,38 +185,33 @@ export async function guardarSuscripcion({ data }) {
   return nuevaSuscripcion;
 }  
 
-export async function getSuscripcionActivaPorDni(identificador) {
+export async function getSuscripcionActivaPorDni() {
   try {
     const sesion = obtenerSesion();
-    if (!sesion?.token) return null;
+    if (!sesion?.token) return [];
 
-    const respuesta = await fetch(`${API_URL}/api/suscripciones/listar`, {
+    const respuesta = await fetch(`${API_URL}/api/suscripciones/mis-suscripciones`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${sesion.token}`
       }
     });
 
-    if (!respuesta.ok) return null;
+    if (!respuesta.ok) return [];
 
     const suscripciones = await respuesta.json();
-    const suscripcionActiva = suscripciones.find((sub) => {
-      const coincideDni = sub.dni_cliente && String(sub.dni_cliente).trim() === String(identificador).trim();
-      const coincideId = sesion.id && Number(sub.cliente_id) === Number(sesion.id);
-      return (coincideDni || coincideId) && sub.activo === true;
-    });
+    if (!Array.isArray(suscripciones)) return [];
 
-    if (!suscripcionActiva) return null;
-
-    return {
-      ...suscripcionActiva,
-      planId: suscripcionActiva.plan_nombre || suscripcionActiva.plan_id,
-      estado: 'Activa',
-      fechaPago: suscripcionActiva.fecha_pago?.split('T')[0] || ''
-    };
+    return suscripciones.map((sub) => ({
+      ...sub,
+      planId: sub.plan_nombre || sub.plan_id,
+      estado: sub.activo ? 'Activa' : 'Inactiva',
+      fechaPago: sub.fecha_pago ? String(sub.fecha_pago).split('T')[0] : ''
+    }));
   } catch (error) {
-    console.error('Error al obtener la suscripción activa:', error);
-    return null;
+    console.error('Error al obtener las suscripciones del cliente:', error);
+    return [];
   }
 }
 

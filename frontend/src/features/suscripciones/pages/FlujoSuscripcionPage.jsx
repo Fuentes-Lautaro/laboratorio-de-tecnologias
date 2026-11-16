@@ -47,6 +47,18 @@ export function FlujoSuscripcionPage() {
     cargarPlan();
   }, [nombre]);
 
+  // Helper para comprobar si entre sus suscripciones ya tiene activo el plan elegido
+  const buscarMismoPlanActivo = (suscripciones, planActual) => {
+    if (!Array.isArray(suscripciones)) return null;
+    const nombreUrl = decodeURIComponent(nombre || '').trim().toLowerCase();
+
+    return suscripciones.find((sub) => {
+      if (!sub.activo) return false;
+      if (planActual?.id && Number(sub.plan_id) === Number(planActual.id)) return true;
+      return sub.plan_nombre && sub.plan_nombre.trim().toLowerCase() === nombreUrl;
+    }) || null;
+  };
+
   // Verificar sesión previa al cargar el componente
   useEffect(() => {
     async function verificarSesionInicial() {
@@ -55,33 +67,29 @@ export function FlujoSuscripcionPage() {
       if (sesionActiva) {
         setClienteLogueado(sesionActiva);
         setEmail(sesionActiva.email || sesionActiva.mail || '');
+        setCargando(true);
 
-        const identificador = sesionActiva.dni || sesionActiva.email;
-        
-        if (identificador) {
-          setCargando(true);
-          try {
-            const subActiva = await getSuscripcionActivaPorDni(identificador);
-            if (subActiva) {
-              setSuscripcionExistente(subActiva);
-              setPaso('SUSCRIPTO');
-            } else {
-              setPaso('PAGO');
-            }
-          } catch (error) {
-            console.error('Error al verificar suscripción activa:', error);
+        try {
+          const suscripciones = await getSuscripcionActivaPorDni();
+          const mismoPlanActivo = buscarMismoPlanActivo(suscripciones, planSeleccionado);
+
+          if (mismoPlanActivo) {
+            setSuscripcionExistente(mismoPlanActivo);
+            setPaso('SUSCRIPTO');
+          } else {
             setPaso('PAGO');
-          } finally {
-            setCargando(false);
           }
-        } else {
+        } catch (error) {
+          console.error('Error al verificar suscripción activa:', error);
           setPaso('PAGO');
+        } finally {
+          setCargando(false);
         }
       }
     }
 
     verificarSesionInicial();
-  }, []);
+  }, [planSeleccionado]);
 
   const handleVerificarEmail = async (emailIngresado) => {
     setCargando(true);
@@ -114,11 +122,11 @@ export function FlujoSuscripcionPage() {
 
       revalidator.revalidate();
 
-      const identificador = sesion.dni || sesion.email;
-      const subActiva = await getSuscripcionActivaPorDni(identificador);
+      const suscripciones = await getSuscripcionActivaPorDni();
+      const mismoPlanActivo = buscarMismoPlanActivo(suscripciones, planSeleccionado);
 
-      if (subActiva) {
-        setSuscripcionExistente(subActiva);
+      if (mismoPlanActivo) {
+        setSuscripcionExistente(mismoPlanActivo);
         setPaso('SUSCRIPTO');
       } else {
         setPaso('PAGO');
@@ -155,7 +163,6 @@ export function FlujoSuscripcionPage() {
     }
   };
 
-  
   const handleConfirmarPago = async () => {
     setCargando(true);
     setErrorBackend('');
@@ -222,12 +229,12 @@ export function FlujoSuscripcionPage() {
 
         {paso === 'SUSCRIPTO' && (
           <div className="card shadow-sm border-0 p-4 text-center">
-            <h4 className="text-warning fw-bold mb-3">¡Ya tenés una suscripción!</h4>
+            <h4 className="text-warning fw-bold mb-3">¡Ya tenés este plan activo!</h4>
             <p className="text-muted small mb-3">
-              Hola <strong>{clienteLogueado?.nombre || 'Usuario'}</strong>, detectamos que tu cuenta ya posee una suscripción activa.
+              Hola <strong>{clienteLogueado?.nombre || 'Usuario'}</strong>, detectamos que tu cuenta ya posee una suscripción activa para este plan.
             </p>
             <div className="alert alert-light border text-start small mb-3">
-              <div><strong>Plan:</strong> {suscripcionExistente?.planId}</div>
+              <div><strong>Plan:</strong> {suscripcionExistente?.plan_nombre || suscripcionExistente?.planId}</div>
               <div><strong>Estado:</strong> {suscripcionExistente?.estado}</div>
               <div><strong>Fecha de pago:</strong> {suscripcionExistente?.fechaPago}</div>
             </div>

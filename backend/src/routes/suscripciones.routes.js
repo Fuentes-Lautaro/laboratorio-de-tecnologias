@@ -11,6 +11,9 @@ router.post('/webhook', controller.webhookMercadoPago);
 router.post('/preferencia', verificarToken, controller.crearPreferenciaMP);
 router.post('/verificar-pago', verificarToken, controller.verificarPagoMP);
 
+// RUTA DE CLIENTE LOGUEADO (Suscripciones propias)
+router.get('/mis-suscripciones', verificarToken, controller.obtenerMisSuscripciones);
+
 // RUTAS PROTEGIDAS EXISTENTES
 router.get('/listar', verificarToken, controller.listarSuscripciones);
 router.get('/', verificarToken, controller.listarPersonasConSuscripcion);

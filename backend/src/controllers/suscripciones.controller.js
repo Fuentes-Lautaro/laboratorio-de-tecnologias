@@ -27,7 +27,7 @@ async function registrarSuscripcionDesdePagoMP(paymentId) {
 
   // 1. Si este payment_id ya fue registrado (por el webhook o por el retorno), lo devolvemos
   const existente = await pool.query(
-    'SELECT * FROM suscripcion WHERE s_mp_payment_id = $1',
+    'SELECT * FROM suscripcion WHERE s_mp_payment_id = \$1',
     [String(paymentId)]
   );
   if (existente.rows.length > 0) {
@@ -49,7 +49,7 @@ async function registrarSuscripcionDesdePagoMP(paymentId) {
   // Si hubo conflicto concurrente justo en ese milisegundo, consultamos el registro guardado
   if (rows.length === 0) {
     const { rows: yaGuardada } = await pool.query(
-      'SELECT * FROM suscripcion WHERE s_mp_payment_id = $1',
+      'SELECT * FROM suscripcion WHERE s_mp_payment_id = \$1',
       [String(paymentId)]
     );
     return { aprobado: true, status: 'approved', suscripcion: yaGuardada[0] };
@@ -70,7 +70,7 @@ export const crearPreferenciaMP = async (req, res, next) => {
 
     // 1. Buscamos el plan en PostgreSQL para asegurar el precio real
     const { rows: planesRows } = await pool.query(
-      'SELECT ps_id, ps_nombre, ps_descripcion, ps_valor, ps_activo FROM planes WHERE ps_id = $1',
+      'SELECT ps_id, ps_nombre, ps_descripcion, ps_valor, ps_activo FROM planes WHERE ps_id = \$1',
       [ps_id]
     );
 
@@ -80,19 +80,19 @@ export const crearPreferenciaMP = async (req, res, next) => {
 
     const plan = planesRows[0];
 
-    // 2. Verificamos que el cliente no tenga ya una suscripción activa
+    // 2. Verificamos que el cliente no tenga ya activo ESTE MISMO plan (permite tener otros planes distintos)
     const { rows: subActiva } = await pool.query(
-      'SELECT s_id FROM suscripcion WHERE cliente_id = $1 AND activo = TRUE',
-      [cliente_id]
+      'SELECT s_id FROM suscripcion WHERE cliente_id = \$1 AND ps_id = \$2 AND activo = TRUE',
+      [cliente_id, ps_id]
     );
 
     if (subActiva.length > 0) {
-      return res.status(409).json({ error: 'Ya poseés una suscripción activa.' });
+      return res.status(409).json({ error: 'Ya poseés una suscripción activa para este plan.' });
     }
 
     // 3. Creamos la preferencia en Mercado Pago
-    const frontendUrl = env.FRONTEND_URL.replace(/\/$/, '');
-    const backendUrl = env.BACKEND_URL.replace(/\/$/, '');
+    const frontendUrl = env.FRONTEND_URL.replace(/\/\$/, '');
+    const backendUrl = env.BACKEND_URL.replace(/\/\$/, '');
     const urlRetorno = `${frontendUrl}/suscripciones/pago/resultado`;
 
     const preference = new Preference(mpClient);
@@ -113,9 +113,7 @@ export const crearPreferenciaMP = async (req, res, next) => {
         failure: urlRetorno,
         pending: urlRetorno,
       },
-      // auto_return solo es aceptado por MP si la URL es HTTPS pública
       ...(frontendUrl.startsWith('https://') && { auto_return: 'approved' }),
-      // Webhook público HTTPS
       ...(backendUrl.startsWith('https://') && {
         notification_url: `${backendUrl}/api/suscripciones/webhook`,
       }),
@@ -142,7 +140,6 @@ export const webhookMercadoPago = async (req, res) => {
       await registrarSuscripcionDesdePagoMP(paymentId);
     }
 
-    // Siempre responder 200 OK rápido para que Mercado Pago no reintente
     return res.sendStatus(200);
   } catch (err) {
     console.error('Error procesando webhook de Mercado Pago:', err.message);
@@ -173,6 +170,41 @@ export const verificarPagoMP = async (req, res, next) => {
       status: resultado.status,
       suscripcion: resultado.suscripcion,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/suscripciones/mis-suscripciones (Protegida con JWT - Historial completo del cliente)
+export const obtenerMisSuscripciones = async (req, res, next) => {
+  try {
+    const clienteId = req.usuario?.id;
+
+    if (!clienteId) {
+      return res.status(401).json({ error: 'Usuario no identificado en el token.' });
+    }
+
+    const query = `
+      SELECT 
+        s.s_id AS id,
+        s.s_fecha_pago AS fecha_pago,
+        s.s_monto_pago AS monto,
+        s.cliente_id,
+        p.pe_dni AS dni_cliente,
+        p.pe_nombre AS nombre_cliente,
+        s.ps_id AS plan_id,
+        pl.ps_nombre AS plan_nombre,
+        s.s_metodo_pago AS metodo_pago,
+        s.activo
+      FROM suscripcion s
+      JOIN personas p ON s.cliente_id = p.pe_id
+      JOIN planes pl ON s.ps_id = pl.ps_id
+      WHERE s.cliente_id = $1
+      ORDER BY s.activo DESC, s.s_fecha_pago DESC, s.s_id DESC
+    `;
+
+    const { rows } = await pool.query(query, [clienteId]);
+    res.json(rows);
   } catch (err) {
     next(err);
   }
@@ -220,7 +252,7 @@ export const listarSuscripciones = async (req, res, next) => {
 export const obtener = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = $1', [id]);
+    const { rows } = await pool.query('SELECT * FROM suscripcion WHERE s_id = \$1', [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Suscripción no encontrada' });
