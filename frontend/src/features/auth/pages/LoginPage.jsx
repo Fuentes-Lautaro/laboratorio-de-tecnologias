@@ -40,37 +40,6 @@ export function LoginPage() {
             <FormularioLogin onIngresar={handleIngresar} />
           </div>
         </div>
-
-        {/* Desplegable de Usuarios de Ejemplo */}
-        <details className="mt-2 text-center">
-          <summary 
-            className="user-select-none small text-uppercase fw-semibold cursor-pointer" 
-            style={{ color: 'var(--referencias, #513B2A)', fontSize: '0.75rem', letterSpacing: '1px', listStyle: 'none' }}
-          >
-            <span className="text-decoration-underline" style={{ textUnderlineOffset: '3px' }}>Ver usuarios de prueba</span>
-          </summary>
-
-          <div 
-            className="rounded-3 p-3 mt-2 text-start shadow-sm" 
-            style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', border: '1px solid rgba(181, 134, 90, 0.25)', fontSize: '0.78rem' }}
-          >
-            <div className="d-flex flex-column gap-2">
-              <div>
-                <strong style={{ color: 'var(--titulos, #64141B)' }}>Gerente:</strong> gestor@mariabalbina.com / 123456
-              </div>
-              <div>
-                <strong style={{ color: 'var(--titulos, #64141B)' }}>Cliente:</strong> vendedor@mariabalbina.com / 123456
-              </div>
-              <div>
-                <strong style={{ color: 'var(--titulos, #64141B)' }}>CM:</strong> cm@mariabalbina.com / 123456
-              </div>
-              <div>
-                <strong style={{ color: 'var(--titulos, #64141B)' }}>Cliente:</strong> lucia@gmail.com / 123456
-              </div>
-            </div>
-          </div>
-        </details>
-
       </div>
     </div>
   );
