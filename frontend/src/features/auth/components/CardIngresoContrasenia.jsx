@@ -13,7 +13,7 @@ export function CardIngresoContrasenia({ email, onLogin, onVolver, cargando }) {
   return (
     <div className="card-auth-flujo">
       <div className="text-center mb-3">
-        <h3 className="titulo-auth mb-1">Ingresá tu contraseña</h3>
+        <h3 className="titulo-auth mb-1" style={{ color: 'var(--detalles, #B5865A)' }}>Ingresá tu contraseña</h3>
         <span className="badge bg-light text-dark border px-3 py-2 mt-2 rounded-pill small">
           {email}
         </span>

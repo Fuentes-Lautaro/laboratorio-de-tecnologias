@@ -50,7 +50,7 @@ export function CardRegistro({ email, onRegistro, onVolver, cargando, errorBacke
   return (
     <div className="card-auth-flujo" style={{backgroundColor:'var(--titulos, #4a1525)'}}>
       <div className="text-center mb-3">
-        <h3 className="titulo-auth mb-1" style={{color:'var(--detalles, B5865A)'}}>Creá tu cuenta</h3>
+        <h3 className="titulo-auth mb-1" style={{color:'var(--detalles, #B5865A)'}}>Creá tu cuenta</h3>
         <p className="text-muted small mb-1">
           Completá tus datos personales para suscribirte
         </p>

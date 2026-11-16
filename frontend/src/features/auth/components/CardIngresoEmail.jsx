@@ -14,7 +14,7 @@ export function CardIngresoEmail({ onVerificarEmail, cargando }) {
     <div className="card-auth-flujo">
       <div className="text-center mb-4">
         <h3 className="titulo-auth mb-1">¡Te damos la bienvenida!</h3>
-        <p className="small" style={{ color: 'var(--titulos, #4a1525)' }}>
+        <p className="small" style={{ color: 'var(--detalles, #B5865A)' }}>
           Ingresá tu correo electrónico para continuar.
         </p>
       </div>
